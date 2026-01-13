@@ -90,7 +90,7 @@ If you are using Laragon, the site should be available at: http://property-marke
 php artisan serve
 ```
 
-The site will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+The site will be available at [http://property-marketplace.test](http://property-marketplace.test).
 
 ## 🔑 Login Credentials
 
