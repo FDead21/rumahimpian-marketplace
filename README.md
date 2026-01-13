@@ -1,22 +1,3 @@
-<p align="center">
-    <a href="#" target="_blank">
-        <img src="[https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg](https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg)" width="300" alt="RumahImpian Logo">
-    </a>
-</p>
-
-<p align="center">
-    <a href="[https://laravel.com](https://laravel.com)"><img src="[https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white](https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)" alt="Laravel 11"></a>
-    <a href="[https://filamentphp.com](https://filamentphp.com)"><img src="[https://img.shields.io/badge/Filament-v3-md?style=for-the-badge&logo=filament&logoColor=white&color=fdae4b](https://img.shields.io/badge/Filament-v3-md?style=for-the-badge&logo=filament&logoColor=white&color=fdae4b)" alt="Filament v3"></a>
-    <a href="[https://tailwindcss.com](https://tailwindcss.com)"><img src="[https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)" alt="Tailwind CSS"></a>
-    <a href="[https://alpinejs.dev](https://alpinejs.dev)"><img src="[https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white)" alt="Alpine.js"></a>
-</p>
-
-<p align="center">
-    <a href="#"><img src="[https://img.shields.io/badge/License-MIT-green](https://img.shields.io/badge/License-MIT-green)" alt="License"></a>
-    <a href="#"><img src="[https://img.shields.io/badge/PHP-8.2+-777BB4](https://img.shields.io/badge/PHP-8.2+-777BB4)" alt="PHP Version"></a>
-    <a href="#"><img src="[https://img.shields.io/badge/Status-Development-orange](https://img.shields.io/badge/Status-Development-orange)" alt="Status"></a>
-</p>
-
 ## About RumahImpian
 
 **RumahImpian** is a modern, comprehensive Real Estate Marketplace platform designed to connect property seekers with trusted agents. Built on the robust **Laravel 11** framework, it leverages **FilamentPHP** for a powerful administrative backend and **Livewire** for a dynamic, reactive frontend experience.
@@ -103,6 +84,8 @@ npm run build
 
 ### 7. Run the Application
 
+If you are using Laragon, the site should be available at: http://property-marketplace.test
+
 ```bash
 php artisan serve
 ```
@@ -119,7 +102,7 @@ The seeder creates the following default users for testing purposes.
 | **Agency Agent** | `siti@grandrealty.co.id` | `password` | Linked to "Grand Realty". |
 | **Independent Agent** | `budi@gmail.com` | `password` | No agency affiliation. |
 
-👉 **Agent Portal URL:** [http://127.0.0.1:8000/portal](http://127.0.0.1:8000/portal)
+Agent Portal URL: http://property-marketplace.test/portal
 
 ## 📂 Key Routes
 
