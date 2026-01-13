@@ -100,6 +100,23 @@
                 return true;
             })
             ->take(3);
+
+        $qrBase64 = null;
+            try {
+                // 1. Prepare URL (Make sure to urlencode the data!)
+                $currentUrl = url()->current();
+                $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($currentUrl);
+                
+                // 2. Fetch Image Content
+                // Using file_get_contents is more reliable here than letting DomPDF do it
+                $qrContent = file_get_contents($qrApiUrl);
+                
+                if ($qrContent) {
+                    $qrBase64 = 'data:image/png;base64,' . base64_encode($qrContent);
+                }
+            } catch (\Exception $e) {
+                // Leave null if fails (internet issue, etc)
+            }
     @endphp
 
     <div class="hero">
@@ -192,7 +209,13 @@
                         <tr>
                             <td align="center">
                                 <div class="qr-box">
-                                    <img src="http://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ url()->current() }}" width="60" style="display:block;">
+                                    @if($qrBase64)
+                                        {{-- Use the Base64 string --}}
+                                        <img src="{{ $qrBase64 }}" width="60" style="display:block;">
+                                    @else
+                                        {{-- Fallback if generation fails --}}
+                                        <div style="width:60px; height:60px; background:#eee;"></div>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

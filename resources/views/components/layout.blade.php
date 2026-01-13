@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Property Marketplace' }}</title>
+    <title>{{ $title ?? $settings['site_name'] ?? 'RumahImpian' }}</title>
+
+    @if(!empty($settings['site_favicon']))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings['site_favicon']) }}">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}"> 
+    @endif
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="//unpkg.com/alpinejs" defer></script>
-    <style>[x-cloak] { display: none !important; }</style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    {{-- Leaflet CSS/JS ... --}}
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans text-gray-900">
 
@@ -38,6 +46,33 @@
     </div>
 
     <script>
+        // 1. Initialize Alpine Stores (Run before Alpine loads)
+        document.addEventListener('alpine:init', () => {
+            
+            // Define the "wishlist" store used by the property card
+            Alpine.store('wishlist', {
+                ids: JSON.parse(localStorage.getItem('wishlist_ids') || '[]'),
+                
+                has(id) {
+                    return this.ids.includes(id);
+                },
+                
+                toggle(id) {
+                    if (this.ids.includes(id)) {
+                        this.ids = this.ids.filter(i => i !== id);
+                    } else {
+                        this.ids.push(id);
+                    }
+                    
+                    localStorage.setItem('wishlist_ids', JSON.stringify(this.ids));
+                    
+                    // Dispatch event to update other parts of the UI if needed
+                    window.dispatchEvent(new CustomEvent('wishlist-updated'));
+                }
+            });
+        });
+
+        // 2. Existing Comparison Logic functions
         function compareLogic(id) {
             return {
                 id: id,
@@ -63,6 +98,7 @@
                 }
             }
         }
+
         function compareBar() {
             return {
                 count: 0,

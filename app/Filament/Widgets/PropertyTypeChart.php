@@ -10,11 +10,20 @@ class PropertyTypeChart extends ChartWidget
 {
     protected static ?string $heading = 'Properties by Type';
     protected static ?int $sort = 3;
+    
+    // FIX: Limit the height so it doesn't cover the screen
+    protected static ?string $maxHeight = '300px';
 
     protected function getData(): array
     {
-        $types = Property::where('user_id', auth()->id())
-            ->select('property_type', DB::raw('count(*) as total'))
+        // LOGIC: Admin sees GLOBAL stats, Agent sees THEIR stats
+        $query = Property::query();
+
+        if (auth()->user()->role !== 'ADMIN') {
+            $query->where('user_id', auth()->id());
+        }
+
+        $types = $query->select('property_type', DB::raw('count(*) as total'))
             ->groupBy('property_type')
             ->pluck('total', 'property_type')
             ->toArray();
@@ -22,10 +31,10 @@ class PropertyTypeChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'My Property Types',
+                    'label' => 'Property Types',
                     'data' => array_values($types),
                     'backgroundColor' => [
-                        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+                        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'
                     ],
                 ],
             ],

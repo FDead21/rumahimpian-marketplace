@@ -9,34 +9,37 @@ use Flowframe\Trend\TrendValue;
 
 class PropertiesOverviewChart extends ChartWidget
 {
-    protected static ?string $heading = 'New Properties (Last 6 Months)';
-    
-    // Sort order: 2 means it appears after the stats cards (if we make them)
-    protected static ?int $sort = 2; 
+    protected static ?string $heading = 'Properties Growth';
+    protected static ?int $sort = 2;
+    protected static ?string $maxHeight = '300px';
 
     protected function getData(): array
     {
-        $query = \App\Models\Property::query()->where('user_id', auth()->id());
+        $query = Property::query();
 
-        $data = \Flowframe\Trend\Trend::query($query)
+        if (auth()->user()->role !== 'ADMIN') {
+            $query->where('user_id', auth()->id());
+        }
+
+        $data = Trend::query($query)
             ->between(
-                start: now()->subMonths(6),
-                end: now(),
+                start: now()->startOfYear(),
+                end: now()->endOfYear(),
             )
             ->perMonth()
             ->count();
- 
+
         return [
             'datasets' => [
                 [
-                    'label' => 'My Listings Growth',
-                    'data' => $data->map(fn (\Flowframe\Trend\TrendValue $value) => $value->aggregate),
-                    'borderColor' => '#4F46E5', 
-                    'fill' => true,
+                    'label' => 'New Properties',
+                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
+                    'borderColor' => '#4f46e5', // Indigo
+                    'fill' => 'start',
                     'backgroundColor' => 'rgba(79, 70, 229, 0.1)',
                 ],
             ],
-            'labels' => $data->map(fn (\Flowframe\Trend\TrendValue $value) => $value->date),
+            'labels' => $data->map(fn (TrendValue $value) => $value->date),
         ];
     }
 

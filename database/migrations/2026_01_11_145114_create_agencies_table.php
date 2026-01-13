@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('logo')->nullable(); 
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
+            $table->string('email')->nullable();   // Agency Contact Email
             $table->timestamps();
         });
 
@@ -32,6 +33,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agencies');
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        \Illuminate\Support\Facades\Schema::dropIfExists('agencies');
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
     }
 };

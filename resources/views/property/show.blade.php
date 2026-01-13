@@ -217,13 +217,13 @@
             <div class="md:col-span-1">
                 <div class="bg-white p-6 rounded-xl shadow-lg border sticky top-4">
                     <div class="flex items-center space-x-4 mb-6">
-                        @if(Auth::user()->avatar_url)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar_url) }}" 
+                        @if($property->user->avatar_url)
+                            <img src="{{ asset('storage/' . $property->user->avatar_url) }}" 
                                 class="w-24 h-24 rounded-full object-cover border border-indigo-200"
                                 alt="Avatar">
                         @else
                             <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold border border-indigo-200">
-                                {{ substr(Auth::user()->name, 0, 1) }}
+                                {{ substr($property->user->name, 0, 1) }}
                             </div>
                         @endif
                         <div>

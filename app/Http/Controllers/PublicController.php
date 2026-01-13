@@ -6,6 +6,7 @@ use App\Models\Property;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Agency;
 
 class PublicController extends Controller
 {
@@ -24,8 +25,8 @@ class PublicController extends Controller
             });
         }
 
-        // 2. Filter by Property Type (e.g., 'Villa', 'House')
-        if ($request->filled('type')) {
+        // 2. Filter by Property Type
+        if ($request->filled('type') && $request->type !== 'ALL') {
             $query->where('property_type', $request->type);
         }
 
@@ -34,18 +35,29 @@ class PublicController extends Controller
             $query->where('listing_type', $request->listing_type);
         }
 
-        // 4. Min Price
+        // 4. Min Price (Handle "dot" formatting if needed, e.g. 1.000.000)
         if ($request->filled('min_price')) {
-            $query->where('price', '>=', $request->min_price);
+            $price = str_replace('.', '', $request->min_price);
+            $query->where('price', '>=', (int)$price);
         }
 
         // 5. Max Price
         if ($request->filled('max_price')) {
-            $query->where('price', '<=', $request->max_price);
+            $price = str_replace('.', '', $request->max_price);
+            $query->where('price', '<=', (int)$price);
         }
 
-        // 6. Sort by Newest
-        $properties = $query->latest()->paginate(9)->withQueryString(); // Keep filters in URL when clicking page 2
+        // 6. Bedrooms (NEW ADDITION)
+        if ($request->filled('bedrooms')) {
+            if ($request->bedrooms == '5+') {
+                $query->where('bedrooms', '>=', 5);
+            } else {
+                $query->where('bedrooms', $request->bedrooms);
+            }
+        }
+
+        // Sort by Newest
+        $properties = $query->latest()->paginate(9)->withQueryString();
 
         return view('home', compact('properties'));
     }

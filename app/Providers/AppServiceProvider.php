@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\View;
 use App\Models\Property;
 use App\Models\PropertyMedia;
 use App\Observers\PropertyMediaObserver;
+use Illuminate\Support\Facades\Schema;
+use App\Models\Setting;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (Schema::hasTable('settings')) {
+            $settings = \Cache::rememberForever('site_settings', function () {
+                return Setting::all()->pluck('value', 'key')->toArray();
+            });
+
+            View::share('settings', $settings);
+        }
+
         Blade::directive('currency', function ($expression) {
             return "<?php
                 \$num = $expression;
