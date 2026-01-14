@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -32,12 +33,15 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone_number' => $request->phone_number,
-            'role' => 'AGENT', // <--- Force them to be an Agent
+            'role' => 'AGENT',
+            'is_verified' => false, // <--- Force them to be an Agent
         ]);
 
         // 3. Auto Login & Redirect to Dashboard
         Auth::login($user);
+
+        event(new Registered($user));
         
-        return redirect('/portal'); // Send them straight to the CMS
+        return redirect()->route('verification.notice');
     }
 }

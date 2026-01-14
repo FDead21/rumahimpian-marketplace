@@ -42,10 +42,10 @@
         {{-- 2. HERO TEXT --}}
         <div class="absolute inset-0 flex flex-col items-center justify-center pb-32 text-center z-10 px-4 pointer-events-none">
             <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg tracking-tight">
-                {{ $settings['hero_title'] ?? 'Find Your Dream Home' }}
+                {{ __($settings['hero_title'] ?? 'Find Your Dream Home') }}
             </h1>
             <p class="text-xl text-gray-200 drop-shadow-md max-w-2xl">
-                {{ $settings['hero_subtitle'] ?? 'Search properties for sale and rent from top agents.' }}
+                {{ __($settings['hero_subtitle'] ?? 'Search properties for sale and rent from top agents.') }}
             </p>
         </div>
 
@@ -61,13 +61,13 @@
                         <button @click="tab = 'SALE'" 
                                 class="flex-1 py-4 text-center font-bold text-lg transition-colors relative"
                                 :class="tab === 'SALE' ? 'text-indigo-600 bg-white' : 'text-gray-500 bg-gray-50 hover:bg-gray-100'">
-                            For Sale
+                            {{ __('For Sale') }}
                             <div x-show="tab === 'SALE'" class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600"></div>
                         </button>
                         <button @click="tab = 'RENT'" 
                                 class="flex-1 py-4 text-center font-bold text-lg transition-colors relative"
                                 :class="tab === 'RENT' ? 'text-indigo-600 bg-white' : 'text-gray-500 bg-gray-50 hover:bg-gray-100'">
-                            For Rent
+                            {{ __('For Rent') }}
                             <div x-show="tab === 'RENT'" class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600"></div>
                         </button>
                     </div>
@@ -78,36 +78,36 @@
 
                         {{-- Location --}}
                         <div class="md:col-span-4">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Location</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">{{ __('Location') }}</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-400">📍</span>
                                 <input type="text" name="search" value="{{ request('search') }}"
                                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-gray-800"
-                                       placeholder="City, District, or Keyword...">
+                                       placeholder="{{ __('City, District, or Keyword...') }}">
                             </div>
                         </div>
 
                         {{-- Property Type --}}
                         <div class="md:col-span-3">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Property Type</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">{{ __('Property Type') }}</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-400">🏠</span>
                                 <select name="type" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-gray-800 appearance-none">
-                                    <option value="ALL">All Types</option>
-                                    <option value="House">House</option>
-                                    <option value="Apartment">Apartment</option>
-                                    <option value="Villa">Villa</option>
-                                    <option value="Land">Land</option>
+                                    <option value="ALL">{{ __('All Types') }}</option>
+                                    <option value="House">{{ __('House') }}</option>
+                                    <option value="Apartment">{{ __('Apartment') }}</option>
+                                    <option value="Villa">{{ __('Villa') }}</option>
+                                    <option value="Land">{{ __('Land') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         {{-- Max Price --}}
                         <div class="md:col-span-3">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Max Price</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">{{ __('Max Price') }}</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-400">💰</span>
-                                <input type="number" name="max_price" placeholder="Any Price"
+                                <input type="number" name="max_price" placeholder="{{ __('Any Price') }}"
                                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-gray-800">
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                         {{-- Button --}}
                         <div class="md:col-span-2">
                             <button type="submit" class="w-full h-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-md transition transform hover:-translate-y-0.5">
-                                Search
+                                {{ __('Search') }}
                             </button>
                         </div>
                     </form>
@@ -127,7 +127,7 @@
     <div class="h-32 bg-gray-50"></div>
 
     <div class="max-w-7xl mx-auto px-4 py-12">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Latest Listings</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">{{ __('Latest Listings') }}</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @foreach($properties as $property)
@@ -141,7 +141,7 @@
 
         @if($properties->count() == 0)
             <div class="text-center py-12 text-gray-500">
-                No properties found. Please go to Admin Panel and change status to <strong>PUBLISHED</strong>.
+                {{ __('No properties found. Please go to Admin Panel and change status to') }} <strong>PUBLISHED</strong>.
             </div>
         @endif
     </div>

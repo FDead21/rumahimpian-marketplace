@@ -8,12 +8,12 @@
                 </span>
             </div>
             <p class="text-gray-400 text-sm leading-relaxed">
-                {{ $settings['site_description'] ?? 'Your trusted partner in finding the perfect property.' }}
+                {{ __($settings['site_description'] ?? 'Your trusted partner in finding the perfect property.') }}
             </p>
         </div>
 
         <div>
-            <h3 class="font-bold text-lg mb-4 text-gray-100">Contact Us</h3>
+            <h3 class="font-bold text-lg mb-4 text-gray-100">{{ __('Contact Us') }}</h3>
             <ul class="space-y-3 text-sm text-gray-400">
                 <li class="flex items-start space-x-3">
                     <span>📍</span>
@@ -65,11 +65,11 @@
         </div>
 
         <div>
-            <h3 class="font-bold text-lg mb-4 text-gray-100">Discover</h3>
+            <h3 class="font-bold text-lg mb-4 text-gray-100">{{ __('Discover') }}</h3>
             <ul class="space-y-3 text-sm text-gray-400">
                 <li>
                     <a href="{{ route('home') }}" class="hover:text-white transition flex items-center gap-2">
-                        <span>🏠</span> All Properties
+                        <span>🏠</span> {{ __('All Properties') }}
                     </a>
                 </li>
                 
@@ -77,14 +77,14 @@
                     {{-- Logged in? Show Dashboard --}}
                     <li>
                         <a href="/admin" class="hover:text-white transition flex items-center gap-2">
-                            <span>⚡</span> My Dashboard
+                            <span>⚡</span> {{ __('My Dashboard') }}
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
                             @csrf
                             <button type="submit" class="hover:text-red-400 transition flex items-center gap-2">
-                                <span>🚪</span> Logout
+                                <span>🚪</span> {{ __('Logout') }}
                             </button>
                         </form>
                     </li>
@@ -92,19 +92,19 @@
                     {{-- Guest? Show Login/Register --}}
                     <li>
                         <a href="/admin/login" class="hover:text-white transition flex items-center gap-2">
-                            <span>🔐</span> Agent Login
+                            <span>🔐</span> {{ __('Agent Login') }}
                         </a>
                     </li>
                     <li>
                         <a href="/admin/register" class="hover:text-white transition flex items-center gap-2">
-                            <span>📝</span> Register as Agent
+                            <span>📝</span> {{ __('Register as Agent') }}
                         </a>
                     </li>
                 @endauth
 
                 <li>
                     <a href="#" class="hover:text-white transition flex items-center gap-2">
-                        <span>🛡️</span> Privacy Policy
+                        <span>🛡️</span> {{ __('Privacy Policy') }}
                     </a>
                 </li>
             </ul>

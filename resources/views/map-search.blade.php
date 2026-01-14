@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Map Search - RumahImpian</title>
+    <title>{{ __('Map Search') }} - RumahImpian</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     {{-- Leaflet --}}
@@ -11,14 +11,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        /* Hide Scrollbar but keep functionality */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Active Card Style */
         .property-card.active { border-color: #4F46E5; background-color: #F5F3FF; }
-        
-        /* Custom Popup Styling */
         .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; overflow: hidden; }
         .leaflet-popup-content { margin: 0; width: 220px !important; }
         .leaflet-container a.leaflet-popup-close-button { top: 8px; right: 8px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
@@ -34,7 +29,7 @@
             <div class="flex gap-3">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 bg-white border border-gray-300 hover:border-indigo-500 hover:text-indigo-600 px-4 py-1.5 rounded-full text-sm font-medium transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                    List View
+                    {{ __('List View') }}
                 </a>
             </div>
         </div>
@@ -46,7 +41,7 @@
         {{-- 1. LEFT PANEL (Desktop List) --}}
         <div class="hidden md:flex w-[400px] lg:w-[450px] flex-col bg-white border-r border-gray-200 h-full shadow-xl z-20 relative">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-white">
-                <h2 class="font-bold text-gray-800">{{ $properties->count() }} Properties Found</h2>
+                <h2 class="font-bold text-gray-800">{{ $properties->count() }} {{ __('Properties Found') }}</h2>
             </div>
             
             <div class="flex-1 overflow-y-auto p-4 space-y-4" id="desktop-list">
@@ -60,7 +55,7 @@
                                 <img src="{{ asset('storage/' . $property->media->first()->file_path) }}" class="w-full h-full object-cover">
                             @endif
                             <div class="absolute top-1 left-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                                {{ $property->listing_type }}
+                                {{ __(ucfirst(strtolower($property->listing_type))) }}
                             </div>
                         </div>
 
@@ -89,7 +84,6 @@
 
             {{-- 3. MOBILE BOTTOM CARD SLIDER --}}
             <div class="md:hidden absolute bottom-6 left-0 right-0 z-[500] px-4 pointer-events-none">
-                {{-- Pointer events auto on slider only --}}
                 <div class="flex overflow-x-auto gap-4 no-scrollbar snap-x snap-mandatory py-4 pointer-events-auto" id="mobile-slider">
                     
                     @foreach($properties as $property)
@@ -110,7 +104,7 @@
                                     
                                     <a href="{{ route('property.show', ['id' => $property->id, 'slug' => $property->slug]) }}" 
                                        class="text-xs bg-gray-900 text-white py-1.5 px-3 rounded-lg text-center font-bold">
-                                        View Details
+                                        {{ __('View Details') }}
                                     </a>
                                 </div>
                             </div>
@@ -135,22 +129,19 @@
 
         var properties = @json($properties);
         var markers = {};
-        var activeId = null;
         var bounds = L.latLngBounds();
         
         properties.forEach(function(prop) {
             if(prop.latitude && prop.longitude) {
                 
-                // 1. Define Pin Icon
                 var icon = L.divIcon({
                     className: 'custom-pin',
                     html: `<div class="w-10 h-10 bg-white rounded-full border-2 border-indigo-600 shadow-xl flex items-center justify-center text-indigo-600 text-lg font-bold hover:scale-110 transition transform">🏠</div>`,
                     iconSize: [40, 40],
                     iconAnchor: [20, 40],
-                    popupAnchor: [0, -40] // Popup opens above pin
+                    popupAnchor: [0, -40] 
                 });
 
-                // 2. Define Popup Content
                 var popupContent = `
                     <div class="font-sans">
                         <div class="h-32 w-full bg-gray-200 relative">
@@ -163,23 +154,19 @@
                             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 truncate">${prop.title}</h3>
                             <p class="text-xs text-gray-500 mb-2">${prop.district}, ${prop.city}</p>
                             <a href="/property/${prop.id}/${prop.slug}" target="_blank" class="block w-full bg-indigo-600 text-white text-center text-xs py-2 rounded font-bold hover:bg-indigo-700 transition">
-                                View Property
+                                {{ __('View Property') }}
                             </a>
                         </div>
                     </div>
                 `;
 
-                // 3. Create Marker
                 var marker = L.marker([prop.latitude, prop.longitude], {icon: icon})
                     .addTo(map)
                     .bindPopup(popupContent)
                     .on('click', function() {
-                        // When PIN is clicked -> Highlight Card
                         highlightCard('card-desktop-' + prop.id);
                         highlightCard('card-mobile-' + prop.id);
-                        
-                        // Also center map (with offset for mobile)
-                        focusOnMap(prop.latitude, prop.longitude, prop.id, false); // false = don't re-open popup (it opens automatically)
+                        focusOnMap(prop.latitude, prop.longitude, prop.id, false); 
                     });
 
                 markers[prop.id] = marker;
@@ -191,23 +178,17 @@
             map.fitBounds(bounds, { padding: [50, 50] });
         }
 
-        // Main Logic to sync Map & List
         function focusOnMap(lat, lng, id, openPopup = true) {
-            // Mobile Offset: Move map 'down' so pin is above the bottom slider
             var offset = window.innerWidth < 768 ? -0.008 : 0; 
-            
             map.flyTo([lat + offset, lng], 16, { animate: true, duration: 1 });
 
-            // Highlight Cards
             highlightCard('card-desktop-' + id);
             highlightCard('card-mobile-' + id);
 
-            // Open Popup (Only if triggered from list click)
             if(openPopup && markers[id]) {
                 markers[id].openPopup();
             }
 
-            // Scroll Mobile Slider
             var mobileCard = document.getElementById('card-mobile-' + id);
             if(mobileCard) {
                 mobileCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });

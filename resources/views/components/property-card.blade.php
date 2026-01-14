@@ -17,7 +17,7 @@
         <div class="absolute top-4 left-4">
             <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm
                 {{ $property->listing_type == 'SALE' ? 'bg-indigo-600 text-white' : 'bg-emerald-500 text-white' }}">
-                {{ $property->listing_type }}
+                {{ __(ucfirst(strtolower($property->listing_type))) }}
             </span>
         </div>
 
@@ -46,7 +46,7 @@
                 @click.prevent="toggle()" 
                 class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:scale-110 transition active:scale-95 group/compare border border-transparent"
                 :class="selected ? 'text-indigo-600 ring-2 ring-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600'"
-                title="Compare Property"
+                title="{{ __('Compare Property') }}"
             >
                 <svg x-show="!selected" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
@@ -78,15 +78,15 @@
         </h3>
 
         <div class="flex items-center justify-between border-t border-gray-100 pt-4 text-sm text-gray-600">
-            <div class="flex items-center gap-1" title="Bedrooms">
+            <div class="flex items-center gap-1" title="{{ __('Bedrooms') }}">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                <span class="font-semibold">{{ $property->bedrooms }}</span> <span class="text-xs">Bed</span>
+                <span class="font-semibold">{{ $property->bedrooms }}</span> <span class="text-xs">{{ __('Bed') }}</span>
             </div>
-            <div class="flex items-center gap-1" title="Bathrooms">
+            <div class="flex items-center gap-1" title="{{ __('Bathrooms') }}">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 00-2-2H9a2 2 0 00-2 2m5-4v.01M17 16v.01"></path></svg>
-                <span class="font-semibold">{{ $property->bathrooms }}</span> <span class="text-xs">Bath</span>
+                <span class="font-semibold">{{ $property->bathrooms }}</span> <span class="text-xs">{{ __('Bath') }}</span>
             </div>
-            <div class="flex items-center gap-1" title="Building Area">
+            <div class="flex items-center gap-1" title="{{ __('Building Area') }}">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 00-2-2H9a2 2 0 00-2 2m5-4v.01M17 16v.01"></path></svg>
                 <span class="font-semibold">{{ $property->building_area }}</span> <span class="text-xs">m²</span>
             </div>

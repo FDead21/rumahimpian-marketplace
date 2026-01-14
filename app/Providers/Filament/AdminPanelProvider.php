@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('RumahImpian Panel')
             ->login()
             ->registration(Register::class) 
+            ->emailVerification()
             ->passwordReset()
             ->colors([
                 'primary' => \Filament\Support\Colors\Color::Indigo, 

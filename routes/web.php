@@ -6,6 +6,9 @@ use App\Http\Controllers\Agent\DashboardController;
 use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +25,13 @@ Route::get('/map', [PublicController::class, 'mapSearch'])->name('map.search');
 // Agent & Agency Profiles
 Route::get('/agent/{id}', [PublicController::class, 'agent'])->name('agent.show');
 Route::get('/agency/{slug}', [PublicController::class, 'agency'])->name('agency.show');
+
+Route::get('/lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'id'])) {
+        Session::put('locale', $locale);
+    }
+    return back();
+})->name('lang.switch');
 
 /*
 |--------------------------------------------------------------------------
@@ -72,3 +82,26 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('agent.dashboard');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Email Verification Routes
+|--------------------------------------------------------------------------
+*/
+
+// 1. The Notice Page (Shown if they try to access dashboard without verifying)
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+// 2. The Link Handler (When they click the email link)
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); // This fires the "Verified" event -> triggers our Listener!
+    return redirect('/dashboard')->with('success', 'Email verified! You now have the Blue Badge.');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// 3. Resend Link
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');

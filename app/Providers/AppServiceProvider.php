@@ -10,6 +10,9 @@ use App\Models\PropertyMedia;
 use App\Observers\PropertyMediaObserver;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Setting;
+use Illuminate\Auth\Events\Verified; 
+use App\Listeners\AssignBlueBadge;  
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +29,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Event::listen(
+            Verified::class,
+            AssignBlueBadge::class,
+        );
+
         if (Schema::hasTable('settings')) {
             $settings = \Cache::rememberForever('site_settings', function () {
                 return Setting::all()->pluck('value', 'key')->toArray();

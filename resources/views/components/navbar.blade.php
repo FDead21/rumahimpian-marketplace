@@ -33,7 +33,7 @@
                         <div class="relative group">
                             <input type="text" name="search" 
                                    class="w-full bg-gray-100 border-transparent focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 rounded-full py-2.5 pl-11 pr-14 transition-all outline-none text-gray-800 font-medium placeholder-gray-400"
-                                   placeholder="Type City, Project, or Keyword...">
+                                   placeholder="{{ __('Search by City, District, or Property Name...') }}">
                             <span class="absolute left-4 top-3 text-gray-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </span>
@@ -46,8 +46,26 @@
 
                 {{-- 3. RIGHT: ACTIONS (Desktop Only) --}}
                 <div class="hidden md:flex items-center space-x-4">
+                    <div class="relative" x-data="{ langOpen: false }">
+                        <button @click="langOpen = !langOpen" class="flex items-center gap-1 text-gray-500 hover:text-indigo-600 font-bold text-sm">
+                            @if(app()->getLocale() == 'id')
+                                🇮🇩 ID
+                            @else
+                                🇺🇸 EN
+                            @endif
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="langOpen" @click.away="langOpen = false" 
+                             class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-100 z-50 py-1"
+                             style="display: none;">
+                            <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">🇺🇸 English</a>
+                            <a href="{{ route('lang.switch', 'id') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">🇮🇩 Indonesia</a>
+                        </div>
+                    </div>
+
                     {{-- Wishlist --}}
-                    <a href="{{ route('wishlist') }}" class="relative p-2 text-gray-400 hover:text-red-500 transition-colors group" title="My Wishlist">
+                    <a href="{{ route('wishlist') }}" class="relative p-2 text-gray-400 hover:text-red-500 transition-colors group" title="{{ __('My Saved Homes') }}">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         <div x-show="$store.wishlist.ids.length > 0" x-transition.scale style="display: none;" class="absolute top-0 right-0 transform translate-x-1 -translate-y-1">
                             <span class="flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white" x-text="$store.wishlist.ids.length"></span>
@@ -65,20 +83,20 @@
                                 @endif
                                 <div class="text-left leading-tight">
                                     <span class="block text-sm font-bold text-gray-800">{{ Auth::user()->name }}</span>
-                                    <span class="block text-[10px] text-gray-500 uppercase font-semibold tracking-wide">Agent</span>
+                                    <span class="block text-[10px] text-gray-500 uppercase font-semibold tracking-wide">{{ __('Agent') }}</span>
                                 </div>
                             </button>
                             <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50" style="display: none;">
-                                <a href="/portal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">Dashboard</a>
+                                <a href="/portal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">{{ __('My Dashboard') }}</a>
                                 <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
                                     @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">{{ __('Logout') }}</button>
                                 </form>
                             </div>
                         </div>
                     @else
-                        <a href="/portal/login" class="text-sm font-bold text-gray-600 hover:text-indigo-600">Login</a>
-                        <a href="/portal/register" class="bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:bg-indigo-700">Join</a>
+                        <a href="/portal/login" class="text-sm font-bold text-gray-600 hover:text-indigo-600">{{ __('Login') }}</a>
+                        <a href="/portal/register" class="bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:bg-indigo-700">{{ __('Join as Agent') }}</a>
                     @endauth
                 </div>
 
@@ -99,37 +117,37 @@
     <div class="hidden md:block bg-white/80 backdrop-blur-md border-b border-gray-100 relative z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center h-12 gap-8 relative">
-                <a href="{{ route('home') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 h-full flex items-center border-b-2 border-transparent hover:border-indigo-600">Home</a>
+                <a href="{{ route('home') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 h-full flex items-center border-b-2 border-transparent hover:border-indigo-600">{{ __('Home') }}</a>
                 
                 {{-- Locations Dropdown (Desktop) --}}
                 <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                    <button class="text-gray-500 hover:text-indigo-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">Locations</button>
+                    <button class="text-gray-500 hover:text-indigo-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">{{ __('Location') }}</button>
                     <div x-show="open" class="absolute left-0 top-full w-[600px] bg-white border border-gray-100 shadow-xl rounded-b-xl p-6 z-50 grid grid-cols-3 gap-4" style="display: none;">
                         @if(isset($cities) && $cities->count() > 0)
                             @foreach($cities as $city)
                                 <a href="{{ route('home', ['search' => $city]) }}" class="text-sm text-gray-600 hover:text-indigo-600 block">📍 {{ $city }}</a>
                             @endforeach
                         @else
-                            <p class="text-gray-400 italic text-sm">No locations yet.</p>
+                            <p class="text-gray-400 italic text-sm">{{ __('No locations found.') }}</p>
                         @endif
                     </div>
                 </div>
 
                  {{-- Agencies Dropdown (Desktop) --}}
                  <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                    <button class="text-gray-500 hover:text-indigo-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">Agencies</button>
+                    <button class="text-gray-500 hover:text-indigo-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">{{ __('Find Agencies') }}</button>
                     <div x-show="open" class="absolute left-0 top-full w-[250px] bg-white border border-gray-100 shadow-xl rounded-b-xl p-4 z-50 space-y-2" style="display: none;">
                         @if(isset($agencies) && $agencies->count() > 0)
                             @foreach($agencies as $agency)
                                 <a href="{{ route('agency.show', $agency->slug) }}" class="block text-sm text-gray-600 hover:text-indigo-600">{{ $agency->name }}</a>
                             @endforeach
                         @else
-                            <p class="text-gray-400 italic text-sm">No agencies yet.</p>
+                            <p class="text-gray-400 italic text-sm">{{ __('No agencies found.') }}</p>
                         @endif
                     </div>
                 </div>
 
-                <a href="{{ route('map.search') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 h-full flex items-center">Map Search</a>
+                <a href="{{ route('map.search') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 h-full flex items-center">{{ __('Map Search') }}</a>
             </div>
         </div>
     </div>
@@ -166,7 +184,7 @@
             {{-- Drawer Header (User Info) --}}
             <div class="p-6 bg-indigo-50 border-b border-indigo-100">
                 <div class="flex items-center justify-between mb-6">
-                    <span class="font-bold text-lg text-indigo-900">Menu</span>
+                    <span class="font-bold text-lg text-indigo-900">{{ __('Menu') }}</span>
                     <button @click="mobileOpen = false" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -183,13 +201,13 @@
                         @endif
                         <div>
                             <p class="font-bold text-gray-900">{{ Auth::user()->name }}</p>
-                            <a href="/portal" class="text-xs text-indigo-600 font-bold hover:underline">Go to Dashboard →</a>
+                            <a href="/portal" class="text-xs text-indigo-600 font-bold hover:underline">{{ __('My Dashboard') }} →</a>
                         </div>
                     </div>
                 @else
                     <div class="grid grid-cols-2 gap-3">
-                        <a href="/portal/login" class="block text-center py-2 border border-indigo-200 rounded-lg text-indigo-700 font-bold text-sm hover:bg-white">Login</a>
-                        <a href="/portal/register" class="block text-center py-2 bg-indigo-600 rounded-lg text-white font-bold text-sm hover:bg-indigo-700">Register</a>
+                        <a href="/portal/login" class="block text-center py-2 border border-indigo-200 rounded-lg text-indigo-700 font-bold text-sm hover:bg-white">{{ __('Login') }}</a>
+                        <a href="/portal/register" class="block text-center py-2 bg-indigo-600 rounded-lg text-white font-bold text-sm hover:bg-indigo-700">{{ __('Register') }}</a>
                     </div>
                 @endauth
             </div>
@@ -199,12 +217,27 @@
                 
                 {{-- Home --}}
                 <a href="{{ route('home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                    🏠 Home
+                    🏠 {{ __('Home') }}
                 </a>
+
+                <div class="relative" x-data="{ langOpen: false }">
+                    <button @click="langOpen = !langOpen" class="w-full flex items-center justify-between px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
+                        <span class="flex items-center gap-2">
+                            🌐 {{ __('Language') }}
+                            @if(app()->getLocale() == 'id') (ID) @else (EN) @endif
+                        </span>
+                        <svg class="w-4 h-4 transition-transform" :class="langOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+
+                    <div x-show="langOpen" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2">
+                        <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-gray-700 hover:text-indigo-600">🇺🇸 English</a>
+                        <a href="{{ route('lang.switch', 'id') }}" class="block px-4 py-2 text-sm text-gray-700 hover:text-indigo-600">🇮🇩 Indonesia</a>
+                    </div>
+                </div>
 
                 {{-- Wishlist --}}
                 <a href="{{ route('wishlist') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg flex justify-between items-center">
-                    <span>❤️ My Wishlist</span>
+                    <span>❤️ {{ __('My Saved Homes') }}</span>
                     <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full" x-text="$store.wishlist.ids.length"></span>
                 </a>
 
@@ -213,7 +246,7 @@
                 {{-- Locations Toggle --}}
                 <div x-data="{ open: false }">
                     <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                        <span>📍 Browse Locations</span>
+                        <span>📍 {{ __('Browse by Location') }}</span>
                         <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="open" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2">
@@ -222,7 +255,7 @@
                                 <a href="{{ route('home', ['search' => $city]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-indigo-600">{{ $city }}</a>
                             @endforeach
                         @else
-                            <span class="block px-4 py-2 text-sm text-gray-400">No locations found.</span>
+                            <span class="block px-4 py-2 text-sm text-gray-400">{{ __('No locations found.') }}</span>
                         @endif
                     </div>
                 </div>
@@ -230,7 +263,7 @@
                 {{-- Agencies Toggle --}}
                 <div x-data="{ open: false }">
                     <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                        <span>🏢 Find Agencies</span>
+                        <span>🏢 {{ __('Find Agencies') }}</span>
                         <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="open" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2">
@@ -239,13 +272,13 @@
                                 <a href="{{ route('agency.show', $agency->slug) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-indigo-600">{{ $agency->name }}</a>
                             @endforeach
                         @else
-                            <span class="block px-4 py-2 text-sm text-gray-400">No agencies found.</span>
+                            <span class="block px-4 py-2 text-sm text-gray-400">{{ __('No agencies found.') }}</span>
                         @endif
                     </div>
                 </div>
 
                 <a href="{{ route('map.search') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                    🗺️ Map Search
+                    🗺️ {{ __('Map Search') }}
                 </a>
 
                 @auth
@@ -253,7 +286,7 @@
                     <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
                         @csrf
                         <button type="submit" class="w-full text-left px-4 py-3 text-red-600 font-bold hover:bg-red-50 rounded-lg">
-                            🚪 Logout
+                            🚪 {{ __('Logout') }}
                         </button>
                     </form>
                 @endauth

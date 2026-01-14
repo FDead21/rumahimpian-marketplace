@@ -36,6 +36,16 @@ class Property extends Model
         'price' => 'decimal:2',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function ($property) {
+            // If user_id is not manually set, and a user is logged in, use their ID.
+            if (empty($property->user_id) && auth()->check()) {
+                $property->user_id = auth()->id();
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

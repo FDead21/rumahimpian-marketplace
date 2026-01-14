@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $agency->name }} - Real Estate Office</title>
+    <title>{{ $agency->name }} - {{ __('Real Estate Office') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
@@ -27,10 +27,10 @@
                         📍 {{ $agency->address ?? 'Indonesia' }}
                     </p>
                     <p class="flex items-center justify-center md:justify-start gap-2">
-                        📞 {{ $agency->phone ?? 'Contact Agent' }}
+                        📞 {{ $agency->phone ?? __('Contact Agent') }}
                     </p>
                     <p class="flex items-center justify-center md:justify-start gap-2 text-indigo-600 font-bold">
-                        👥 {{ $agency->agents->count() }} Agents Registered
+                        👥 {{ $agency->agents->count() }} {{ __('Agents Registered') }}
                     </p>
                 </div>
             </div>
@@ -40,7 +40,7 @@
 
     <div class="max-w-7xl mx-auto px-4 py-12 flex-grow w-full">
         <h2 class="text-xl font-bold text-gray-900 mb-6 border-l-4 border-indigo-600 pl-4">
-            Properties by {{ $agency->name }}
+            {{ __('Properties by') }} {{ $agency->name }}
         </h2>
 
         @if($properties->count() > 0)
@@ -55,7 +55,7 @@
             </div>
         @else
             <div class="text-center py-12 bg-white rounded-xl border border-dashed border-gray-300">
-                <p class="text-gray-500">No active listings found for this agency.</p>
+                <p class="text-gray-500">{{ __('No active listings found for this agency.') }}</p>
             </div>
         @endif
     </div>

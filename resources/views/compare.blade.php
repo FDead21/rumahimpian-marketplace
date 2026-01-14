@@ -1,17 +1,17 @@
 <x-layout>
     <div class="max-w-7xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-bold mb-6">Property Comparison</h1>
+        <h1 class="text-3xl font-bold mb-6">{{ __('Property Comparison') }}</h1>
 
         @if($properties->count() < 1)
             {{-- Handle case where user removes all items --}}
             <div class="p-10 text-center bg-gray-50 rounded-xl">
-                <p class="text-gray-500 mb-4">No properties selected.</p>
-                <a href="{{ route('home') }}" class="text-indigo-600 font-bold underline">Browse Properties</a>
+                <p class="text-gray-500 mb-4">{{ __('No properties selected.') }}</p>
+                <a href="{{ route('home') }}" class="text-indigo-600 font-bold underline">{{ __('Browse Properties') }}</a>
             </div>
         @elseif($properties->count() < 2)
             <div class="p-10 text-center bg-gray-50 rounded-xl">
-                <p class="text-gray-500 mb-4">Select at least 2 properties to compare effectively.</p>
-                <a href="{{ route('home') }}" class="text-indigo-600 font-bold underline">Browse Properties</a>
+                <p class="text-gray-500 mb-4">{{ __('Select at least 2 properties to compare effectively.') }}</p>
+                <a href="{{ route('home') }}" class="text-indigo-600 font-bold underline">{{ __('Browse Properties') }}</a>
             </div>
             {{-- Still show the single property table below so they can see/remove it --}}
         @endif
@@ -21,7 +21,7 @@
                 <table class="w-full text-left border-collapse table-fixed">
                     {{-- Row 1: Property Image, Title, Price, Remove Button --}}
                     <tr>
-                        <td class="p-4 bg-gray-50 font-bold text-gray-500 w-48 align-top">Property</td>
+                        <td class="p-4 bg-gray-50 font-bold text-gray-500 w-48 align-top">{{ __('Property') }}</td>
                         @foreach($properties as $p)
                         <td class="p-4 border-b min-w-[250px] align-top relative group">
                             {{-- Remove Button --}}
@@ -41,27 +41,28 @@
                             </div>
                             <h3 class="font-bold text-lg leading-tight mb-1">{{ Str::limit($p->title, 40) }}</h3>
                             <p class="text-indigo-600 font-bold text-lg">@currency($p->price)</p>
-                            <a href="{{ route('property.show', [$p->id, $p->slug]) }}" target="_blank" class="text-xs text-indigo-500 underline mt-2 block">View Details ></a>
+                            <a href="{{ route('property.show', [$p->id, $p->slug]) }}" target="_blank" class="text-xs text-indigo-500 underline mt-2 block">{{ __('View Details') }} ></a>
                         </td>
                         @endforeach
                     </tr>
 
                     {{-- Row 2: Listing Type (Rent/Sale) --}}
                     <tr>
-                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">Type</td>
+                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">{{ __('Type') }}</td>
                         @foreach($properties as $p)
                         <td class="p-4 border-t border-gray-100">
                             <span class="inline-block px-2 py-1 text-xs font-bold rounded {{ $p->listing_type == 'SALE' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700' }}">
-                                {{ ucfirst(strtolower($p->listing_type)) }}
+                                {{-- Translate "Sale" or "Rent" --}}
+                                {{ __(ucfirst(strtolower($p->listing_type))) }}
                             </span>
-                            <span class="text-gray-600 text-sm ml-2">{{ $p->property_type }}</span>
+                            <span class="text-gray-600 text-sm ml-2">{{ __($p->property_type) }}</span>
                         </td>
                         @endforeach
                     </tr>
 
                     {{-- Row 3: Location --}}
                     <tr>
-                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">Location</td>
+                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">{{ __('Location') }}</td>
                         @foreach($properties as $p)
                         <td class="p-4 border-t border-gray-100">
                             {{ $p->district }}, {{ $p->city }}
@@ -71,24 +72,24 @@
 
                     {{-- Row 4: Specs (Beds, Baths, Areas) --}}
                     <tr>
-                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">Specs</td>
+                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">{{ __('Specs') }}</td>
                         @foreach($properties as $p)
                         <td class="p-4 border-t border-gray-100 space-y-2">
                             <div class="flex justify-between text-sm border-b border-gray-100 pb-1">
-                                <span class="text-gray-500">🛏 Beds</span> 
+                                <span class="text-gray-500">🛏 {{ __('Beds') }}</span> 
                                 <span class="font-bold">{{ $p->bedrooms }}</span>
                             </div>
                             <div class="flex justify-between text-sm border-b border-gray-100 pb-1">
-                                <span class="text-gray-500">🚿 Baths</span> 
+                                <span class="text-gray-500">🚿 {{ __('Baths') }}</span> 
                                 <span class="font-bold">{{ $p->bathrooms }}</span>
                             </div>
                             <div class="flex justify-between text-sm border-b border-gray-100 pb-1">
-                                <span class="text-gray-500">🏠 Building</span> 
+                                <span class="text-gray-500">🏠 {{ __('Building') }}</span> 
                                 <span class="font-bold">{{ $p->building_area }} m²</span>
                             </div>
                             @if($p->land_area)
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-500">🌳 Land</span> 
+                                <span class="text-gray-500">🌳 {{ __('Land') }}</span> 
                                 <span class="font-bold">{{ $p->land_area }} m²</span>
                             </div>
                             @endif
@@ -98,7 +99,7 @@
 
                     {{-- Row 5: Price per m² --}}
                     <tr>
-                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">Price / m²</td>
+                        <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">{{ __('Price / m²') }}</td>
                         @foreach($properties as $p)
                         <td class="p-4 border-t border-gray-100">
                             @if($p->building_area > 0)
@@ -120,23 +121,15 @@
     {{-- Script to handle Removal --}}
     <script>
         function removeProperty(id) {
-            // 1. Get current IDs from LocalStorage
             let stored = JSON.parse(localStorage.getItem('compare_ids') || '[]');
-            
-            // 2. Filter out the ID to remove
             stored = stored.filter(i => i != id);
-            
-            // 3. Update LocalStorage
             localStorage.setItem('compare_ids', JSON.stringify(stored));
-            
-            // 4. Dispatch event (to update the floating bar count immediately)
             window.dispatchEvent(new CustomEvent('compare-updated'));
 
-            // 5. Reload the page with the new ID list
             if (stored.length > 0) {
                 window.location.href = '/compare?ids=' + stored.join(',');
             } else {
-                window.location.href = '/compare'; // Or redirect to home
+                window.location.href = '/compare'; 
             }
         }
     </script>

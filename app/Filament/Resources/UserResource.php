@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\IconColumn;
 
 class UserResource extends Resource
 {
@@ -47,6 +49,11 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('avatar_url')
                     ->maxLength(255),
+                Toggle::make('is_verified')
+                    ->label('Verified Agent')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->helperText('Enable to show a blue tick badge on their profile.'),
             ]);
     }
 
@@ -71,6 +78,10 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('is_verified')
+                    ->boolean()
+                    ->label('Verified')
+                    ->sortable(),
             ])
             ->filters([
                 //

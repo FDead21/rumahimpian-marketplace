@@ -63,10 +63,10 @@
                         class="w-full h-full object-cover hover:opacity-95 transition duration-300">
                     
                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
-                        <span class="bg-white/90 px-4 py-2 rounded-full text-sm font-bold shadow-lg">🔍 View Photos</span>
+                        <span class="bg-white/90 px-4 py-2 rounded-full text-sm font-bold shadow-lg">🔍 {{ __('View Photos') }}</span>
                     </div>
                 @else
-                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
+                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">{{ __('No Image') }}</div>
                 @endif
             </div>
 
@@ -126,38 +126,38 @@
                 
                 <div class="flex space-x-8 border-b pb-6">
                     <div>
-                        <span class="block text-gray-500 text-sm">Price</span>
+                        <span class="block text-gray-500 text-sm">{{ __('Price') }}</span>
                         <span class="text-2xl font-bold text-indigo-600">
                             Rp {{ number_format($property->price, 0, ',', '.') }}
                         </span>
                     </div>
                     @if($property->bedrooms)
                     <div>
-                        <span class="block text-gray-500 text-sm">Bedrooms</span>
+                        <span class="block text-gray-500 text-sm">{{ __('Bedrooms') }}</span>
                         <span class="font-semibold text-lg">🛏 {{ $property->bedrooms }}</span>
                     </div>
                     @endif
                     @if($property->bathrooms)
                     <div>
-                        <span class="block text-gray-500 text-sm">Bathrooms</span>
+                        <span class="block text-gray-500 text-sm">{{ __('Bathrooms') }}</span>
                         <span class="font-semibold text-lg">🚿 {{ $property->bathrooms }}</span>
                     </div>
                     @endif
                     <div>
-                        <span class="block text-gray-500 text-sm">Building Size</span>
+                        <span class="block text-gray-500 text-sm">{{ __('Building Size') }}</span>
                         <span class="font-semibold text-lg">🏠 {{ $property->building_area }} m²</span>
                     </div>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-bold mb-3">Description</h2>
+                    <h2 class="text-xl font-bold mb-3">{{ __('Description') }}</h2>
                     <div class="prose max-w-none text-gray-600 leading-relaxed">
                         {!! nl2br(e($property->description)) !!}
                     </div>
                 </div>
 
                 <div class="mt-8 border-t pt-8">
-                    <h2 class="text-xl font-bold mb-4">Location</h2>
+                    <h2 class="text-xl font-bold mb-4">{{ __('Location') }}</h2>
                     <div id="map" class="rounded-xl shadow-lg border"></div>
                 </div>
 
@@ -181,11 +181,11 @@
 
                 @if($property->specifications)
                 <div>
-                    <h2 class="text-xl font-bold mb-3">Property Details</h2>
+                    <h2 class="text-xl font-bold mb-3">{{ __('Property Details') }}</h2>
                     <div class="grid grid-cols-2 gap-4 bg-white p-6 rounded-lg border">
                         @foreach($property->specifications as $key => $value)
                             <div class="flex justify-between border-b border-gray-100 pb-2">
-                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}</span>
+                                <span class="font-medium text-gray-600 capitalize">{{ __(ucwords(str_replace('_', ' ', $key))) }}</span>
                                 <span class="font-semibold text-gray-900">{{ $value }}</span>
                             </div>
                         @endforeach
@@ -194,8 +194,8 @@
                 @endif
                 
                 <div class="bg-gray-900 text-white p-8 rounded-lg text-center">
-                    <h3 class="text-xl font-bold mb-2">📷 360° Virtual Tour</h3>
-                    <p class="text-gray-400 mb-4">Experience this property virtually from anywhere.</p>
+                    <h3 class="text-xl font-bold mb-2">📷 {{ __('360° Virtual Tour') }}</h3>
+                    <p class="text-gray-400 mb-4">{{ __('Experience this property virtually from anywhere.') }}</p>
                     @php
                         $has360 = $property->media->where('file_type', 'VIRTUAL_TOUR_360')->count() > 0;
                     @endphp
@@ -203,11 +203,11 @@
                     @if($has360)
                         <a href="{{ route('property.tour', ['id' => $property->id, 'slug' => $property->slug]) }}" 
                         class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full font-bold transition inline-block">
-                            🚀 Launch Virtual Tour
+                            🚀 {{ __('Launch Virtual Tour') }}
                         </a>
                     @else
                         <button disabled class="bg-gray-700 text-gray-400 px-6 py-2 rounded-full font-bold cursor-not-allowed">
-                            No Virtual Tour Available
+                            {{ __('No Virtual Tour Available') }}
                         </button>
                     @endif
                 </div>
@@ -227,9 +227,20 @@
                             </div>
                         @endif
                         <div>
-                            <p class="text-sm text-gray-500">Listed by</p>
+                            <p class="text-sm text-gray-500">{{ __('Listed by') }}</p>
                             <a href="{{ route('agent.show', $property->user->id) }}" class="hover:underline">
-                                <h3 class="font-bold text-gray-900">{{ $property->user->name }}</h3>
+                                <div class="flex items-center gap-1">
+                                    <div class="font-bold text-gray-900 text-lg">{{ $property->user->name }}</div>
+                                    @if($property->user->is_verified)
+                                        {{-- Blue Tick Icon --}}
+                                        <svg class="w-5 h-5 text-blue-500 fill-current" viewBox="0 0 24 24">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z" fill="currentColor" stroke="none"/>
+                                        </svg>
+                                        {{-- Optional Tooltip --}}
+                                        <span class="text-[10px] bg-blue-100 text-blue-700 px-1 rounded border border-blue-200">{{ __('Verified') }}</span>
+                                    @endif
+                                </div>
                             </a>
                         </div>
                     </div>
@@ -252,21 +263,21 @@
                     @endphp
 
                     <a href="{{ $wa_link }}" target="_blank" class="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-3 rounded-lg mb-3 transition flex items-center justify-center gap-2">
-                        <span>WhatsApp Agent</span>
+                        <span>{{ __('WhatsApp Agent') }}</span>
                     </a>
                     
                     <button class="block w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-lg transition">
-                        Schedule Viewing
+                        {{ __('Schedule Viewing') }}
                     </button>
 
                     <a href="{{ route('property.pdf', ['id' => $property->id, 'slug' => $property->slug]) }}" 
                     target="_blank"
                     class="block w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-bold py-3 rounded-lg transition text-center mt-3">
-                        📄 Download Brochure (PDF)
+                        📄 {{ __('Download Brochure (PDF)') }}
                     </a>
 
                     <div class="mt-6 border-t pt-4">
-                        <h4 class="font-bold text-gray-900 mb-2">Send a Message</h4>
+                        <h4 class="font-bold text-gray-900 mb-2">{{ __('Send a Message') }}</h4>
                         
                         @if(session('success'))
                             <div class="bg-green-100 text-green-700 p-2 rounded mb-2 text-sm text-center">
@@ -276,12 +287,12 @@
 
                         <form action="{{ route('inquiry.send', $property->id) }}" method="POST" class="space-y-2">
                             @csrf
-                            <input type="text" name="name" placeholder="Your Name" required class="w-full border rounded px-3 py-2 text-sm">
-                            <input type="text" name="phone" placeholder="Your Phone (WA)" required class="w-full border rounded px-3 py-2 text-sm">
-                            <textarea name="message" rows="2" placeholder="I am interested..." class="w-full border rounded px-3 py-2 text-sm"></textarea>
+                            <input type="text" name="name" placeholder="{{ __('Your Name') }}" required class="w-full border rounded px-3 py-2 text-sm">
+                            <input type="text" name="phone" placeholder="{{ __('Your Phone (WA)') }}" required class="w-full border rounded px-3 py-2 text-sm">
+                            <textarea name="message" rows="2" placeholder="{{ __('I am interested...') }}" class="w-full border rounded px-3 py-2 text-sm"></textarea>
                             
                             <button type="submit" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 rounded text-sm transition">
-                                Send Inquiry
+                                {{ __('Send Inquiry') }}
                             </button>
                         </form>
                     </div>
@@ -289,11 +300,11 @@
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-lg border mt-8">
-                <h3 class="font-bold text-gray-900 mb-4 text-lg">Simulasi KPR</h3>
+                <h3 class="font-bold text-gray-900 mb-4 text-lg">{{ __('Home Credit (KPR) Simulation') }}</h3>
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Property Price</label>
+                        <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Property Price') }}</label>
                         <div class="flex items-center border rounded mt-1 bg-gray-50">
                             <span class="px-3 text-gray-500 text-sm">Rp</span>
                             <input type="text" value="{{ number_format($property->price, 0, ',', '.') }}" disabled class="w-full py-2 bg-transparent text-gray-700 font-bold outline-none">
@@ -301,7 +312,7 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Down Payment (20%)</label>
+                        <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Down Payment (20%)') }}</label>
                         <div class="flex items-center border rounded mt-1">
                             <span class="px-3 text-gray-500 text-sm">Rp</span>
                             <input type="number" id="dp_amount" class="w-full py-2 outline-none text-gray-900" 
@@ -311,11 +322,11 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase">Interest (%)</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Interest (%)') }}</label>
                             <input type="number" id="interest_rate" value="8.5" step="0.1" class="w-full border rounded mt-1 py-2 px-3 text-gray-900">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase">Tenor (Years)</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Tenor (Years)') }}</label>
                             <select id="tenor" class="w-full border rounded mt-1 py-2 px-3 text-gray-900 bg-white">
                                 <option value="10">10 Years</option>
                                 <option value="15" selected>15 Years</option>
@@ -325,7 +336,7 @@
                     </div>
 
                     <div class="bg-indigo-50 p-4 rounded-lg text-center mt-4">
-                        <p class="text-xs text-indigo-600 font-bold uppercase">Estimated Monthly Installment</p>
+                        <p class="text-xs text-indigo-600 font-bold uppercase">{{ __('Estimated Monthly Installment') }}</p>
                         <p class="text-2xl font-bold text-indigo-700 mt-1" id="monthly_result">Rp 0</p>
                     </div>
                 </div>
@@ -377,7 +388,7 @@
         
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <h3 class="text-2xl font-bold text-gray-900 mb-8">You might also like</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-8">{{ __('You might also like') }}</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($relatedProperties as $related)
