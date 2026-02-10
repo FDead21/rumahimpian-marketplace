@@ -42,7 +42,8 @@
 
     @php
         // (Your existing Image/QR Logic remains the same)
-        $allImages = $property->media;
+        $allImages = $property->media->where('file_type', '!=', 'VIRTUAL_TOUR_360');
+        
         $heroImage = null;
         foreach ($allImages as $img) {
             $path = public_path('storage/' . $img->file_path);
@@ -72,7 +73,7 @@
             } catch (\Exception $e) { }
         }
         $heroId = $heroImage ? $heroImage->id : 0;
-        $galleryImages = $property->media->where('id', '!=', $heroId)->take(3);
+        $galleryImages = $allImages->where('id', '!=', $heroId)->take(3);
 
         $qrBase64 = null;
         try {

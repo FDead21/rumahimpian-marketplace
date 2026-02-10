@@ -118,7 +118,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center h-12 gap-8 relative">
                 <a href="{{ route('home') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 h-full flex items-center border-b-2 border-transparent hover:border-indigo-600">{{ __('Home') }}</a>
-                
+                <a href="{{ route('articles.index') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 h-full flex items-center border-b-2 border-transparent hover:border-indigo-600">{{ __('News') }}</a>
                 {{-- Locations Dropdown (Desktop) --}}
                 <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                     <button class="text-gray-500 hover:text-indigo-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">{{ __('Location') }}</button>
@@ -218,6 +218,10 @@
                 {{-- Home --}}
                 <a href="{{ route('home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
                     🏠 {{ __('Home') }}
+                </a>
+
+                <a href="{{ route('articles.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
+                    📰 {{ __('News') }}
                 </a>
 
                 <div class="relative" x-data="{ langOpen: false }">

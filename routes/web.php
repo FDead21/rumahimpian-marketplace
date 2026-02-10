@@ -44,15 +44,22 @@ Route::prefix('property')->group(function () {
     Route::get('/{id}/{slug}/360', [PublicController::class, 'tour'])->name('property.tour');
     Route::get('/{id}/{slug}/pdf', [PublicController::class, 'downloadPdf'])->name('property.pdf');
     
-    // Inquiry Form Submission
     Route::post('/{id}/inquire', function (Request $request, $id) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'message' => 'required|string',
+        ]);
+
         Inquiry::create([
             'property_id' => $id,
             'buyer_name' => $request->name,
             'buyer_phone' => $request->phone,
             'message' => $request->message,
+            'status' => 'NEW', // Default status
         ]);
-        return back()->with('success', 'Message sent to agent!');
+
+        return back()->with('success', 'Inquiry sent! Our agent will contact you shortly.');
     })->name('inquiry.send')->middleware('throttle:3,1');
 });
 
@@ -105,3 +112,6 @@ Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::get('/news', [PublicController::class, 'articles'])->name('articles.index');
+Route::get('/news/{slug}', [PublicController::class, 'articleShow'])->name('articles.show');

@@ -16,9 +16,9 @@ class EditInquiry extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-
-    protected function getFormActions(): array
+    
+    protected function getRedirectUrl(): string
     {
-        return [];
+        return $this->getResource()::getUrl('index');
     }
 }

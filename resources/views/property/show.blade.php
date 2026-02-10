@@ -43,6 +43,10 @@
             <p class="text-gray-500 mt-1">📍 {{ $property->address }}, {{ $property->district }}, {{ $property->city }}</p>
         </div>
 
+        @php
+            $galleryImages = $property->media->where('file_type', '!=', 'VIRTUAL_TOUR_360')->values();
+        @endphp
+
         <div x-data="{ 
             lightboxOpen: false, 
             activeImage: 0,
@@ -58,8 +62,8 @@
             
             <div class="md:col-span-2 md:row-span-2 h-full relative group cursor-pointer" 
                 @click="lightboxOpen = true; activeImage = 0">
-                @if(isset($property->media[0]))
-                    <img src="{{ asset('storage/' . $property->media[0]->file_path) }}" 
+                @if(isset($galleryImages[0]))
+                    <img src="{{ asset('storage/' . $galleryImages[0]->file_path) }}" 
                         class="w-full h-full object-cover hover:opacity-95 transition duration-300">
                     
                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -70,14 +74,16 @@
                 @endif
             </div>
 
-            @foreach($property->media->skip(1)->take(4) as $index => $image)
+            @foreach($galleryImages->skip(1)->take(4) as $index => $image)
                 <div class="hidden md:block h-full relative group cursor-pointer" 
-                    @click="lightboxOpen = true; activeImage = {{ $loop->index + 1 }}"> <img src="{{ asset('storage/' . $image->file_path) }}" 
+                    @click="lightboxOpen = true; activeImage = {{ $loop->iteration }}"> 
+                    <img src="{{ asset('storage/' . $image->file_path) }}" 
                         class="w-full h-full object-cover hover:opacity-95 transition duration-300">
                     
-                    @if($loop->last && $property->media->count() > 5)
+                    {{-- Counter Logic --}}
+                    @if($loop->last && $galleryImages->count() > 5)
                         <div class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-xl">
-                            +{{ $property->media->count() - 5 }}
+                            +{{ $galleryImages->count() - 5 }}
                         </div>
                     @endif
                 </div>
@@ -92,7 +98,9 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             class="fixed inset-0 z-[999] bg-black/95 flex items-center justify-center backdrop-blur-sm"
-            style="display: none;"> <button @click="lightboxOpen = false" class="absolute top-6 right-6 text-white hover:text-gray-300 z-50">
+            style="display: none;"> 
+            
+            <button @click="lightboxOpen = false" class="absolute top-6 right-6 text-white hover:text-gray-300 z-50">
                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
@@ -115,7 +123,6 @@
                     <span x-text="activeImage + 1"></span> / <span x-text="images.length"></span>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -149,6 +156,41 @@
                     </div>
                 </div>
 
+                @if($property->youtube_url)
+                    <div class="mt-8">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">Video Tour</h2>
+                        
+                        <div class="relative w-full overflow-hidden rounded-xl shadow-lg aspect-video">
+                            @php
+                                $video_id = '';
+                                $url = $property->youtube_url;
+                                
+                                if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $url, $matches)) {
+                                    $video_id = $matches[1];
+                                }
+                            @endphp
+
+                            @if($video_id)
+                                <iframe 
+                                    class="absolute top-0 left-0 w-full h-full"
+                                    src="https://www.youtube.com/embed/{{ $video_id }}?rel=0" 
+                                    title="YouTube video player" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            @else
+                                <div class="flex items-center justify-center h-full bg-gray-100">
+                                    <a href="{{ $property->youtube_url }}" target="_blank" class="flex items-center gap-2 text-red-600 font-bold hover:underline">
+                                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                                        Watch on YouTube
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 <div>
                     <h2 class="text-xl font-bold mb-3">{{ __('Description') }}</h2>
                     <div class="prose max-w-none text-gray-600 leading-relaxed">
@@ -158,7 +200,7 @@
 
                 <div class="mt-8 border-t pt-8">
                     <h2 class="text-xl font-bold mb-4">{{ __('Location') }}</h2>
-                    <div id="map" class="rounded-xl shadow-lg border"></div>
+                    <div id="map" class="rounded-xl shadow-lg border h-96 w-full z-0"></div>
                 </div>
 
                 <script>
@@ -266,10 +308,100 @@
                         <span>{{ __('WhatsApp Agent') }}</span>
                     </a>
                     
-                    <button class="block w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-lg transition">
-                        {{ __('Schedule Viewing') }}
-                    </button>
+                    <div x-data="{ 
+                            viewingOpen: false,
+                            date: '',
+                            time: '',
+                            phone: '{{ $phone }}',
+                            title: '{{ $property->title }}',
+                            url: '{{ url()->current() }}',
+                            
+                            get whatsappLink() {
+                                let msg = 'Halo, saya ingin menjadwalkan viewing properti:\n\n';
+                                msg += '*' + this.title + '*\n';
+                                msg += '📅 Tanggal: ' + (this.date || 'Belum ditentukan') + '\n';
+                                msg += '⏰ Jam: ' + (this.time || 'Belum ditentukan') + '\n';
+                                msg += 'Link: ' + this.url;
+                                
+                                return 'https://wa.me/' + this.phone + '?text=' + encodeURIComponent(msg);
+                            }
+                        }">
 
+                        <button @click="viewingOpen = true" 
+                                class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                            📅 {{ __('Schedule Viewing') }}
+                        </button>
+
+                        <div x-show="viewingOpen" 
+                            style="display: none;"
+                            class="fixed inset-0 z-[9999] flex items-center justify-center px-4"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0">
+                            
+                            <div class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" @click="viewingOpen = false"></div>
+
+                            <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6 overflow-hidden transform transition-all"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+                                
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-xl font-bold text-gray-900">{{ __('Schedule a Visit') }}</h3>
+                                    <button @click="viewingOpen = false" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1">{{ __('Select Date') }}</label>
+                                        <input type="date" x-model="date" 
+                                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+                                            min="{{ date('Y-m-d') }}">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1">{{ __('Select Time') }}</label>
+                                        <select x-model="time" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                            <option value="">-- {{ __('Choose Time') }} --</option>
+                                            <option value="09:00 AM">09:00 AM</option>
+                                            <option value="10:00 AM">10:00 AM</option>
+                                            <option value="11:00 AM">11:00 AM</option>
+                                            <option value="01:00 PM">01:00 PM</option>
+                                            <option value="02:00 PM">02:00 PM</option>
+                                            <option value="03:00 PM">03:00 PM</option>
+                                            <option value="04:00 PM">04:00 PM</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg flex gap-2 items-start">
+                                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <p>{{ __('The agent will confirm availability via WhatsApp after you send this request.') }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 pt-4 border-t border-gray-100 flex gap-3">
+                                    <button @click="viewingOpen = false" class="w-1/3 px-4 py-3 text-gray-700 font-bold hover:bg-gray-100 rounded-lg transition">
+                                        {{ __('Cancel') }}
+                                    </button>
+                                    <a :href="whatsappLink" target="_blank" @click="viewingOpen = false"
+                                    class="w-2/3 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2 shadow-lg hover:shadow-green-500/30">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                        {{ __('Confirm & Chat') }}
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
                     <a href="{{ route('property.pdf', ['id' => $property->id, 'slug' => $property->slug]) }}" 
                     target="_blank"
                     class="block w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-bold py-3 rounded-lg transition text-center mt-3">
@@ -300,85 +432,117 @@
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-lg border mt-8">
-                <h3 class="font-bold text-gray-900 mb-4 text-lg">{{ __('Home Credit (KPR) Simulation') }}</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('KPR Simulation') }}</h3>
+                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">{{ __('Smart Calc') }}</span>
+                </div>
                 
-                <div class="space-y-4">
+                <div class="space-y-4" x-data="kprCalculator()">
+                    
+                    {{-- Bank Selector --}}
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Property Price') }}</label>
-                        <div class="flex items-center border rounded mt-1 bg-gray-50">
-                            <span class="px-3 text-gray-500 text-sm">Rp</span>
-                            <input type="text" value="{{ number_format($property->price, 0, ',', '.') }}" disabled class="w-full py-2 bg-transparent text-gray-700 font-bold outline-none">
-                        </div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Select Bank Program') }}</label>
+                        <select x-model="selectedBankId" @change="updateBank()" class="w-full border border-gray-300 rounded-lg py-2 px-3 mt-1 outline-none focus:ring-2 focus:ring-indigo-500">
+                            @foreach($banks as $bank)
+                                <option value="{{ $bank->id }}">
+                                    {{ $bank->name }} (Floating: {{ $bank->floating_rate }}%)
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Down Payment (20%)') }}</label>
-                        <div class="flex items-center border rounded mt-1">
-                            <span class="px-3 text-gray-500 text-sm">Rp</span>
-                            <input type="number" id="dp_amount" class="w-full py-2 outline-none text-gray-900" 
-                                value="{{ $property->price * 0.2 }}">
+                    {{-- Rate Info Display --}}
+                    <div class="grid grid-cols-3 gap-2 text-center text-[10px] text-gray-500 bg-gray-50 p-2 rounded-lg" x-show="currentBank">
+                        <div>
+                            <span class="block font-bold text-gray-900" x-text="(currentBank.fixed_rate_1y || '-') + '%'"></span>
+                            <span>Fix 1Yr</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-gray-900" x-text="(currentBank.fixed_rate_3y || '-') + '%'"></span>
+                            <span>Fix 3Yr</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-gray-900" x-text="(currentBank.fixed_rate_5y || '-') + '%'"></span>
+                            <span>Fix 5Yr</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Interest (%)') }}</label>
-                            <input type="number" id="interest_rate" value="8.5" step="0.1" class="w-full border rounded mt-1 py-2 px-3 text-gray-900">
+                            <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Down Payment (%)') }}</label>
+                            <input type="number" x-model="dp_percent" class="w-full border border-gray-300 rounded-lg mt-1 py-2 px-3 focus:ring-indigo-500 outline-none">
+                            <p class="text-[10px] text-red-500 mt-1" x-show="dp_percent < (currentBank.min_dp_percent || 0)">
+                                Min DP is <span x-text="currentBank.min_dp_percent"></span>%
+                            </p>
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase">{{ __('Tenor (Years)') }}</label>
-                            <select id="tenor" class="w-full border rounded mt-1 py-2 px-3 text-gray-900 bg-white">
-                                <option value="10">10 Years</option>
-                                <option value="15" selected>15 Years</option>
-                                <option value="20">20 Years</option>
+                            <select x-model="tenor" class="w-full border border-gray-300 rounded-lg mt-1 py-2 px-3 outline-none">
+                                <template x-for="y in (currentBank.max_tenor || 20)">
+                                    <option :value="y" x-text="y + ' Years'"></option>
+                                </template>
                             </select>
                         </div>
                     </div>
 
-                    <div class="bg-indigo-50 p-4 rounded-lg text-center mt-4">
-                        <p class="text-xs text-indigo-600 font-bold uppercase">{{ __('Estimated Monthly Installment') }}</p>
-                        <p class="text-2xl font-bold text-indigo-700 mt-1" id="monthly_result">Rp 0</p>
+                    <div class="bg-indigo-50 p-4 rounded-lg text-center mt-4 border border-indigo-100">
+                        <p class="text-xs text-indigo-600 font-bold uppercase">{{ __('Estimated Monthly') }}</p>
+                        <p class="text-2xl font-extrabold text-indigo-700 mt-1" x-text="calculate()">Rp 0</p>
+                        <p class="text-[10px] text-gray-500 mt-2">
+                            *Using <span x-text="effectiveRate"></span>% Effective Rate (Avg of Fixed & Floating)
+                        </p>
                     </div>
                 </div>
             </div>
 
             <script>
-                function calculateKPR() {
-                    // Get raw inputs
-                    let price = {{ $property->price }};
-                    let dp = document.getElementById('dp_amount').value;
-                    let rate = document.getElementById('interest_rate').value;
-                    let years = document.getElementById('tenor').value;
+            function kprCalculator() {
+                return {
+                    price: {{ $property->price }},
+                    dp_percent: 20,
+                    tenor: 15,
+                    banks: {{ Js::from($banks) }},
+                    selectedBankId: {{ $banks->first()->id ?? 'null' }},
+                    currentBank: {},
+                    effectiveRate: 0,
 
-                    // KPR Formula (Standard Annuity)
-                    let principal = price - dp;
-                    let monthlyRate = (rate / 100) / 12;
-                    let months = years * 12;
+                    init() {
+                        this.updateBank();
+                    },
 
-                    if (principal <= 0) {
-                        document.getElementById('monthly_result').innerText = "Rp 0";
-                        return;
+                    updateBank() {
+                        this.currentBank = this.banks.find(b => b.id == this.selectedBankId) || {};
+                        if(this.currentBank.min_dp_percent) this.dp_percent = Math.max(this.dp_percent, this.currentBank.min_dp_percent);
+                    },
+
+                    calculate() {
+                        if (!this.currentBank.id) return 'Rp 0';
+
+                        let dpAmount = this.price * (this.dp_percent / 100);
+                        let loanAmount = this.price - dpAmount;
+                        if (loanAmount <= 0) return 'Rp 0';
+
+                        // SMART LOGIC: Determine applicable rate
+                        // If tenor <= 1, use Fix 1. If <= 3, use Fix 3. Else use Floating or Weighted.
+                        let rate = this.currentBank.floating_rate; 
+                        
+                        // Simple logic: If we have a fixed rate that matches the tenor, use it. 
+                        // Otherwise, assume a blend (simplified for UI).
+                        if (this.tenor <= 1 && this.currentBank.fixed_rate_1y) rate = this.currentBank.fixed_rate_1y;
+                        else if (this.tenor <= 3 && this.currentBank.fixed_rate_3y) rate = this.currentBank.fixed_rate_3y;
+                        else if (this.tenor <= 5 && this.currentBank.fixed_rate_5y) rate = this.currentBank.fixed_rate_5y;
+                        
+                        this.effectiveRate = rate;
+
+                        let monthlyRate = (rate / 100) / 12;
+                        let months = this.tenor * 12;
+                        let x = Math.pow(1 + monthlyRate, months);
+                        let monthly = (loanAmount * x * monthlyRate) / (x - 1);
+
+                        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(monthly);
                     }
-
-                    // M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1 ]
-                    let x = Math.pow(1 + monthlyRate, months);
-                    let monthly = (principal * x * monthlyRate) / (x - 1);
-
-                    // Format to Rupiah
-                    let formatter = new Intl.NumberFormat('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        minimumFractionDigits: 0
-                    });
-
-                    document.getElementById('monthly_result').innerText = formatter.format(monthly);
                 }
-
-                // Run on load and whenever inputs change
-                document.addEventListener('DOMContentLoaded', calculateKPR);
-                document.querySelectorAll('#dp_amount, #interest_rate, #tenor').forEach(item => {
-                    item.addEventListener('input', calculateKPR);
-                });
+            }
             </script>
 
         </div>

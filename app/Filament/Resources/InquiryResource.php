@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InquiryResource\Pages;
-use App\Filament\Resources\InquiryResource\RelationManagers;
 use App\Models\Inquiry;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,16 +10,26 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model; 
 
 class InquiryResource extends Resource
 {
     protected static ?string $model = Inquiry::class;
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static ?string $navigationGroup = 'CRM';
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // Show a red badge for NEW inquiries
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getEloquentQuery()->where('status', 'NEW')->count() ?: null;
+    }
 
-    
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
+    }
+
     public static function canCreate(): bool
     {
         return false; 
@@ -35,56 +44,107 @@ class InquiryResource extends Resource
     {
         return $form
             ->schema([
-                // Section 1: The Context
-                Forms\Components\Section::make('Lead Details')
-                    ->schema([
-                        Forms\Components\Placeholder::make('property_name')
-                            ->label('Property Interested In')
-                            ->content(fn ($record) => $record->property->title),
-                        Forms\Components\Placeholder::make('created_at')
-                            ->label('Received At')
-                            ->content(fn ($record) => $record->created_at->format('d M Y, H:i')),
-                    ])->columns(2),
+                Forms\Components\Group::make()->schema([
+                    // Section 1: Lead Details (Read Only)
+                    Forms\Components\Section::make('Lead Information')
+                        ->schema([
+                            Forms\Components\Placeholder::make('property_name')
+                                ->label('Property Interested In')
+                                ->content(fn ($record) => $record->property->title ?? 'Unknown'),
+                                
+                            Forms\Components\Placeholder::make('created_at')
+                                ->label('Received At')
+                                ->content(fn ($record) => $record->created_at->format('d M Y, H:i')),
 
-                // Section 2: The Buyer
-                Forms\Components\Section::make('Buyer Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('buyer_name')
-                            ->label('Name')
-                            ->disabled(),
-                            
-                        Forms\Components\TextInput::make('buyer_phone')
-                            ->label('WhatsApp / Phone')
-                            ->prefixIcon('heroicon-m-phone')
-                            ->disabled(), // Tip: You can't click to call in an input, but you can copy it.
-                            
-                        Forms\Components\TextInput::make('buyer_email')
-                            ->label('Email')
-                            ->email()
-                            ->disabled(),
-                    ])->columns(3),
+                            Forms\Components\Textarea::make('message')
+                                ->rows(4)
+                                ->disabled()
+                                ->columnSpanFull(),
+                        ])->columns(2),
 
-                // Section 3: The Message
-                Forms\Components\Section::make('Message Content')
-                    ->schema([
-                        Forms\Components\Textarea::make('message')
-                            ->rows(5)
-                            ->disabled()
-                            ->columnSpanFull(),
+                    // Section 2: Buyer Details (Read Only)
+                    Forms\Components\Section::make('Buyer Details')
+                        ->schema([
+                            Forms\Components\TextInput::make('buyer_name')
+                                ->label('Name')
+                                ->disabled(),
+                                
+                            Forms\Components\TextInput::make('buyer_phone')
+                                ->label('WhatsApp / Phone')
+                                ->prefixIcon('heroicon-m-phone')
+                                ->disabled(),
+                        ])->columns(2),
+                ])->columnSpan(2),
+
+                // Section 3: CRM Actions (Editable)
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\Section::make('Manage Status')->schema([
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'NEW' => 'New Lead',
+                                'CONTACTED' => 'Contacted',
+                                'CLOSED' => 'Closed',
+                            ])
+                            ->required()
+                            ->selectablePlaceholder(false)
+                            ->native(false),
+
+                        Forms\Components\Textarea::make('admin_notes')
+                            ->label('Internal Notes')
+                            ->placeholder('e.g. Called them, waiting for visit...')
+                            ->rows(4),
                     ]),
-            ]);
+                ])->columnSpan(1),
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('property.title')->label('Property')->limit(20),
-                Tables\Columns\TextColumn::make('buyer_name')->label('Buyer')->searchable(),
-                Tables\Columns\TextColumn::make('buyer_phone')->label('Phone')->copyable(), 
-                Tables\Columns\TextColumn::make('created_at')->since()->label('Received'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Received')
+                    ->date('d M Y')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('buyer_name')
+                    ->label('Buyer')
+                    ->weight('bold')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('property.title')
+                    ->label('Property')
+                    ->limit(20)
+                    ->url(fn (Inquiry $record) => route('property.show', [$record->property->id, $record->property->slug]))
+                    ->openUrlInNewTab(),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'danger' => 'NEW',
+                        'warning' => 'CONTACTED',
+                        'success' => 'CLOSED',
+                    ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'NEW' => 'New',
+                        'CONTACTED' => 'Contacted',
+                        'CLOSED' => 'Closed',
+                    ]),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                
+                // The WhatsApp Action Button
+                Tables\Actions\Action::make('whatsapp')
+                    ->label('Chat')
+                    ->icon('heroicon-o-chat-bubble-oval-left')
+                    ->color('success')
+                    ->url(fn (Inquiry $record) => "https://wa.me/" . preg_replace('/[^0-9]/', '', $record->buyer_phone) . "?text=Hello {$record->buyer_name}, this is about your inquiry for {$record->property->title}...", true),
+            ]);
     }
 
     public static function getRelations(): array
@@ -98,13 +158,12 @@ class InquiryResource extends Resource
     {
         return [
             'index' => Pages\ListInquiries::route('/'),
-            'create' => Pages\CreateInquiry::route('/create'),
+            // 'create' => Pages\CreateInquiry::route('/create'), // Disable create page entirely
             'edit' => Pages\EditInquiry::route('/{record}/edit'),
         ];
-        
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
 
@@ -116,5 +175,4 @@ class InquiryResource extends Resource
             $q->where('user_id', auth()->id());
         });
     }
-
 }

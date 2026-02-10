@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Agency;
+use App\Models\Article;
 
 class PublicController extends Controller
 {
@@ -59,7 +60,13 @@ class PublicController extends Controller
         // Sort by Newest
         $properties = $query->latest()->paginate(9)->withQueryString();
 
-        return view('home', compact('properties'));
+        $latestArticles = \App\Models\Article::where('is_published', true)
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
+        return view('home', compact('properties', 'latestArticles'));
     }
 
     public function show($id, $slug)
@@ -97,7 +104,9 @@ class PublicController extends Controller
                 ->get();
         }
 
-        return view('property.show', compact('property', 'relatedProperties'));
+        $banks = \App\Models\Bank::where('is_active', true)->orderBy('name')->get();
+
+        return view('property.show', compact('property', 'relatedProperties', 'banks'));
     }
 
     public function tour($id, $slug)
@@ -224,6 +233,33 @@ class PublicController extends Controller
             ->get();
 
         return view('compare', compact('properties'));
+    }
+
+    public function articles()
+    {
+        // Fetch published articles, latest first
+        $articles = Article::where('is_published', true)
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->paginate(9); 
+    
+        return view('article.index', compact('articles'));
+    }
+    
+    public function articleShow($slug)
+    {
+        $article = Article::where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+    
+        // Suggest 3 other recent articles
+        $relatedArticles = Article::where('is_published', true)
+            ->where('id', '!=', $article->id)
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+    
+        return view('article.show', compact('article', 'relatedArticles'));
     }
     
 }

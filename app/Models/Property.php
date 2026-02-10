@@ -29,6 +29,7 @@ class Property extends Model
         'building_area',
         'specifications',
         'status',
+        'youtube_url',
     ];
 
     protected $casts = [

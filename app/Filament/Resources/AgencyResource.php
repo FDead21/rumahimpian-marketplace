@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
@@ -66,21 +68,46 @@ class AgencyResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                //
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+        ->columns([
+            // 1. Show the Logo (if you have one)
+            ImageColumn::make('logo_url')
+                ->label('Logo')
+                ->circular(),
+
+            // 2. Show the Agency Name
+            TextColumn::make('name')
+                ->label('Agency Name')
+                ->sortable()
+                ->searchable()
+                ->weight('bold'),
+
+            // 3. Show the Email
+            TextColumn::make('email')
+                ->icon('heroicon-m-envelope')
+                ->copyable(),
+
+            // 4. Show Phone (Optional)
+            TextColumn::make('phone_number')
+                ->label('Phone'),
+                
+            // 5. Show Creation Date
+            TextColumn::make('created_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ])
+        ->filters([
+            //
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
+}
 
     public static function getRelations(): array
     {

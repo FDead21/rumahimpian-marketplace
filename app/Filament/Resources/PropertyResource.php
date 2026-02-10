@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Filament\Resources\PropertyResource\RelationManagers;
+use Filament\Forms\Components\TextInput;
 use App\Models\Property;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -131,7 +132,14 @@ class PropertyResource extends Resource
                     ->orderColumn('sort_order')
                     ->reorderableWithButtons()
                     ->grid(2) // Display 2 items per row
-                    ->itemLabel(fn (array $state): ?string => $state['file_type'] ?? null), // Shows label on collapsed items
+                    ->itemLabel(fn (array $state): ?string => $state['file_type'] ?? null), 
+
+                    TextInput::make('youtube_url')
+                    ->label('YouTube Video URL')
+                    ->placeholder('https://www.youtube.com/watch?v=...')
+                    ->url() // Validates it is a real URL
+                    ->prefixIcon('heroicon-m-video-camera')
+                    ->columnSpanFull(),
 
                     ]);
     }
