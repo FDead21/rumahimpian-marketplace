@@ -4,12 +4,12 @@
 
 ## Key Features
 
-- 🗺️ **Interactive Map Search:** A mobile-responsive map interface powered by [Leaflet.js](https://leafletjs.com/), featuring geolocation and card sliders.
-- 🔍 **Advanced Filtering:** "Sticky" search bar with filters for price range, property type, location, and bedrooms.
-- ⚡ **Agent Portal:** A dedicated dashboard for agents to manage listings, inquiries, and profiles.
-- 📄 **Auto-Generated Brochures:** Instantly download PDF brochures for any property, complete with QR codes generated via **DomPDF**.
-- ❤️ **Wishlist & Compare:** Save favorite homes and compare up to 3 properties side-by-side using local storage.
-- 📱 **Fully Responsive:** Optimized UI for both desktop and mobile, including a custom drawer navigation for mobile users.
+- **Interactive Map Search:** A mobile-responsive map interface powered by [Leaflet.js](https://leafletjs.com/), featuring geolocation and card sliders.
+- **Advanced Filtering:** "Sticky" search bar with filters for price range, property type, location, and bedrooms.
+- **Agent Portal:** A dedicated dashboard for agents to manage listings, inquiries, and profiles.
+- **Auto-Generated Brochures:** Instantly download PDF brochures for any property, complete with QR codes generated via **DomPDF**.
+- **Wishlist & Compare:** Save favorite homes and compare up to 3 properties side-by-side using local storage.
+- **Fully Responsive:** Optimized UI for both desktop and mobile, including a custom drawer navigation for mobile users.
 
 ## Tech Stack
 
@@ -92,7 +92,7 @@ php artisan serve
 
 The site will be available at [http://property-marketplace.test](http://property-marketplace.test).
 
-## 🔑 Login Credentials
+## Login Credentials
 
 The seeder creates the following default users for testing purposes.
 
@@ -104,7 +104,7 @@ The seeder creates the following default users for testing purposes.
 
 Agent Portal URL: http://property-marketplace.test/portal
 
-## 📂 Key Routes
+## Key Routes
 
 Here are the primary routes available in the application:
 
