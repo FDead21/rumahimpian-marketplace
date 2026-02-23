@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             AssignBlueBadge::class,
         );
 
-        if (Schema::hasTable('settings')) {
+        if (! $this->app->runningInConsole() && Schema::hasTable('settings')) {
             $settings = \Cache::rememberForever('site_settings', function () {
                 return Setting::all()->pluck('value', 'key')->toArray();
             });
