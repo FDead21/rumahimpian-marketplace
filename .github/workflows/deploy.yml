@@ -7,33 +7,33 @@ on:
 
 jobs:
   build-and-deploy:
-    name: 🎉 Build & Deploy
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🚚 Get latest code
+    - name: Get latest code
       uses: actions/checkout@v4
 
-    - name: ⚡️ Setup PHP 8.3
+    - name: Setup PHP 8.3
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
     
-    - name: 📦 Install PHP Dependencies (Composer)
+    - name: Install PHP Dependencies (Composer)
       run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-    - name: ⚡️ Setup Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
 
-    - name: 🔨 Build Frontend Assets (Vite)
+    - name: Build Frontend Assets (Vite)
       run: |
         npm install
         npm run build
         rm -rf node_modules # Delete this so we don't upload 10,000 junk files
 
-    - name: 📂 Sync Core Files to Apps Folder
+    - name: Sync Core Files to Apps Folder
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -47,8 +47,9 @@ jobs:
           public/**
           .env
           .env.example
+          vendor/** 
 
-    - name: 📂 Sync Public Files to public_html
+    - name: Sync Public Files to public_html
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
