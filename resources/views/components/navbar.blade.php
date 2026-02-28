@@ -71,33 +71,6 @@
                             <span class="flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white" x-text="$store.wishlist.ids.length"></span>
                         </div>
                     </a>
-
-                    @auth
-                        {{-- Logged In Dropdown --}}
-                        <div class="relative ml-2" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none hover:bg-gray-50 rounded-full p-1 pr-3 transition border border-transparent hover:border-gray-200">
-                                @if(Auth::user()->avatar_url)
-                                    <img src="{{ asset('storage/' . Auth::user()->avatar_url) }}" class="h-9 w-9 rounded-full object-cover ring-2 ring-gray-100">
-                                @else
-                                    <div class="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm ring-2 ring-indigo-50">{{ substr(Auth::user()->name, 0, 1) }}</div>
-                                @endif
-                                <div class="text-left leading-tight">
-                                    <span class="block text-sm font-bold text-gray-800">{{ Auth::user()->name }}</span>
-                                    <span class="block text-[10px] text-gray-500 uppercase font-semibold tracking-wide">{{ __('Agent') }}</span>
-                                </div>
-                            </button>
-                            <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50" style="display: none;">
-                                <a href="/portal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">{{ __('My Dashboard') }}</a>
-                                <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
-                                    @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">{{ __('Logout') }}</button>
-                                </form>
-                            </div>
-                        </div>
-                    @else
-                        <a href="/portal/login" class="text-sm font-bold text-gray-600 hover:text-indigo-600">{{ __('Login') }}</a>
-                        <a href="/portal/register" class="bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:bg-indigo-700">{{ __('Join as Agent') }}</a>
-                    @endauth
                 </div>
 
                 {{-- 4. HAMBURGER BUTTON (Mobile Only) --}}
@@ -190,26 +163,6 @@
                     </button>
                 </div>
 
-                @auth
-                    <div class="flex items-center gap-3">
-                        @if(Auth::user()->avatar_url)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar_url) }}" class="h-12 w-12 rounded-full object-cover ring-2 ring-white">
-                        @else
-                            <div class="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-lg ring-2 ring-white">
-                                {{ substr(Auth::user()->name, 0, 1) }}
-                            </div>
-                        @endif
-                        <div>
-                            <p class="font-bold text-gray-900">{{ Auth::user()->name }}</p>
-                            <a href="/portal" class="text-xs text-indigo-600 font-bold hover:underline">{{ __('My Dashboard') }} →</a>
-                        </div>
-                    </div>
-                @else
-                    <div class="grid grid-cols-2 gap-3">
-                        <a href="/portal/login" class="block text-center py-2 border border-indigo-200 rounded-lg text-indigo-700 font-bold text-sm hover:bg-white">{{ __('Login') }}</a>
-                        <a href="/portal/register" class="block text-center py-2 bg-indigo-600 rounded-lg text-white font-bold text-sm hover:bg-indigo-700">{{ __('Register') }}</a>
-                    </div>
-                @endauth
             </div>
 
             {{-- Drawer Links --}}

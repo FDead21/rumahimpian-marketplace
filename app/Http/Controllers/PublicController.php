@@ -112,18 +112,19 @@ class PublicController extends Controller
     public function tour($id, $slug)
     {
         $property = \App\Models\Property::where('status', 'PUBLISHED')->findOrFail($id);
-        
-        // Attempt to find a specific 360 image
-        // If you don't have a 'file_type' column yet, we will just grab the LAST image as a demo
-        $tourImage = $property->media->where('file_type', 'VIRTUAL_TOUR_360')->first();
-        
-        // FALLBACK: If no specific 360 image exists, use the main image 
-        // (It will look weird/warped, but it proves the code works)
-        if (!$tourImage) {
-            $tourImage = $property->media->first();
+
+        $scenes = $property->media()
+            ->where('file_type', 'VIRTUAL_TOUR_360')
+            ->orderBy('sort_order')
+            ->with('hotspots.toMedia')
+            ->get();
+
+        if ($scenes->isEmpty()) {
+            return redirect()->route('property.show', ['id' => $id, 'slug' => $slug])
+                ->with('error', 'No Virtual Tour available.');
         }
 
-        return view('property.tour', compact('property', 'tourImage'));
+        return view('property.tour', compact('property', 'scenes'));
     }
 
     // public function tour($slug)

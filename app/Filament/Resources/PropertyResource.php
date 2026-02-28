@@ -122,6 +122,11 @@ class PropertyResource extends Resource
                             ])
                             ->default('IMAGE')
                             ->required(),
+                        Forms\Components\TextInput::make('room_name')
+                            ->label('Room Name')
+                            ->placeholder('e.g. Living Room, Master Bedroom')
+                            ->nullable()
+                            ->visible(fn (callable $get) => $get('file_type') === 'VIRTUAL_TOUR_360'),
 
                         // Sort Order (Manual override)
                         Forms\Components\TextInput::make('sort_order')
@@ -201,6 +206,12 @@ class PropertyResource extends Resource
                     ])
                     ->actions([
                         Tables\Actions\EditAction::make(),
+                        Tables\Actions\Action::make('tour_editor')
+                            ->label('🗺 Tour Hotspots')
+                            ->url(fn ($record) => route('tour.editor', $record))
+                            ->openUrlInNewTab()
+                            ->color('success')
+                            ->visible(fn ($record) => $record->media()->where('file_type', 'VIRTUAL_TOUR_360')->exists()),
                     ])
                     ->bulkActions([
                         Tables\Actions\BulkActionGroup::make([

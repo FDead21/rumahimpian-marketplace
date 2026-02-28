@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+Route::get('/migrate-' . env('MIGRATE_SECRET'), function() {
+    Artisan::call('migrate', ['--force' => true]);
+    return 'Done: ' . Artisan::output();
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -115,3 +119,11 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::get('/news', [PublicController::class, 'articles'])->name('articles.index');
 Route::get('/news/{slug}', [PublicController::class, 'articleShow'])->name('articles.show');
+
+// Virtual Tour Hotspot Editor
+Route::prefix('portal-api')->middleware(['auth'])->group(function () {
+    Route::get('/properties/{property}/tour-editor', [App\Http\Controllers\TourEditorController::class, 'show'])->name('tour.editor');
+    Route::post('/hotspots', [App\Http\Controllers\TourEditorController::class, 'store'])->name('hotspots.store');
+    Route::delete('/hotspots/{hotspot}', [App\Http\Controllers\TourEditorController::class, 'destroy'])->name('hotspots.destroy');
+});
+

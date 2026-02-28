@@ -33,6 +33,10 @@ class PropertyMediaResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('file_type')
                     ->required(),
+                Forms\Components\TextInput::make('room_name')
+                    ->nullable()
+                    ->placeholder('e.g. Living Room, Master Bedroom')
+                    ->visible(fn ($get) => $get('file_type') === 'VIRTUAL_TOUR_360'),
                 Forms\Components\TextInput::make('sort_order')
                     ->required()
                     ->numeric()
@@ -50,6 +54,7 @@ class PropertyMediaResource extends Resource
                 Tables\Columns\TextColumn::make('file_path')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('file_type'),
+                Tables\Columns\TextColumn::make('room_name')->searchable(),
                 Tables\Columns\TextColumn::make('sort_order')
                     ->numeric()
                     ->sortable(),

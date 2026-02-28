@@ -131,7 +131,7 @@
             
             <div class="md:col-span-2 space-y-8">
                 
-                <div class="flex space-x-8 border-b pb-6">
+                <div class="flex flex-wrap gap-x-8 gap-y-4 border-b pb-6">
                     <div>
                         <span class="block text-gray-500 text-sm">{{ __('Price') }}</span>
                         <span class="text-2xl font-bold text-indigo-600">
