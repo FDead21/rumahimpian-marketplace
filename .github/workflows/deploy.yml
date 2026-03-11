@@ -63,8 +63,9 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }} 
-        port: 22
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        port: 2222
         script: |
           cd ~/apps/property-marketplace
           composer install --no-dev --optimize-autoloader
