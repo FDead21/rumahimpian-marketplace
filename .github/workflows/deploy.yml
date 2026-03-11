@@ -39,7 +39,7 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: apps/property-marketplace/ 
+        server-dir: apps/property-marketplace/
         exclude: |
           **/.git*
           **/.git*/**
@@ -47,7 +47,6 @@ jobs:
           public/**
           .env
           .env.example
-          vendor/** 
 
     - name: Sync Public Files to public_html
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -57,15 +56,3 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./public/     
         server-dir: public_html/
-    
-    - name: Run Composer on Server
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        port: 22
-        script: |
-          cd ~/apps/property-marketplace
-          composer install --no-dev --optimize-autoloader
