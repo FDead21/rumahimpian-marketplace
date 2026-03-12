@@ -40,6 +40,7 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: apps/property-marketplace/
+        dangerous-clean-slate: true        # ← forces re-upload everything
         exclude: |
           **/.git*
           **/.git*/**
