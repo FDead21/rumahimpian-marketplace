@@ -47,6 +47,7 @@ jobs:
           public/**
           .env
           .env.example
+          vendor/**
 
     - name: Sync Public Files to public_html
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
