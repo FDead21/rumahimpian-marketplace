@@ -7,7 +7,7 @@
             
             <article class="prose lg:prose-xl max-w-none">
                 <div class="mb-8 text-center">
-                    <span class="bg-indigo-100 text-indigo-800 text-sm font-bold px-3 py-1 rounded-full">
+                    <span class="bg-sky-100 text-sky-800 text-sm font-bold px-3 py-1 rounded-full">
                         {{ $article->published_at->format('F d, Y') }}
                     </span>
                     <h1 class="text-4xl font-extrabold text-gray-900 mt-4 mb-6 leading-tight">{{ $article->title }}</h1>
@@ -36,7 +36,7 @@
                                     <div class="w-full h-full bg-gray-200"></div>
                                 @endif
                             </div>
-                            <h4 class="font-bold text-gray-900 group-hover:text-indigo-600 transition">{{ $related->title }}</h4>
+                            <h4 class="font-bold text-gray-900 group-hover:text-sky-600 transition">{{ $related->title }}</h4>
                         </a>
                     @endforeach
                 </div>

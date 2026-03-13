@@ -2,8 +2,8 @@
     <div class="min-h-[60vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg text-center">
             
-            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100">
-                <svg class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-sky-100">
+                <svg class="h-8 w-8 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
@@ -18,13 +18,13 @@
 
             <form method="POST" action="{{ route('verification.send') }}" class="mt-8">
                 @csrf
-                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition">
                     Resend Verification Email
                 </button>
             </form>
 
             @if (session('message'))
-                <div class="mt-4 p-2 bg-green-100 text-green-700 text-sm rounded">
+                <div class="mt-4 p-2 bg-sky-100 text-sky-700 text-sm rounded">
                     {{ session('message') }}
                 </div>
             @endif

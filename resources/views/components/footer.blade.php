@@ -3,7 +3,7 @@
         
         <div class="space-y-4">
             <div class="flex items-center space-x-2">
-                <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
+                <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-cyan-400">
                     {{ $settings['site_name'] ?? 'RumahImpian' }}
                 </span>
             </div>

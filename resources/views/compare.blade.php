@@ -6,12 +6,12 @@
             {{-- Handle case where user removes all items --}}
             <div class="p-10 text-center bg-gray-50 rounded-xl">
                 <p class="text-gray-500 mb-4">{{ __('No properties selected.') }}</p>
-                <a href="{{ route('home') }}" class="text-indigo-600 font-bold underline">{{ __('Browse Properties') }}</a>
+                <a href="{{ route('home') }}" class="text-sky-600 font-bold underline">{{ __('Browse Properties') }}</a>
             </div>
         @elseif($properties->count() < 2)
             <div class="p-10 text-center bg-gray-50 rounded-xl">
                 <p class="text-gray-500 mb-4">{{ __('Select at least 2 properties to compare effectively.') }}</p>
-                <a href="{{ route('home') }}" class="text-indigo-600 font-bold underline">{{ __('Browse Properties') }}</a>
+                <a href="{{ route('home') }}" class="text-sky-600 font-bold underline">{{ __('Browse Properties') }}</a>
             </div>
             {{-- Still show the single property table below so they can see/remove it --}}
         @endif
@@ -40,8 +40,8 @@
                                 @endif
                             </div>
                             <h3 class="font-bold text-lg leading-tight mb-1">{{ Str::limit($p->title, 40) }}</h3>
-                            <p class="text-indigo-600 font-bold text-lg">@currency($p->price)</p>
-                            <a href="{{ route('property.show', [$p->id, $p->slug]) }}" target="_blank" class="text-xs text-indigo-500 underline mt-2 block">{{ __('View Details') }} ></a>
+                            <p class="text-sky-600 font-bold text-lg">@currency($p->price)</p>
+                            <a href="{{ route('property.show', [$p->id, $p->slug]) }}" target="_blank" class="text-xs text-sky-500 underline mt-2 block">{{ __('View Details') }} ></a>
                         </td>
                         @endforeach
                     </tr>
@@ -51,7 +51,7 @@
                         <td class="p-4 bg-gray-50 font-bold text-gray-500 border-t">{{ __('Type') }}</td>
                         @foreach($properties as $p)
                         <td class="p-4 border-t border-gray-100">
-                            <span class="inline-block px-2 py-1 text-xs font-bold rounded {{ $p->listing_type == 'SALE' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700' }}">
+                            <span class="inline-block px-2 py-1 text-xs font-bold rounded {{ $p->listing_type == 'SALE' ? 'bg-blue-100 text-blue-700' : 'bg-sky-100 text-sky-700' }}">
                                 {{-- Translate "Sale" or "Rent" --}}
                                 {{ __(ucfirst(strtolower($p->listing_type))) }}
                             </span>

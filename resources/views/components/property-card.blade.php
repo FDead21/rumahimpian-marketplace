@@ -16,7 +16,7 @@
 
         <div class="absolute top-4 left-4">
             <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm
-                {{ $property->listing_type == 'SALE' ? 'bg-indigo-600 text-white' : 'bg-emerald-500 text-white' }}">
+                {{ $property->listing_type == 'SALE' ? 'bg-sky-600 text-white' : 'bg-emerald-500 text-white' }}">
                 {{ __(ucfirst(strtolower($property->listing_type))) }}
             </span>
         </div>
@@ -45,7 +45,7 @@
             <button 
                 @click.prevent="toggle()" 
                 class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:scale-110 transition active:scale-95 group/compare border border-transparent"
-                :class="selected ? 'text-indigo-600 ring-2 ring-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600'"
+                :class="selected ? 'text-sky-600 ring-2 ring-sky-600 bg-sky-50' : 'text-gray-600 hover:text-sky-600'"
                 title="{{ __('Compare Property') }}"
             >
                 <svg x-show="!selected" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +59,7 @@
         </div>
 
         <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm border border-white/50">
-            <span class="text-indigo-700 font-extrabold text-lg">
+            <span class="text-sky-700 font-extrabold text-lg">
                 @currency($property->price)
             </span>
         </div>
@@ -71,7 +71,7 @@
             {{ $property->city }}, {{ $property->district }}
         </div>
 
-        <h3 class="font-bold text-gray-900 text-lg leading-tight mb-4 group-hover:text-indigo-600 transition-colors">
+        <h3 class="font-bold text-gray-900 text-lg leading-tight mb-4 group-hover:text-sky-600 transition-colors">
             <a href="{{ route('property.show', ['id' => $property->id, 'slug' => $property->slug]) }}">
                 {{ Str::limit($property->title, 45) }}
             </a>

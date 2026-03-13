@@ -29,7 +29,7 @@
                     <p class="flex items-center justify-center md:justify-start gap-2">
                         📞 {{ $agency->phone ?? __('Contact Agent') }}
                     </p>
-                    <p class="flex items-center justify-center md:justify-start gap-2 text-indigo-600 font-bold">
+                    <p class="flex items-center justify-center md:justify-start gap-2 text-sky-600 font-bold">
                         👥 {{ $agency->agents->count() }} {{ __('Agents Registered') }}
                     </p>
                 </div>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 py-12 flex-grow w-full">
-        <h2 class="text-xl font-bold text-gray-900 mb-6 border-l-4 border-indigo-600 pl-4">
+        <h2 class="text-xl font-bold text-gray-900 mb-6 border-l-4 border-sky-600 pl-4">
             {{ __('Properties by') }} {{ $agency->name }}
         </h2>
 

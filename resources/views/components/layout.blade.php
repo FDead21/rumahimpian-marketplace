@@ -38,7 +38,7 @@
             </div>
             <div class="flex gap-3">
                 <button @click="clear()" class="text-gray-500 hover:text-red-600 font-bold text-sm underline">{{ __('Clear') }}</button>
-                <a :href="'/compare?ids=' + ids.join(',')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-1">
+                <a :href="'/compare?ids=' + ids.join(',')" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-1">
                     ⚖️ {{ __('Compare Now') }}
                 </a>
             </div>

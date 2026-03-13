@@ -9,10 +9,10 @@
 <body class="bg-gray-50 flex flex-col min-h-screen">
     @include('components.navbar')
 
-    <div class="bg-indigo-900 text-white">
+    <div class="bg-sky-900 text-white">
         <div class="max-w-4xl mx-auto px-4 py-16 text-center">
             
-            <div class="w-24 h-24 bg-white rounded-full mx-auto mb-4 flex items-center justify-center text-indigo-900 font-bold text-3xl border-4 border-indigo-200">
+            <div class="w-24 h-24 bg-white rounded-full mx-auto mb-4 flex items-center justify-center text-sky-900 font-bold text-3xl border-4 border-sky-200">
                 {{ substr($agent->name, 0, 1) }}
             </div>
 
@@ -30,22 +30,22 @@
             </div>
             
             @if($agent->agency)
-                <a href="{{ route('agency.show', $agent->agency->slug) }}" class="inline-block bg-indigo-800 hover:bg-indigo-700 px-4 py-1 rounded-full text-sm font-medium transition mb-4">
+                <a href="{{ route('agency.show', $agent->agency->slug) }}" class="inline-block bg-sky-800 hover:bg-sky-700 px-4 py-1 rounded-full text-sm font-medium transition mb-4">
                     🏢 {{ $agent->agency->name }}
                 </a>
             @else
-                <span class="inline-block bg-indigo-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
+                <span class="inline-block bg-sky-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
                     {{ __('Freelance Agent') }}
                 </span>
             @endif
 
-            <div class="flex justify-center gap-4 text-indigo-200 text-sm">
+            <div class="flex justify-center gap-4 text-sky-200 text-sm">
                 <span>{{ __('Joined') }} {{ $agent->created_at->format('M Y') }}</span>
                 <span>•</span>
                 <span>{{ $properties->total() }} {{ __('Active Listings') }}</span>
             </div>
 
-            <a href="https://wa.me/{{ $agent->phone_number }}" target="_blank" class="inline-flex items-center gap-2 mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-bold transition">
+            <a href="https://wa.me/{{ $agent->phone_number }}" target="_blank" class="inline-flex items-center gap-2 mt-6 bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-lg font-bold transition">
                 <span>{{ __('Chat on WhatsApp') }}</span>
             </a>
         </div>

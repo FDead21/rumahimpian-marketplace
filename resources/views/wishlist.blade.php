@@ -8,7 +8,7 @@
 
         {{-- Loading State --}}
         <div x-show="loading" class="py-20 text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mx-auto mb-4"></div>
             <p class="text-gray-500">{{ __('Loading your favorites...') }}</p>
         </div>
 
@@ -17,7 +17,7 @@
             <div class="text-6xl mb-4">💔</div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('No favorites yet') }}</h3>
             <p class="text-gray-500 mb-6">{{ __('Start browsing and click the heart icon to save properties here.') }}</p>
-            <a href="{{ route('home') }}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition">
+            <a href="{{ route('home') }}" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition">
                 {{ __('Browse Properties') }}
             </a>
         </div>

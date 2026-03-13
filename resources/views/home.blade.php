@@ -60,15 +60,15 @@
                     <div class="flex border-b border-gray-100">
                         <button @click="tab = 'SALE'" 
                                 class="flex-1 py-4 text-center font-bold text-lg transition-colors relative"
-                                :class="tab === 'SALE' ? 'text-indigo-600 bg-white' : 'text-gray-500 bg-gray-50 hover:bg-gray-100'">
+                                :class="tab === 'SALE' ? 'text-sky-600 bg-white' : 'text-gray-500 bg-gray-50 hover:bg-gray-100'">
                             {{ __('For Sale') }}
-                            <div x-show="tab === 'SALE'" class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600"></div>
+                            <div x-show="tab === 'SALE'" class="absolute bottom-0 left-0 w-full h-1 bg-sky-600"></div>
                         </button>
                         <button @click="tab = 'RENT'" 
                                 class="flex-1 py-4 text-center font-bold text-lg transition-colors relative"
-                                :class="tab === 'RENT' ? 'text-indigo-600 bg-white' : 'text-gray-500 bg-gray-50 hover:bg-gray-100'">
+                                :class="tab === 'RENT' ? 'text-sky-600 bg-white' : 'text-gray-500 bg-gray-50 hover:bg-gray-100'">
                             {{ __('For Rent') }}
-                            <div x-show="tab === 'RENT'" class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600"></div>
+                            <div x-show="tab === 'RENT'" class="absolute bottom-0 left-0 w-full h-1 bg-sky-600"></div>
                         </button>
                     </div>
 
@@ -82,7 +82,7 @@
                             <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-400">📍</span>
                                 <input type="text" name="search" value="{{ request('search') }}"
-                                       class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-gray-800"
+                                       class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none font-semibold text-gray-800"
                                        placeholder="{{ __('City, District, or Keyword...') }}">
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                             <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">{{ __('Property Type') }}</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-400">🏠</span>
-                                <select name="type" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-gray-800 appearance-none">
+                                <select name="type" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none font-semibold text-gray-800 appearance-none">
                                     <option value="ALL">{{ __('All Types') }}</option>
                                     <option value="House">{{ __('House') }}</option>
                                     <option value="Apartment">{{ __('Apartment') }}</option>
@@ -108,13 +108,13 @@
                             <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-400">💰</span>
                                 <input type="number" name="max_price" placeholder="{{ __('Any Price') }}"
-                                       class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-gray-800">
+                                       class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none font-semibold text-gray-800">
                             </div>
                         </div>
 
                         {{-- Button --}}
                         <div class="md:col-span-2">
-                            <button type="submit" class="w-full h-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-md transition transform hover:-translate-y-0.5">
+                            <button type="submit" class="w-full h-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-lg shadow-md transition transform hover:-translate-y-0.5">
                                 {{ __('Search') }}
                             </button>
                         </div>
@@ -154,7 +154,7 @@
                     <h2 class="text-3xl font-bold text-gray-900">{{ __('Latest Property News') }}</h2>
                     <p class="text-gray-500 mt-2">{{ __('Insights, trends, and tips for your property journey.') }}</p>
                 </div>
-                <a href="{{ route('articles.index') }}" class="hidden md:flex items-center text-indigo-600 font-bold hover:text-indigo-700 transition">
+                <a href="{{ route('articles.index') }}" class="hidden md:flex items-center text-sky-600 font-bold hover:text-sky-700 transition">
                     {{ __('View All News') }} 
                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </a>
@@ -178,14 +178,14 @@
                     
                     <div class="p-6 flex-1 flex flex-col">
                         <a href="{{ route('articles.show', $article->slug) }}" class="block mb-3">
-                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition line-clamp-2">
+                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-sky-600 transition line-clamp-2">
                                 {{ $article->title }}
                             </h3>
                         </a>
                         <p class="text-gray-500 text-sm mb-4 line-clamp-3 flex-1">
                             {{ Str::limit(strip_tags($article->content), 120) }}
                         </p>
-                        <a href="{{ route('articles.show', $article->slug) }}" class="inline-flex items-center text-indigo-600 font-bold text-sm hover:underline mt-auto">
+                        <a href="{{ route('articles.show', $article->slug) }}" class="inline-flex items-center text-sky-600 font-bold text-sm hover:underline mt-auto">
                             {{ __('Read Article') }} 
                         </a>
                     </div>

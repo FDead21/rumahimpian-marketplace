@@ -77,7 +77,7 @@ class PropertyResource extends Resource
                 Forms\Components\Placeholder::make('helper')
                     ->label('How to get coordinates?')
                     ->content(new \Illuminate\Support\HtmlString('
-                        <a href="https://www.google.com/maps" target="_blank" class="text-indigo-600 underline">
+                        <a href="https://www.google.com/maps" target="_blank" class="text-sky-600 underline">
                             Open Google Maps
                         </a>. Right-click on a location and select the numbers (e.g., -6.917, 107.619) to copy them.
                     ')),

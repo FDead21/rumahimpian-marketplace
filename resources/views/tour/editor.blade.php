@@ -141,7 +141,7 @@
                     <label class="text-xs text-gray-400">Label (optional)</label>
                     <input id="labelInput" type="text" class="w-full bg-gray-600 rounded px-3 py-1 text-sm mt-1 outline-none" placeholder="e.g. Go to Bedroom">
                 </div>
-                <button onclick="saveHotspot()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-sm transition">
+                <button onclick="saveHotspot()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 rounded-lg text-sm transition">
                     Save Hotspot
                 </button>
             </div>

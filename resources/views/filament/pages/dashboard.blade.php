@@ -33,7 +33,7 @@
 
         {{-- Card 2 --}}
         <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-green-50 dark:bg-green-900/50 rounded-lg flex items-center justify-center text-green-600 dark:text-green-400 text-2xl">👀</div>
+            <div class="w-12 h-12 bg-sky-50 dark:bg-sky-900/50 rounded-lg flex items-center justify-center text-sky-600 dark:text-sky-400 text-2xl">👀</div>
             <div>
                 <p class="text-sm text-gray-500 font-medium">Total Views</p>
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalViews ?? 0) }}</h3>
@@ -94,7 +94,7 @@
                                 <h4 class="font-bold text-gray-900 truncate text-sm">{{ $property->title }}</h4>
                                 <p class="text-xs text-gray-500 mb-1">{{ $property->city }}</p>
                             </div>
-                            <a href="{{ route('property.show', [$property->id, $property->slug]) }}" target="_blank" class="text-indigo-600 text-sm hover:underline">View ↗</a>
+                            <a href="{{ route('property.show', [$property->id, $property->slug]) }}" target="_blank" class="text-sky-600 text-sm hover:underline">View ↗</a>
                         </div>
                     @empty
                         <div class="p-8 text-center text-gray-500 text-sm">No properties found.</div>
@@ -117,7 +117,7 @@
                                 <span class="font-bold text-sm">{{ $lead->buyer_name }}</span>
                                 <span class="text-[10px] text-gray-400">{{ $lead->created_at->diffForHumans() }}</span>
                             </div>
-                            <p class="text-[10px] text-indigo-600 mb-2">re: {{ Str::limit($lead->property->title ?? 'Deleted', 20) }}</p>
+                            <p class="text-[10px] text-sky-600 mb-2">re: {{ Str::limit($lead->property->title ?? 'Deleted', 20) }}</p>
                         </div>
                     @empty
                         <div class="p-8 text-center text-gray-500 text-sm">No messages yet.</div>

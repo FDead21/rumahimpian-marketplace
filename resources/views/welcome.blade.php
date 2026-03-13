@@ -1,6 +1,6 @@
 <x-layout>
     
-    <div class="relative bg-indigo-900 py-20">
+    <div class="relative bg-sky-900 py-20">
         <div class="absolute inset-0 overflow-hidden opacity-20">
             <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover">
         </div>
@@ -9,7 +9,7 @@
             <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
                 Find Your Dream Home
             </h1>
-            <p class="text-xl text-indigo-200 mb-8 max-w-2xl">
+            <p class="text-xl text-sky-200 mb-8 max-w-2xl">
                 Search thousands of properties for sale and rent from top agents.
             </p>
 
@@ -18,7 +18,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-4 relative">
                             <input type="text" name="search" value="{{ request('search') }}" 
-                                class="block w-full pl-4 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" 
+                                class="block w-full pl-4 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" 
                                 placeholder="Search by City, District, or Property Name...">
                         </div>
                         <div class="md:col-span-1">
@@ -37,7 +37,7 @@
                             </select>
                         </div>
                          <div class="md:col-span-1">
-                            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition">
+                            <button type="submit" class="w-full bg-sky-600 text-white font-bold py-3 rounded-lg hover:bg-sky-700 transition">
                                 Search
                             </button>
                         </div>

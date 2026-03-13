@@ -24,10 +24,10 @@
     {{-- NAVBAR --}}
     <nav class="absolute top-0 left-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-200 h-16 z-[1000] shadow-sm flex-shrink-0">
         <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-            <a href="{{ route('home') }}" class="text-xl font-extrabold text-indigo-600 tracking-tight">RumahImpian</a>
+            <a href="{{ route('home') }}" class="text-xl font-extrabold text-sky-600 tracking-tight">RumahImpian</a>
             
             <div class="flex gap-3">
-                <a href="{{ route('home') }}" class="flex items-center gap-2 bg-white border border-gray-300 hover:border-indigo-500 hover:text-indigo-600 px-4 py-1.5 rounded-full text-sm font-medium transition shadow-sm">
+                <a href="{{ route('home') }}" class="flex items-center gap-2 bg-white border border-gray-300 hover:border-sky-500 hover:text-sky-600 px-4 py-1.5 rounded-full text-sm font-medium transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                     {{ __('List View') }}
                 </a>
@@ -60,11 +60,11 @@
                         </div>
 
                         <div class="flex-grow flex flex-col justify-center min-w-0">
-                            <h3 class="font-bold text-gray-900 text-sm leading-tight truncate group-hover:text-indigo-600 mb-1">
+                            <h3 class="font-bold text-gray-900 text-sm leading-tight truncate group-hover:text-sky-600 mb-1">
                                 {{ $property->title }}
                             </h3>
                             <p class="text-xs text-gray-500 mb-2 truncate">{{ $property->district }}, {{ $property->city }}</p>
-                            <p class="text-indigo-600 font-bold text-sm mb-2">
+                            <p class="text-sky-600 font-bold text-sm mb-2">
                                 @currency($property->price)
                             </p>
                             <div class="flex items-center gap-3 text-xs text-gray-500">
@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="flex-1 p-3 flex flex-col justify-center">
                                     <h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-1 mb-1">{{ $property->title }}</h3>
-                                    <p class="text-indigo-600 font-bold text-sm mb-1">@currency($property->price)</p>
+                                    <p class="text-sky-600 font-bold text-sm mb-1">@currency($property->price)</p>
                                     <p class="text-xs text-gray-500 mb-2 truncate">{{ $property->city }}</p>
                                     
                                     <a href="{{ route('property.show', ['id' => $property->id, 'slug' => $property->slug]) }}" 
@@ -136,7 +136,7 @@
                 
                 var icon = L.divIcon({
                     className: 'custom-pin',
-                    html: `<div class="w-10 h-10 bg-white rounded-full border-2 border-indigo-600 shadow-xl flex items-center justify-center text-indigo-600 text-lg font-bold hover:scale-110 transition transform">🏠</div>`,
+                    html: `<div class="w-10 h-10 bg-white rounded-full border-2 border-sky-600 shadow-xl flex items-center justify-center text-sky-600 text-lg font-bold hover:scale-110 transition transform">🏠</div>`,
                     iconSize: [40, 40],
                     iconAnchor: [20, 40],
                     popupAnchor: [0, -40] 
@@ -153,7 +153,7 @@
                         <div class="p-3">
                             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 truncate">${prop.title}</h3>
                             <p class="text-xs text-gray-500 mb-2">${prop.district}, ${prop.city}</p>
-                            <a href="/property/${prop.id}/${prop.slug}" target="_blank" class="block w-full bg-indigo-600 text-white text-center text-xs py-2 rounded font-bold hover:bg-indigo-700 transition">
+                            <a href="/property/${prop.id}/${prop.slug}" target="_blank" class="block w-full bg-sky-600 text-white text-center text-xs py-2 rounded font-bold hover:bg-sky-700 transition">
                                 {{ __('View Property') }}
                             </a>
                         </div>

@@ -20,16 +20,16 @@
                     </a>
                     
                     <div class="p-6 flex-1 flex flex-col">
-                        <div class="text-sm text-indigo-600 font-semibold mb-2">
+                        <div class="text-sm text-sky-600 font-semibold mb-2">
                             {{ $article->published_at->format('M d, Y') }}
                         </div>
                         <a href="{{ route('articles.show', $article->slug) }}" class="block">
-                            <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-indigo-600 transition">{{ $article->title }}</h3>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sky-600 transition">{{ $article->title }}</h3>
                         </a>
                         <p class="text-gray-600 text-sm mb-4 flex-1">
                             {{ Str::limit(strip_tags($article->content), 100) }}
                         </p>
-                        <a href="{{ route('articles.show', $article->slug) }}" class="inline-flex items-center text-indigo-600 font-bold hover:underline">
+                        <a href="{{ route('articles.show', $article->slug) }}" class="inline-flex items-center text-sky-600 font-bold hover:underline">
                             Read Article <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>
                     </div>

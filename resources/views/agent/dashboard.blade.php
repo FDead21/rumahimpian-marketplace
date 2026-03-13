@@ -20,7 +20,7 @@
                 <a href="{{ url('/portal') }}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition">
                     ⚙️ Manage Listings
                 </a>
-                <a href="{{ route('agent.show', Auth::id()) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">
+                <a href="{{ route('agent.show', Auth::id()) }}" class="bg-sky-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-sky-700 transition">
                     👤 View My Public Profile
                 </a>
             </div>
@@ -38,7 +38,7 @@
             </div>
 
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-green-600 text-2xl">
+                <div class="w-12 h-12 bg-sky-50 rounded-lg flex items-center justify-center text-sky-600 text-2xl">
                     👀
                 </div>
                 <div>
@@ -81,12 +81,12 @@
                                         {{ $property->city }} • {{ $property->views }} Views
                                     </p>
                                     <span class="px-2 py-0.5 rounded text-xs font-bold 
-                                        {{ $property->status == 'PUBLISHED' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                                        {{ $property->status == 'PUBLISHED' ? 'bg-sky-100 text-sky-700' : 'bg-gray-100 text-gray-600' }}">
                                         {{ $property->status }}
                                     </span>
                                 </div>
 
-                                <a href="{{ route('property.show', ['id' => $property->id, 'slug' => $property->slug]) }}" target="_blank" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-full">
+                                <a href="{{ route('property.show', ['id' => $property->id, 'slug' => $property->slug]) }}" target="_blank" class="text-sky-600 hover:bg-sky-50 p-2 rounded-full">
                                     ↗️
                                 </a>
                             </div>
@@ -118,7 +118,7 @@
                                     <span class="font-bold text-sm text-gray-900">{{ $lead->buyer_name }}</span>
                                     <span class="text-xs text-gray-400">{{ $lead->created_at->diffForHumans() }}</span>
                                 </div>
-                                <p class="text-xs text-indigo-600 mb-2 font-medium">
+                                <p class="text-xs text-sky-600 mb-2 font-medium">
                                     re: {{ Str::limit($lead->property->title, 20) }}
                                 </p>
                                 <p class="text-sm text-gray-600 italic">"{{ Str::limit($lead->message, 50) }}"</p>
