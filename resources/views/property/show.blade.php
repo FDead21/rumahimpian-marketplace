@@ -327,6 +327,25 @@
                             }
                         }">
 
+                        @if($property->listing_type === 'RENT')
+                        <div class="bg-rose-50 border border-rose-100 rounded-2xl p-6 mt-6">
+                            <div class="flex items-start gap-4">
+                                <div class="text-3xl">🎊</div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-rose-800 text-lg mb-1">Use this property as your event venue?</h3>
+                                    <p class="text-rose-600 text-sm mb-4">
+                                        This property is available for rent and can be booked as a venue through our Event Organizer service.
+                                    </p>
+                                    <a href="{{ route('eo.booking.booking-form', ['property_id' => $property->id]) }}"
+                                    class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-3 rounded-xl shadow transition transform hover:-translate-y-0.5">
+                                        📅 Book as Event Venue
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+
                         <button @click="viewingOpen = true" 
                                 class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
                             📅 {{ __('Schedule Viewing') }}

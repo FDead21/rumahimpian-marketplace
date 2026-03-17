@@ -8,11 +8,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\EoController;
+ 
+Route::domain(env('EO_DOMAIN'))->group(function () {
+    
+    Route::get('/', [EoController::class, 'home'])->name('eo.home');
+    Route::get('/packages', [EoController::class, 'packages'])->name('eo.packages');
+    Route::get('/packages/{slug}', [EoController::class, 'packageShow'])->name('eo.packages.show');
+    Route::get('/booking', [EoController::class, 'bookingForm'])->name('eo.booking.booking-form');
+    Route::post('/booking', [EoController::class, 'bookingStore'])->name('eo.booking.store')->middleware('throttle:5,1');
+    Route::get('/booking/confirmation/{code}', [EoController::class, 'bookingConfirmation'])->name('eo.booking.booking-confirmation');
+    Route::get('/gallery', [EoController::class, 'gallery'])->name('eo.gallery');
+    Route::get('/gallery/{slug}', [EoController::class, 'galleryShow'])->name('eo.gallery.gallery-index');
+    Route::get('/vendors', [EoController::class, 'vendors'])->name('eo.vendors');
+
+});
 
 Route::get('/migrate-' . env('MIGRATE_SECRET'), function() {
     Artisan::call('migrate', ['--force' => true]);
     return 'Done: ' . Artisan::output();
 });
+
 
 /*
 |--------------------------------------------------------------------------

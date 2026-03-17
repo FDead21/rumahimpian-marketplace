@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\PackageResource\Pages;
+use App\Models\Package;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+
+class PackageResource extends Resource
+{
+    protected static ?string $model = Package::class;
+    protected static ?string $navigationIcon = 'heroicon-o-gift';
+    protected static ?string $navigationGroup = 'Event Management';
+    protected static ?int $navigationSort = 1;
+
+    public static function canViewAny(): bool
+    {
+        return in_array(auth()->user()->role, ['ADMIN', 'EO_AGENT']);
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Package Details')->schema([
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn ($set, $state) => $set('slug', Str::slug($state))),
+
+                Forms\Components\TextInput::make('slug')
+                    ->required()
+                    ->unique(ignoreRecord: true),
+
+                Forms\Components\Textarea::make('description')
+                    ->rows(3)
+                    ->columnSpanFull(),
+
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->helperText('Enter raw number e.g. 15000000'),
+
+                Forms\Components\TextInput::make('max_pax')
+                    ->label('Max Guests (pax)')
+                    ->numeric()
+                    ->suffix('pax'),
+
+                Forms\Components\FileUpload::make('thumbnail')
+                    ->image()
+                    ->directory('packages')
+                    ->columnSpanFull(),
+            ])->columns(2),
+
+            Forms\Components\Section::make('Package Inclusions')->schema([
+                Forms\Components\Repeater::make('inclusions')
+                    ->schema([
+                        Forms\Components\TextInput::make('item')
+                            ->label('Inclusion Item')
+                            ->placeholder('e.g. MC Professional, Catering 500 pax, Decoration')
+                            ->required(),
+                    ])
+                    ->addActionLabel('Add Inclusion')
+                    ->columnSpanFull(),
+            ]),
+
+            Forms\Components\Section::make('Visibility')->schema([
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Active (visible on website)')
+                    ->default(true),
+                Forms\Components\Toggle::make('is_featured')
+                    ->label('Featured (shown on homepage)')
+                    ->default(false),
+            ])->columns(2),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\ImageColumn::make('thumbnail')->circular(),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->weight('bold'),
+                Tables\Columns\TextColumn::make('price')
+                    ->money('IDR', locale: 'id_ID')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('max_pax')->suffix(' pax')->sortable(),
+                Tables\Columns\IconColumn::make('is_featured')->boolean()->label('Featured'),
+                Tables\Columns\IconColumn::make('is_active')->boolean()->label('Active'),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index'  => Pages\ListPackages::route('/'),
+            'create' => Pages\CreatePackage::route('/create'),
+            'edit'   => Pages\EditPackage::route('/{record}/edit'),
+        ];
+    }
+}

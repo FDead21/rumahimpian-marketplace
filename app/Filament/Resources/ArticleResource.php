@@ -59,6 +59,15 @@ class ArticleResource extends Resource
                         Forms\Components\FileUpload::make('thumbnail')
                             ->image()
                             ->directory('articles'),
+                        Forms\Components\Select::make('category')
+                            ->options([
+                                'PROPERTY' => '🏠 Property Website',
+                                'EO'       => '🎪 EO Website',
+                                'GENERAL'  => '🌐 General',
+                            ])
+                            ->default('PROPERTY')
+                            ->native(false)
+                            ->required(),
 
                         Forms\Components\Toggle::make('is_published')
                             ->default(false),
@@ -76,11 +85,23 @@ class ArticleResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('thumbnail'),
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('category')
+                    ->badge()
+                    ->colors([
+                        'info'    => 'PROPERTY',
+                        'warning' => 'EO',
+                        'gray'    => 'GENERAL',
+                    ]),
                 Tables\Columns\IconColumn::make('is_published')->boolean(),
                 Tables\Columns\TextColumn::make('published_at')->date()->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category')
+                    ->options([
+                        'PROPERTY' => 'Property Website',
+                        'EO'       => 'EO Website',
+                        'GENERAL'  => 'General',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -1,0 +1,175 @@
+<x-eo-layout>
+
+    {{-- HERO --}}
+    <div class="relative h-[600px] w-full"
+         x-data="{
+            activeSlide: 0,
+            slides: {{ Js::from($eoSettings['eo_hero_slides'] ?? []) }},
+            init() {
+                if(this.slides.length > 1) {
+                    setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length; }, 5000);
+                }
+            }
+         }">
+
+        <div class="absolute inset-0 overflow-hidden">
+            <template x-for="(slide, index) in slides" :key="index">
+                <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                     x-show="activeSlide === index"
+                     x-transition:enter="opacity-0" x-transition:enter-end="opacity-100"
+                     x-transition:leave="opacity-100" x-transition:leave-end="opacity-0">
+                    <img :src="'/storage/' + slide" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30"></div>
+                </div>
+            </template>
+
+            @if(empty($eoSettings['eo_hero_slides']) || $eoSettings['eo_hero_slides'] == '[]')
+                <div class="absolute inset-0 bg-rose-900">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2070&q=80"
+                         class="w-full h-full object-cover opacity-40">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                </div>
+            @endif
+        </div>
+
+        {{-- Hero Text --}}
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
+            <span class="bg-rose-600/90 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
+                Wedding & Event Organizer
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg tracking-tight">
+                {{ $eoSettings['eo_hero_title'] ?? 'Your Dream Event, Made Real' }}
+            </h1>
+            <p class="text-xl text-gray-200 drop-shadow-md max-w-2xl mb-8">
+                {{ $eoSettings['eo_hero_subtitle'] ?? 'Professional event organizer for weddings, corporate, and more.' }}
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="{{ route('eo.booking.booking-form') }}"
+                   class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-4 rounded-xl shadow-2xl transition transform hover:-translate-y-1 text-lg">
+                    📅 Book Your Event
+                </a>
+                <a href="{{ route('eo.packages') }}"
+                   class="bg-white/20 backdrop-blur hover:bg-white/30 text-white font-bold px-8 py-4 rounded-xl border border-white/40 transition text-lg">
+                    🎁 View Packages
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- STATS BAR --}}
+    <div class="bg-rose-600 text-white py-6">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div><div class="text-3xl font-extrabold">{{ $packages->count() }}+</div><div class="text-rose-200 text-sm mt-1">Packages Available</div></div>
+            <div><div class="text-3xl font-extrabold">{{ $vendors->count() }}+</div><div class="text-rose-200 text-sm mt-1">Trusted Vendors</div></div>
+        </div>
+    </div>
+
+    {{-- FEATURED PACKAGES --}}
+    <div class="max-w-7xl mx-auto px-4 py-16">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Our Packages</h2>
+                <p class="text-gray-500 mt-1">Choose the perfect package for your event</p>
+            </div>
+            <a href="{{ route('eo.packages') }}" class="hidden md:flex items-center text-rose-600 font-bold hover:text-rose-700 transition">
+                View All Packages
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach($packages as $package)
+            <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
+                @if($package->is_featured)
+                    <div class="absolute top-4 left-4 z-10 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">⭐ Featured</div>
+                @endif
+                <div class="relative h-48 overflow-hidden">
+                    @if($package->thumbnail)
+                        <img src="{{ asset('storage/' . $package->thumbnail) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 flex items-center justify-center text-5xl">🎊</div>
+                    @endif
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg">
+                        <span class="text-rose-700 font-extrabold text-lg">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl text-gray-900 mb-2 group-hover:text-rose-600 transition">{{ $package->name }}</h3>
+                    @if($package->max_pax)
+                        <p class="text-sm text-gray-500 mb-3">👥 Up to {{ $package->max_pax }} guests</p>
+                    @endif
+                    @if($package->inclusions)
+                        <ul class="space-y-1 mb-4">
+                            @foreach(array_slice($package->inclusions, 0, 3) as $item)
+                                <li class="text-sm text-gray-600 flex items-center gap-2">
+                                    <span class="text-rose-500">✓</span> {{ $item['item'] ?? $item }}
+                                </li>
+                            @endforeach
+                            @if(count($package->inclusions) > 3)
+                                <li class="text-xs text-gray-400">+ {{ count($package->inclusions) - 3 }} more inclusions</li>
+                            @endif
+                        </ul>
+                    @endif
+                    <a href="{{ route('eo.packages.show', $package->slug) }}"
+                       class="block w-full text-center bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white font-bold py-2.5 rounded-xl border border-rose-200 hover:border-rose-600 transition">
+                        View Details
+                    </a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- GALLERY PREVIEW --}}
+    @if($galleryEvents->count() > 0)
+    <div class="bg-gray-50 border-t border-gray-200 py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Our Work</h2>
+                    <p class="text-gray-500 mt-1">A glimpse of events we've organized</p>
+                </div>
+                <a href="{{ route('eo.gallery') }}" class="hidden md:flex items-center text-rose-600 font-bold hover:text-rose-700 transition">
+                    View Full Gallery
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach($galleryEvents->take(4) as $event)
+                <a href="{{ route('eo.gallery.gallery-index', $event->slug) }}"
+                   class="group relative h-48 rounded-2xl overflow-hidden">
+                    @if($event->cover_photo)
+                        <img src="{{ asset('storage/' . $event->cover_photo) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-rose-200 to-pink-300 flex items-center justify-center text-4xl">🎉</div>
+                    @endif
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-3 left-3 right-3 text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {{ $event->title }}
+                    </div>
+                    @if($event->event_type)
+                        <div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            {{ $event->event_type }}
+                        </div>
+                    @endif
+                </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- CTA BANNER --}}
+    <div class="bg-gradient-to-r from-rose-600 to-pink-600 py-16 text-white text-center">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Ready to plan your dream event?</h2>
+            <p class="text-rose-100 text-lg mb-8">Let's make it unforgettable. Reach out to us today.</p>
+            <a href="{{ route('eo.booking.booking-form') }}"
+               class="bg-white text-rose-600 hover:bg-rose-50 font-bold px-10 py-4 rounded-xl shadow-xl transition transform hover:-translate-y-1 text-lg inline-block">
+                📅 Book Your Event Now
+            </a>
+        </div>
+    </div>
+
+</x-eo-layout>

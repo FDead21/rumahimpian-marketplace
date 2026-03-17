@@ -13,6 +13,7 @@ use App\Models\Setting;
 use Illuminate\Auth\Events\Verified; 
 use App\Listeners\AssignBlueBadge;  
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Cache;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,29 @@ class AppServiceProvider extends ServiceProvider
             View::share('settings', $settings);
         }
 
+        View::composer('*', function ($view) {
+            if (Schema::hasTable('settings')) {
+                $eoSettings = Cache::remember('eo_settings', 3600, function () {
+                    $raw = Setting::where('key', 'like', 'eo_%')
+                        ->pluck('value', 'key')
+                        ->toArray();
+
+                    foreach (['eo_hero_slides'] as $field) {
+                        if (!empty($raw[$field])) {
+                            $decoded = json_decode($raw[$field], true);
+                            if (is_array($decoded)) {
+                                $raw[$field] = $decoded;
+                            }
+                        }
+                    }
+
+                    return $raw;
+                });
+
+                $view->with('eoSettings', $eoSettings);
+            }
+        });
+
         Blade::directive('currency', function ($expression) {
             return "<?php
                 \$num = $expression;
@@ -70,5 +94,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         PropertyMedia::observe(PropertyMediaObserver::class);
+        Blade::component('eo.layouts.eo-layout', 'eo-layout');
+        Blade::component('eo.components.eo-navbar', 'eo-navbar');
+        Blade::component('eo.components.eo-footer', 'eo-footer');
     }
 }

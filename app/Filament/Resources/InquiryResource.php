@@ -48,6 +48,9 @@ class InquiryResource extends Resource
                     // Section 1: Lead Details (Read Only)
                     Forms\Components\Section::make('Lead Information')
                         ->schema([
+                            Forms\Components\Placeholder::make('source')
+                                ->label('Inquiry Source')
+                                ->content(fn ($record) => $record->source === 'EO' ? '🎪 EO Website' : '🏠 Property Website'),
                             Forms\Components\Placeholder::make('property_name')
                                 ->label('Property Interested In')
                                 ->content(fn ($record) => $record->property->title ?? 'Unknown'),
@@ -125,6 +128,12 @@ class InquiryResource extends Resource
                         'warning' => 'CONTACTED',
                         'success' => 'CLOSED',
                     ]),
+                Tables\Columns\TextColumn::make('source')
+                ->badge()
+                ->colors([
+                    'info'    => 'PROPERTY',
+                    'warning' => 'EO',
+                ]),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
@@ -133,6 +142,11 @@ class InquiryResource extends Resource
                         'NEW' => 'New',
                         'CONTACTED' => 'Contacted',
                         'CLOSED' => 'Closed',
+                    ]),
+                Tables\Filters\SelectFilter::make('source')
+                    ->options([
+                        'PROPERTY' => 'Property Website',
+                        'EO'       => 'EO Website',
                     ]),
             ])
             ->actions([
