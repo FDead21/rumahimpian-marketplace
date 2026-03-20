@@ -79,7 +79,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2">
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="font-bold text-gray-900">Recent Properties</h3>
                 </div>
                 <div class="divide-y divide-gray-100">
@@ -107,7 +107,7 @@
         @if($role !== 'ADMIN')
         <div>
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="font-bold text-gray-900">Recent Inquiries</h3>
                 </div>
                 <div class="divide-y divide-gray-100">
