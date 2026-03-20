@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PackageResource\Pages;
 use App\Models\Package;
+use App\Models\Vendor;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -26,6 +27,7 @@ class PackageResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+
             Forms\Components\Section::make('Package Details')->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -35,6 +37,13 @@ class PackageResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->unique(ignoreRecord: true),
+
+                Forms\Components\Select::make('vendor_id')
+                    ->label('Vendor')
+                    ->options(Vendor::where('is_active', true)->pluck('name', 'id'))
+                    ->searchable()
+                    ->nullable()
+                    ->placeholder('Select a vendor (optional)'),
 
                 Forms\Components\Textarea::make('description')
                     ->rows(3)
@@ -46,15 +55,62 @@ class PackageResource extends Resource
                     ->prefix('Rp')
                     ->helperText('Enter raw number e.g. 15000000'),
 
+                Forms\Components\TextInput::make('original_price')
+                    ->label('Original Price (for discount display)')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->helperText('Leave empty if no discount. Must be higher than price.')
+                    ->nullable(),
+
                 Forms\Components\TextInput::make('max_pax')
                     ->label('Max Guests (pax)')
                     ->numeric()
                     ->suffix('pax'),
 
                 Forms\Components\FileUpload::make('thumbnail')
+                    ->label('Main Thumbnail')
                     ->image()
                     ->directory('packages')
                     ->columnSpanFull(),
+            ])->columns(2),
+
+            Forms\Components\Section::make('Gallery Images')
+                ->description('Upload multiple images for the gallery slideshow on the package detail page.')
+                ->schema([
+                    Forms\Components\Repeater::make('media')
+                        ->relationship('media')
+                        ->schema([
+                            Forms\Components\FileUpload::make('file_path')
+                                ->label('Image')
+                                ->image()
+                                ->directory('packages/gallery')
+                                ->required(),
+                            Forms\Components\TextInput::make('sort_order')
+                                ->label('Sort Order')
+                                ->numeric()
+                                ->default(0),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('Add Gallery Image')
+                        ->columnSpanFull(),
+                ]),
+
+            Forms\Components\Section::make('Location')->schema([
+                Forms\Components\TextInput::make('address')
+                    ->label('Address / Venue Name')
+                    ->placeholder('e.g. Anantara Seminyak, Jl. Abimanyu, Bali')
+                    ->columnSpanFull(),
+
+                Forms\Components\TextInput::make('latitude')
+                    ->label('Latitude')
+                    ->numeric()
+                    ->placeholder('-8.6905')
+                    ->helperText('Get from Google Maps (right click → copy coordinates)'),
+
+                Forms\Components\TextInput::make('longitude')
+                    ->label('Longitude')
+                    ->numeric()
+                    ->placeholder('115.1670'),
             ])->columns(2),
 
             Forms\Components\Section::make('Package Inclusions')->schema([
@@ -62,7 +118,7 @@ class PackageResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('item')
                             ->label('Inclusion Item')
-                            ->placeholder('e.g. MC Professional, Catering 500 pax, Decoration')
+                            ->placeholder('e.g. MC Professional, Catering 500 pax')
                             ->required(),
                     ])
                     ->addActionLabel('Add Inclusion')
@@ -86,6 +142,7 @@ class PackageResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('thumbnail')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable()->weight('bold'),
+                Tables\Columns\TextColumn::make('vendor.name')->label('Vendor')->sortable()->placeholder('—'),
                 Tables\Columns\TextColumn::make('price')
                     ->money('IDR', locale: 'id_ID')
                     ->sortable(),

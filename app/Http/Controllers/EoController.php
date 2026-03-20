@@ -65,17 +65,28 @@ class EoController extends Controller
     }
 
     // Package detail
-    public function packageShow($slug)
+        public function packageShow($slug)
     {
         $package = Package::where('slug', $slug)
             ->where('is_active', true)
+            ->with(['vendor', 'media'])
             ->firstOrFail();
-
+ 
+        $relatedPackages = Package::where('is_active', true)
+            ->where('id', '!=', $package->id)
+            ->orderByDesc('is_featured')
+            ->orderByRaw('ABS(price - ?)', [$package->price])
+            ->take(3)
+            ->with('media')
+            ->get();
+ 
         return view('eo.package-detail', [
-            'package'    => $package,
-            'eoSettings' => $this->eoSettings(),
+            'package'         => $package,
+            'relatedPackages' => $relatedPackages,
+            'eoSettings'      => $this->eoSettings(),
         ]);
     }
+ 
 
     // Booking form
     public function bookingForm(Request $request)
