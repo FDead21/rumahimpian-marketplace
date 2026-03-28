@@ -1,6 +1,12 @@
 <x-eo-layout>
-
-    <div class="max-w-3xl mx-auto px-4 py-12" x-data="venuePicker()">
+<style>
+    /* Sleek custom scrollbar for the vendor list */
+    .vendor-scroll::-webkit-scrollbar { width: 6px; }
+    .vendor-scroll::-webkit-scrollbar-track { background: transparent; }
+    .vendor-scroll::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 10px; }
+    .vendor-scroll:hover::-webkit-scrollbar-thumb { background-color: #cbd5e1; }
+</style>
+    <div class="max-w-4xl mx-auto px-4 py-12" x-data="bookingForm()">
 
         <div class="text-center mb-10">
             <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Book Your Event</h1>
@@ -28,6 +34,13 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="bg-red-600 text-white rounded-xl px-6 py-4 mb-8 shadow-lg">
+                <p class="font-bold text-lg mb-1">🚨 Booking Failed</p>
+                <p class="text-sm font-medium">{{ session('error') }}</p>
+            </div>
+        @endif
+
         <form action="{{ route('eventOrganizer.booking.store') }}" method="POST"
               class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
             @csrf
@@ -38,11 +51,11 @@
             {{-- Package Selection --}}
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Event Package <span class="text-red-500">*</span></label>
-                <select name="package_id" required
+                <select name="package_id" required x-model="selectedPackageId"
                         class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
                     <option value="">Select a package...</option>
                     @foreach($packages as $pkg)
-                        <option value="{{ $pkg->id }}" {{ (request('package_id') == $pkg->id || old('package_id') == $pkg->id) ? 'selected' : '' }}>
+                        <option value="{{ $pkg->id }}">
                             {{ $pkg->name }} — Rp {{ number_format($pkg->price, 0, ',', '.') }}
                         </option>
                     @endforeach
@@ -74,20 +87,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Estimated Guests</label>
-                    <input type="number" name="guest_count" min="1"
+                    <input type="number" name="guest_count" min="1" required
                            value="{{ old('guest_count') }}"
                            placeholder="e.g. 200"
                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
                 </div>
 
-                {{-- Venue Picker --}}
+                {{-- Venue Picker (Your original code remains here) --}}
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
                         Venue
-                        <span class="text-xs text-gray-400 font-normal ml-1">(optional — from property marketplace)</span>
+                        <span class="text-xs text-gray-400 font-normal ml-1">(optional)</span>
                     </label>
-
-                    {{-- Selected venue display / trigger --}}
                     <button type="button" @click="openModal()"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none text-left transition hover:border-rose-300 hover:bg-rose-50 flex items-center justify-between gap-2">
                         <span class="flex items-center gap-2 min-w-0">
@@ -109,8 +120,6 @@
                             </template>
                         </span>
                     </button>
-
-                    {{-- Clear button --}}
                     <button type="button" x-show="selectedId" @click="clearVenue()"
                             class="mt-1.5 text-xs text-gray-400 hover:text-rose-500 transition flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,9 +130,96 @@
                 </div>
             </div>
 
+            {{-- NEW: Clean Customization Section --}}
+            <div class="border-t border-gray-100 pt-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-xl">Customize Your Event</h3>
+                        <p class="text-sm text-gray-500">Optional add-ons to complete your package.</p>
+                    </div>
+                    <button type="button" @click="openVendorListModal()"
+                            class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2 rounded-xl border border-rose-200 transition text-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Add Services
+                    </button>
+                </div>
+
+                {{-- Hidden inputs to pass data cleanly to Laravel --}}
+                <template x-for="(indices, vId) in selectedServices" :key="'input-'+vId">
+                    <template x-for="idx in indices" :key="'input-'+vId+'-'+idx">
+                        <input type="hidden" :name="`vendor_services[${vId}][]`" :value="idx">
+                    </template>
+                </template>
+                <template x-for="vid in selectedVendors" :key="'input-base-'+vid">
+                    <input type="hidden" name="vendors[]" :value="vid">
+                </template>
+
+                {{-- Dynamic Bundled Vendors (Included in Package) --}}
+                <template x-if="bundledVendors.length > 0">
+                    <div class="mb-6 space-y-2">
+                        <p class="text-sm font-bold text-gray-700">Included in selected package:</p>
+                        <template x-for="bv in bundledVendors" :key="'bundled-'+bv.id">
+                            <div class="flex items-center justify-between p-3 bg-green-50/50 border border-green-100 rounded-xl shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xl">✅</span>
+                                    <div>
+                                        <p class="font-bold text-sm text-gray-900" x-text="bv.name"></p>
+                                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider" x-text="bv.category"></p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-bold text-green-700 bg-green-100 px-2 py-1 rounded uppercase tracking-wide" x-text="bv.is_mandatory ? 'Required' : 'Included'"></span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                {{-- Summary of Selected Items --}}
+                <div class="space-y-3" x-show="selectedVendors.length > 0 || hasSelectedServices()">
+                    
+                    {{-- Base Vendors Selected --}}
+                    <template x-for="vid in selectedVendors" :key="'base-'+vid">
+                        <div class="flex items-center justify-between p-3 border border-gray-200 bg-white rounded-xl shadow-sm">
+                            <div>
+                                <p class="font-bold text-sm text-gray-900" x-text="getVendorName(vid)"></p>
+                                <p class="text-xs text-gray-500">Base Package</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-extrabold text-rose-600 text-sm" x-text="'+ Rp ' + formatPrice(getVendorPrice(vid))"></span>
+                                <button type="button" @click="toggleBaseVendor(vid)" class="text-gray-400 hover:text-red-500 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- Specific Services Selected --}}
+                    <template x-for="(indices, vId) in selectedServices" :key="'srv-'+vId">
+                        <template x-for="idx in indices" :key="'srv-'+vId+'-'+idx">
+                            <div class="flex items-center justify-between p-3 border border-gray-200 bg-white rounded-xl shadow-sm">
+                                <div>
+                                    <p class="font-bold text-sm text-gray-900" x-text="getServiceName(vId, idx)"></p>
+                                    <p class="text-xs text-gray-500" x-text="'From: ' + getVendorName(vId)"></p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="font-extrabold text-rose-600 text-sm" x-text="'+ Rp ' + formatPrice(getServicePrice(vId, idx))"></span>
+                                    <button type="button" @click="toggleService(vId, idx)" class="text-gray-400 hover:text-red-500 transition">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+
+                {{-- Empty State if nothing selected --}}
+                <div x-show="selectedVendors.length === 0 && !hasSelectedServices()" class="p-6 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-center">
+                    <p class="text-gray-400 text-sm">No extra vendors selected yet.</p>
+                </div>
+            </div>
+
             {{-- Client Info --}}
             <div class="border-t border-gray-100 pt-6">
-                <h3 class="font-bold text-gray-800 mb-4">Your Contact Details</h3>
+                <h3 class="font-bold text-gray-800 mb-4 text-xl">Your Contact Details</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
@@ -152,24 +248,29 @@
             {{-- Notes --}}
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Special Requests / Notes</label>
-                <textarea name="notes" rows="4"
+                <textarea name="notes" rows="3"
                           placeholder="Tell us anything special about your event..."
                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none text-gray-800 resize-none">{{ old('notes') }}</textarea>
             </div>
 
-            {{-- Submit --}}
-            <button type="submit"
-                    class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 text-lg">
-                📅 Submit Booking Request
-            </button>
+            {{-- NEW: Dynamic Price Display --}}
+            <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl mt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <p class="text-gray-400 text-sm font-medium mb-1">Estimated Total</p>
+                        <div class="text-3xl md:text-4xl font-extrabold text-white">
+                            Rp <span x-text="formatPrice(totalPrice)">0</span>
+                        </div>
+                    </div>
+                    <button type="submit"
+                            class="w-full md:w-auto bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-rose-500/30 transition transform hover:-translate-y-1 text-lg whitespace-nowrap">
+                        📅 Confirm Booking
+                    </button>
+                </div>
+            </div>
 
-            <p class="text-center text-xs text-gray-400">
-                We'll contact you via WhatsApp within 24 hours to confirm your booking.
-            </p>
         </form>
 
-
-        {{-- ===================== VENUE MODAL ===================== --}}
         <div x-show="isOpen"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0"
@@ -343,59 +444,277 @@
             </div>
         </div>
 
+        {{-- ===================== VENDOR SERVICES MODAL ===================== --}}
+        <div x-show="isVendorModalOpen"
+             class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+             @click.self="closeVendorModal()"
+             @keydown.escape.window="closeVendorModal()"
+             style="display:none">
+
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden" x-show="isVendorModalOpen" x-transition>
+                
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gray-50">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-gray-900" x-text="activeVendor ? activeVendor.name : 'Services'"></h2>
+                        <p class="text-sm text-gray-500 mt-0.5">Select the specific items you want</p>
+                    </div>
+                    <button type="button" @click="closeVendorModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                {{-- Scrollable Service List --}}
+                <div class="overflow-y-auto flex-1 p-6 space-y-3">
+                    <template x-if="activeVendor && activeVendor.service_menu">
+                        <template x-for="(item, index) in activeVendor.service_menu" :key="index">
+                            <label class="flex items-center gap-4 p-4 border rounded-2xl cursor-pointer transition-colors"
+                                   :class="(selectedServices[activeVendor.id] || []).includes(String(index)) ? 'border-rose-500 bg-rose-50' : 'border-gray-200 hover:border-rose-300'">
+                                
+                                <input type="checkbox" :value="index" x-model="selectedServices[activeVendor.id]" 
+                                       class="w-5 h-5 text-rose-600 border-gray-300 rounded focus:ring-rose-500">
+                                
+                                <template x-if="item.image">
+                                    <img :src="'/storage/' + item.image" class="w-16 h-16 rounded-xl object-cover shrink-0">
+                                </template>
+                                <template x-if="!item.image">
+                                    <div class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">📦</div>
+                                </template>
+
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900" x-text="item.item_name"></h4>
+                                    <p class="text-xs text-gray-500 line-clamp-1" x-text="item.description"></p>
+                                    <p class="text-sm font-extrabold text-rose-600 mt-1" x-text="'+ Rp ' + formatPrice(item.price)"></p>
+                                </div>
+                            </label>
+                        </template>
+                    </template>
+                </div>
+
+                {{-- Footer --}}
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="button" @click="closeVendorModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- ===================== VENDOR DIRECTORY MODAL ===================== --}}
+        <div x-show="isVendorListModalOpen"
+             class="fixed inset-0 z-[50] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+             @click.self="closeVendorListModal()"
+             @keydown.escape.window="closeVendorListModal()"
+             style="display:none">
+
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden" x-show="isVendorListModalOpen" x-transition>
+                
+                {{-- Header & Filters --}}
+                <div class="px-6 py-5 border-b border-gray-100 bg-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-extrabold text-gray-900">Vendor Directory</h2>
+                        <button type="button" @click="closeVendorListModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                    <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                        <button @click="vendorCategoryFilter = ''" class="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition" :class="vendorCategoryFilter === '' ? 'bg-rose-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">All</button>
+                        @foreach($vendorsByCategory->keys() as $cat)
+                            <button @click="vendorCategoryFilter = '{{ $cat }}'" class="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition" :class="vendorCategoryFilter === '{{ $cat }}' ? 'bg-rose-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">{{ $cat }}</button>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Vendor Grid --}}
+                <div class="overflow-y-auto flex-1 p-6 bg-gray-50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <template x-for="vendor in filteredVendorsList" :key="vendor.id">
+                            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full hover:shadow-md transition">
+                                <div class="flex-1">
+                                    <span class="text-[10px] uppercase font-bold tracking-wider text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md" x-text="vendor.category"></span>
+                                    <h4 class="font-bold text-gray-900 mt-2 leading-tight" x-text="vendor.name"></h4>
+                                    <p class="text-xs text-gray-500 mt-1 line-clamp-2" x-text="vendor.description"></p>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-50">
+                                    {{-- If it has a service menu --}}
+                                    <template x-if="vendor.service_menu && vendor.service_menu.length > 0">
+                                        <button @click="openVendorModal(vendor.id)" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 rounded-xl text-sm transition">
+                                            View Services
+                                        </button>
+                                    </template>
+                                    {{-- If it does NOT have a service menu (Base Vendor) --}}
+                                    <template x-if="!vendor.service_menu || vendor.service_menu.length === 0">
+                                        <button @click="toggleBaseVendor(vendor.id)" class="w-full font-bold py-2 rounded-xl text-sm transition"
+                                                :class="selectedVendors.includes(String(vendor.id)) ? 'bg-rose-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-rose-300'">
+                                            <span x-text="selectedVendors.includes(String(vendor.id)) ? '✓ Selected' : '+ Add (Rp ' + formatPrice(vendor.price_from) + ')'"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div x-show="filteredVendorsList.length === 0" class="text-center py-10 text-gray-400">No vendors found in this category.</div>
+                </div>
+            </div>
+        </div>
+        
     </div>
+
+    @php
+        $packages->load('vendors');
+        $mappedPackages = $packages->map(function($p) {
+            return [
+                'id' => $p->id,
+                'price' => $p->price,
+                'vendors' => $p->vendors->map(fn($v) => [
+                    'id' => $v->id,
+                    'name' => $v->name,
+                    'category' => $v->category,
+                    'is_mandatory' => $v->pivot->is_mandatory
+                ])
+            ];
+        });
+        $mappedVendors = $vendorsByCategory->flatten()->map(function($v) {
+            return [
+                'id' => $v->id,
+                'name' => $v->name,
+                'category' => $v->category,       
+                'description' => $v->description,  
+                'price_from' => $v->price_from,
+                'service_menu' => is_array($v->service_menu) ? $v->service_menu : []
+            ];
+        })->values();
+    @endphp
 
     {{-- Alpine Data --}}
     <script>
-        function venuePicker() {
-            const all = @json($venuesJson);
+        function bookingForm() {
+            const allVenues = @json($venuesJson ?? []); 
+            const packagesData = @json($mappedPackages); 
+            const vendorsData = @json($mappedVendors);
 
             return {
-                isOpen:      false,
-                search:      '',
-                filterCity:  '',
-                filterType:  '',
-                filtered:    all,
-                selectedId:  {{ old('property_id') ? old('property_id') : 'null' }},
-                selectedLabel: '',
-                selectedThumb: null,
+                selectedPackageId: '{{ old('package_id', request('package_id')) }}',
+                selectedVendors: @json(old('vendors', [])).map(String),
+                selectedServices: {}, 
+                
+                // Modal States
+                isVendorListModalOpen: false,
+                vendorCategoryFilter: '',
+                isVendorModalOpen: false,
+                activeVendor: null,
 
                 init() {
-                    // Restore selection if old() exists (form validation failed)
+                    vendorsData.forEach(v => {
+                        this.selectedServices[v.id] = [];
+                    });
+                    
                     @if(old('property_id'))
-                        const pre = all.find(v => v.id === {{ old('property_id') }});
+                        const pre = allVenues.find(v => v.id === {{ old('property_id') }});
                         if (pre) { this.selectedLabel = pre.title + ' — ' + pre.city; this.selectedThumb = pre.thumb; }
                     @endif
                 },
 
+                // --- Vendor Directory Logic ---
+                openVendorListModal() { this.isVendorListModalOpen = true; document.body.style.overflow = 'hidden'; },
+                closeVendorListModal() { this.isVendorListModalOpen = false; document.body.style.overflow = ''; },
+                
+                get filteredVendorsList() {
+                    if (!this.vendorCategoryFilter) return vendorsData;
+                    // Because we didn't pass category in mappedVendors originally, let's look it up dynamically or just pass it! 
+                    // Note: Ensure 'category' is in your mappedVendors array in the @php block at the top of the script!
+                    return vendorsData.filter(v => v.category === this.vendorCategoryFilter);
+                },
+
+                // --- Service Selection Logic ---
+                openVendorModal(vendorId) {
+                    this.activeVendor = vendorsData.find(v => v.id == vendorId);
+                    this.isVendorModalOpen = true;
+                    // Keep body overflow hidden since we are likely opening this over the other modal
+                },
+                closeVendorModal() {
+                    this.isVendorModalOpen = false;
+                    setTimeout(() => this.activeVendor = null, 300);
+                },
+
+                toggleBaseVendor(vid) {
+                    vid = String(vid);
+                    if (this.selectedVendors.includes(vid)) {
+                        this.selectedVendors = this.selectedVendors.filter(id => id !== vid);
+                    } else {
+                        this.selectedVendors.push(vid);
+                    }
+                },
+                toggleService(vId, idx) {
+                    idx = String(idx);
+                    if (this.selectedServices[vId].includes(idx)) {
+                        this.selectedServices[vId] = this.selectedServices[vId].filter(i => i !== idx);
+                    } else {
+                        this.selectedServices[vId].push(idx);
+                    }
+                },
+
+                // --- UI Helpers for Summary ---
+                hasSelectedServices() {
+                    return Object.values(this.selectedServices).some(arr => arr.length > 0);
+                },
+                getVendorName(vid) {
+                    let v = vendorsData.find(v => v.id == vid);
+                    return v ? v.name : '';
+                },
+                getVendorPrice(vid) {
+                    let v = vendorsData.find(v => v.id == vid);
+                    return v ? v.price_from : 0;
+                },
+                getServiceName(vId, idx) {
+                    let v = vendorsData.find(v => v.id == vId);
+                    return v && v.service_menu[idx] ? v.service_menu[idx].item_name : '';
+                },
+                getServicePrice(vId, idx) {
+                    let v = vendorsData.find(v => v.id == vId);
+                    return v && v.service_menu[idx] ? v.service_menu[idx].price : 0;
+                },
+                get bundledVendors() {
+                    if (!this.selectedPackageId) return [];
+                    let pkg = packagesData.find(p => p.id == this.selectedPackageId);
+                    return pkg && pkg.vendors ? pkg.vendors : [];
+                },
+
+                // --- Math & Format ---
+                get totalPrice() {
+                    let total = 0;
+                    if (this.selectedPackageId) {
+                        let pkg = packagesData.find(p => p.id == this.selectedPackageId);
+                        if (pkg) total += parseFloat(pkg.price);
+                    }
+                    this.selectedVendors.forEach(vid => {
+                        let vnd = vendorsData.find(v => v.id == vid);
+                        if (vnd && vnd.price_from) total += parseFloat(vnd.price_from);
+                    });
+                    Object.entries(this.selectedServices).forEach(([vId, indices]) => {
+                        let vnd = vendorsData.find(v => v.id == vId);
+                        if (vnd && vnd.service_menu) {
+                            indices.forEach(idx => {
+                                let item = vnd.service_menu[idx];
+                                if (item && item.price) total += parseFloat(item.price);
+                            });
+                        }
+                    });
+                    return total;
+                },
+                formatPrice(price) { return new Intl.NumberFormat('id-ID').format(price); },
+
+                // --- Venue Logic ---
+                isOpen: false, search: '', filterCity: '', filterType: '', filtered: allVenues,
+                selectedId: {{ old('property_id') ? old('property_id') : 'null' }}, selectedLabel: '', selectedThumb: null,
                 openModal()  { this.isOpen = true; document.body.style.overflow = 'hidden'; },
                 closeModal() { this.isOpen = false; document.body.style.overflow = ''; },
-
                 filterVenues() {
                     const s = this.search.toLowerCase();
-                    this.filtered = all.filter(v => {
-                        const matchSearch = !s ||
-                            v.title.toLowerCase().includes(s) ||
-                            v.city.toLowerCase().includes(s) ||
-                            v.district.toLowerCase().includes(s);
-                        const matchCity = !this.filterCity || v.city === this.filterCity;
-                        const matchType = !this.filterType || v.property_type === this.filterType;
-                        return matchSearch && matchCity && matchType;
-                    });
+                    this.filtered = allVenues.filter(v => (!s || v.title.toLowerCase().includes(s) || v.city.toLowerCase().includes(s) || v.district.toLowerCase().includes(s)) && (!this.filterCity || v.city === this.filterCity) && (!this.filterType || v.property_type === this.filterType));
                 },
-
-                selectVenue(venue) {
-                    this.selectedId    = venue.id;
-                    this.selectedLabel = venue.title + ' — ' + venue.city;
-                    this.selectedThumb = venue.thumb;
-                    this.closeModal();
-                },
-
-                clearVenue() {
-                    this.selectedId    = null;
-                    this.selectedLabel = '';
-                    this.selectedThumb = null;
-                },
+                selectVenue(venue) { this.selectedId = venue.id; this.selectedLabel = venue.title + ' — ' + venue.city; this.selectedThumb = venue.thumb; this.closeModal(); },
+                clearVenue() { this.selectedId = null; this.selectedLabel = ''; this.selectedThumb = null; },
             }
         }
     </script>

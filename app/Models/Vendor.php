@@ -14,8 +14,16 @@ class Vendor extends Model
         'category',
         'phone',
         'email',
+        'city',
+        'address',
         'description',
+        'detailed_description',
         'logo',
+        'instagram_url',
+        'website_url',
+        'youtube_url',
+        'features',     
+        'service_menu', 
         'price_from',
         'price_to',
         'is_active',
@@ -25,6 +33,8 @@ class Vendor extends Model
         'price_from' => 'decimal:2',
         'price_to'   => 'decimal:2',
         'is_active'  => 'boolean',
+        'features'     => 'array',
+        'service_menu' => 'array',
     ];
 
     public function media()

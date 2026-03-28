@@ -17,18 +17,18 @@ class PackageController extends EoBaseController
             ->orderBy('price')
             ->get();
 
-        return view('eventOrganizer.package.packages', [
+        return view('eventOrganizer.package.index', [
             'packages'   => $packages,
             'eoSettings' => Setting::forGroup('EO'),
         ]);
     }
 
     // Package detail
-        public function show($slug)
+    public function show($slug)
     {
         $package = Package::where('slug', $slug)
             ->where('is_active', true)
-            ->with(['vendor', 'media'])
+            ->with(['vendors', 'media']) 
             ->firstOrFail();
  
         $relatedPackages = Package::where('is_active', true)
@@ -39,7 +39,7 @@ class PackageController extends EoBaseController
             ->with('media')
             ->get();
  
-        return view('eventOrganizer.package.package-detail', [
+        return view('eventOrganizer.package.show', [
             'package'         => $package,
             'relatedPackages' => $relatedPackages,
             'eoSettings' => Setting::forGroup('EO'),

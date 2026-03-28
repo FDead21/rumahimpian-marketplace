@@ -11,7 +11,6 @@ class Package extends Model
     use HasFactory;
 
     protected $fillable = [
-        'vendor_id',
         'name',
         'slug',
         'description',
@@ -46,9 +45,11 @@ class Package extends Model
         });
     }
 
-    public function vendor()
+    public function vendors()
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsToMany(Vendor::class, 'package_vendor')
+                    ->withPivot('is_mandatory')
+                    ->withTimestamps();
     }
 
     public function media()
@@ -76,4 +77,28 @@ class Package extends Model
         }
         return null;
     }
+
+    public function packageVendors()
+    {
+        return $this->hasMany(PackageVendor::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getWhatsappUrlAttribute(): string
+        {
+            // Get the creator's phone number, fallback to a default just in case
+            // Note: Change 'phone_number' if your DB column is just named 'phone'
+            $rawPhone = $this->user ? $this->user->phone_number : '6281296760196'; 
+            
+            // Clean the string so it only contains numbers (removes +, -, spaces)
+            $cleanPhone = preg_replace('/[^0-9]/', '', $rawPhone);
+            
+            $message = urlencode("Halo, saya tertarik dengan paket {$this->name} (Rp " . number_format($this->price, 0, ',', '.') . "). Mohon info lebih lanjut!");
+            
+            return "https://wa.me/{$cleanPhone}?text={$message}";
+        }
 }

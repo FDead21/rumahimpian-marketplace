@@ -9,7 +9,7 @@ use App\Models\Setting;
 
 class VendorController extends EoBaseController
 {
-     // Vendors listing
+    // Vendors listing
     public function index()
     {
         $vendors = Vendor::where('is_active', true)
@@ -18,9 +18,18 @@ class VendorController extends EoBaseController
             ->get()
             ->groupBy('category');
 
-        return view('eventOrganizer.vendors.vendor-index', [
+        return view('eventOrganizer.vendors.index', [
             'vendors'    => $vendors,
             'eoSettings' => Setting::forGroup('EO'),
         ]);
+    }
+
+    public function show($id)
+    {
+        $vendor = Vendor::where('is_active', true)
+            ->with('media')
+            ->findOrFail($id);
+
+        return view('eventOrganizer.vendors.show', compact('vendor'));
     }
 }

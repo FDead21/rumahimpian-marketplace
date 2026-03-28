@@ -101,6 +101,7 @@ Route::prefix('eventOrganizer')->name('eventOrganizer.')->group(function () {
 
     // Vendors
     Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+    Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
 });
 
 /*

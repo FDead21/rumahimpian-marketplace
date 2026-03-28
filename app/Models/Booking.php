@@ -62,10 +62,16 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
+    public function bookingVendors()
+    {
+        return $this->hasMany(BookingVendor::class);
+    }
+
     public function vendors()
     {
+        // You must tell Laravel to include the extra columns from the booking_vendors table
         return $this->belongsToMany(Vendor::class, 'booking_vendors')
-                    ->withPivot('notes')
+                    ->withPivot('agreed_price', 'notes') // <-- Double check 'agreed_price' is here!
                     ->withTimestamps();
     }
 

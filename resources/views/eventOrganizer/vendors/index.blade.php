@@ -20,22 +20,23 @@
                 <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
 
                     {{-- Logo --}}
-                    <div class="relative h-40 bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center overflow-hidden">
+                    <a href="{{ route('eventOrganizer.vendors.show', $vendor->id) }}" class="block relative h-40 bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center overflow-hidden">
                         @if($vendor->logo)
                             <img src="{{ asset('storage/' . $vendor->logo) }}"
-                                 class="h-24 w-24 object-cover rounded-full border-4 border-white shadow-md">
+                                 class="h-24 w-24 object-cover rounded-full border-4 border-white shadow-md transform group-hover:scale-110 transition duration-500">
                         @else
-                            <div class="h-24 w-24 rounded-full bg-rose-200 flex items-center justify-center text-4xl border-4 border-white shadow-md">
+                            <div class="h-24 w-24 rounded-full bg-rose-200 flex items-center justify-center text-4xl border-4 border-white shadow-md transform group-hover:scale-110 transition duration-500">
                                 🏪
                             </div>
                         @endif
-                    </div>
+                    </a>
 
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-900 mb-1 group-hover:text-rose-600 transition">
-                            {{ $vendor->name }}
-                        </h3>
-
+                  <div class="p-5">
+                        <a href="{{ route('eventOrganizer.vendors.show', $vendor->id) }}">
+                            <h3 class="font-bold text-lg text-gray-900 mb-1 group-hover:text-rose-600 transition">
+                                {{ $vendor->name }}
+                            </h3>
+                        </a>
                         @if($vendor->description)
                             <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ $vendor->description }}</p>
                         @endif

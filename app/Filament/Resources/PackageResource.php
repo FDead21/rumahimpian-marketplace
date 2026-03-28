@@ -28,6 +28,17 @@ class PackageResource extends Resource
     {
         return $form->schema([
 
+            Forms\Components\Section::make('Sales & Assignment')->schema([
+                    Forms\Components\Select::make('user_id')
+                        ->label('WhatsApp Contact Person (Owner)')
+                        ->relationship('user', 'name', fn ($query) => $query->whereIn('role', ['ADMIN', 'EO_AGENT']))
+                        ->default(auth()->id())
+                        ->searchable()
+                        ->preload()
+                        ->required()
+                        ->helperText('All new WhatsApp inquiries for this package will be sent to this agent.'),
+                ]),
+
             Forms\Components\Section::make('Package Details')->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -37,13 +48,6 @@ class PackageResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->unique(ignoreRecord: true),
-
-                Forms\Components\Select::make('vendor_id')
-                    ->label('Vendor')
-                    ->options(Vendor::where('is_active', true)->pluck('name', 'id'))
-                    ->searchable()
-                    ->nullable()
-                    ->placeholder('Select a vendor (optional)'),
 
                 Forms\Components\Textarea::make('description')
                     ->rows(3)
@@ -116,14 +120,47 @@ class PackageResource extends Resource
             Forms\Components\Section::make('Package Inclusions')->schema([
                 Forms\Components\Repeater::make('inclusions')
                     ->schema([
-                        Forms\Components\TextInput::make('item')
-                            ->label('Inclusion Item')
-                            ->placeholder('e.g. MC Professional, Catering 500 pax')
-                            ->required(),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('item')
+                                ->label('Inclusion Name')
+                                ->placeholder('e.g. MC Professional')
+                                ->required(),
+                            Forms\Components\FileUpload::make('image')
+                                ->label('Item Photo')
+                                ->image()
+                                ->directory('packages/inclusions')
+                                ->imageEditor(),
+                        ]),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Item Description')
+                            ->rows(2)
+                            ->placeholder('Describe what makes this inclusion special...')
+                            ->columnSpanFull(),
                     ])
+                    ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
+                    ->collapsible()
                     ->addActionLabel('Add Inclusion')
                     ->columnSpanFull(),
             ]),
+
+            Forms\Components\Repeater::make('packageVendors') 
+                            ->relationship('packageVendors')
+                            ->schema([
+                                Forms\Components\Select::make('vendor_id')
+                                    ->label('Select Vendor')
+                                    ->options(\App\Models\Vendor::pluck('name', 'id'))
+                                    ->required()
+                                    ->searchable()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                                    
+                                Forms\Components\Toggle::make('is_mandatory')
+                                    ->label('Mandatory Vendor?')
+                                    ->helperText('If checked, the customer cannot remove this vendor from the package.')
+                                    ->default(true),
+                            ])
+                            ->columns(2)
+                            ->itemLabel(fn (array $state): ?string => \App\Models\Vendor::find($state['vendor_id'])?->name ?? 'New Vendor')
+                            ->addActionLabel('Add Vendor to Package'),
 
             Forms\Components\Section::make('Visibility')->schema([
                 Forms\Components\Toggle::make('is_active')
