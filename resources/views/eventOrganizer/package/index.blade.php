@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
 
     {{-- Page Header --}}
     <div class="bg-gradient-to-br from-rose-600 to-pink-700 text-white py-16 text-center">
@@ -72,4 +72,4 @@
         </div>
     </div>
 
-</x-eo-layout>
+</x-layout>

@@ -12,7 +12,8 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         // Start with Published properties only
-        $query = Property::where('status', 'PUBLISHED');
+        $query = Property::where('status', 'PUBLISHED')
+                         ->where('listing_type', 'RENT');
 
         // 1. Search by Keyword (Title or City or District)
         if ($request->filled('search')) {

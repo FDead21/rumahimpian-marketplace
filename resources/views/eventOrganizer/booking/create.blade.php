@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
 <style>
     /* Sleek custom scrollbar for the vendor list */
     .vendor-scroll::-webkit-scrollbar { width: 6px; }
@@ -678,4 +678,4 @@
         }
     </script>
 
-</x-eo-layout>
+</x-layout>

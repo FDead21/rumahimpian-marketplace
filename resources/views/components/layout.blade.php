@@ -3,31 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{-- Dynamically prioritize EO settings if they exist, otherwise fallback to Property/Global settings --}}
-    <title>{{ $title ?? $eoSettings['eo_site_name'] ?? $settings['site_name'] ?? 'RumahImpian Group' }}</title>
+    
+    {{-- Dynamic Title Logic --}}
+    <title>
+        @yield('meta_title', $title ?? $settings['site_name'] ?? 'MadeInTravel')
+    </title>
+    @hasSection('meta_description')
+        <meta name="description" content="@yield('meta_description')">
+    @endif
 
-    @if(!empty($eoSettings['eo_site_favicon']))
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . $eoSettings['eo_site_favicon']) }}">
-    @elseif(!empty($settings['site_favicon']))
+    {{-- Favicon Logic --}}
+    @if(!empty($settings['site_favicon']))
         <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings['site_favicon']) }}">
     @else
         <link rel="icon" href="{{ asset('favicon.ico') }}"> 
     @endif
 
+    {{-- Core Scripts --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {{-- Include Leaflet ONLY if the page requests it (e.g., Map Search, Property Show) --}}
+    @if(View::hasSection('requires_leaflet') || request()->routeIs('property.map') || request()->routeIs('property.show'))
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @endif
+    
+    {{-- Push any extra page-specific head content --}}
+    @stack('head')
 </head>
+
+@php
+        $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home');
+    @endphp
+
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans text-gray-900">
 
+    {{-- GLOBAL NAVBAR --}}
     @include('components.navbar')
 
-    <main class="flex-grow">
+    {{-- PAGE CONTENT --}}
+    <main class="flex-grow {{ $isHomePage ? '' : 'pt-20 md:pt-24' }}">
         {{ $slot }}
     </main>
-    @include('components.popup')
-\
+
+    {{-- GLOBAL POPUP (if you still use this component) --}}
+    @includeWhen(view()->exists('components.popup'), 'components.popup')
+
+    {{-- GLOBAL FOOTER --}}
     @include('components.footer')
 
+    {{-- ================================================================= --}}
+    {{-- PROPERTY COMPARE BAR (Only shows if there are items to compare)   --}}
+    {{-- ================================================================= --}}
     <div x-data="compareBar()" 
          x-show="count > 0" 
          x-transition.duration.300ms
@@ -47,6 +75,9 @@
         </div>
     </div>
 
+    {{-- ================================================================= --}}
+    {{-- GLOBAL ALPINE LOGIC (Wishlist & Compare)                          --}}
+    {{-- ================================================================= --}}
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('wishlist', {
@@ -106,5 +137,8 @@
             }
         }
     </script>
+
+    {{-- Push any extra page-specific scripts to the bottom --}}
+    @stack('scripts')
 </body>
 </html>

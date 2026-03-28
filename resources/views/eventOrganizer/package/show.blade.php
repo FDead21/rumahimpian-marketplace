@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -184,11 +184,34 @@
                 @endif
 
                 {{-- Inclusions --}}
+                {{-- Inclusions --}}
                 @if(is_array($package->inclusions) && count($package->inclusions) > 0)
-                <div class="mb-12" x-data="{ activeIdx: 0, showInclusionModal: false }">
+                <div class="mb-12" x-data="{ 
+                        activeIdx: 0, 
+                        showInclusionModal: false,
+                        totalItems: {{ count($package->inclusions) }},
+                        autoPlayTimer: null,
+                        startAutoPlay() {
+                            this.autoPlayTimer = setInterval(() => {
+                                // Only auto-rotate if the modal is NOT open
+                                if (!this.showInclusionModal) {
+                                    this.activeIdx = (this.activeIdx + 1) % this.totalItems;
+                                }
+                            }, 4000); // Changes image every 4 seconds
+                        },
+                        stopAutoPlay() {
+                            clearInterval(this.autoPlayTimer);
+                        }
+                    }"
+                    x-init="startAutoPlay()"
+                    @mouseenter="stopAutoPlay()"
+                    @mouseleave="startAutoPlay()">
+                    
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __("What's Included") }}</h2>
                     
                     <div class="bg-white border border-gray-100 rounded-3xl p-3 shadow-sm flex flex-col md:flex-row gap-4 h-auto md:h-[450px]">
+                        
+                        {{-- The Left Sidebar (Buttons) --}}
                         <div class="w-full md:w-1/3 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto gap-2 p-1" style="-ms-overflow-style: none; scrollbar-width: none;">
                             @foreach($package->inclusions as $index => $inclusion)
                                 <button type="button" @click="activeIdx = {{ $index }}" 
@@ -204,17 +227,18 @@
                             @endforeach
                         </div>
 
+                        {{-- The Right Side (Auto-changing Image) --}}
                         <button type="button" @click="showInclusionModal = true; document.body.style.overflow='hidden'" 
                                 class="w-full md:w-2/3 relative rounded-2xl overflow-hidden bg-slate-900 h-[300px] md:h-full shrink-0 text-left cursor-zoom-in group focus:outline-none focus:ring-4 focus:ring-rose-500/50">
                             @foreach($package->inclusions as $index => $inclusion)
                                 <div x-show="activeIdx === {{ $index }}" 
-                                     x-transition:enter="transition ease-out duration-500"
-                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter="transition ease-out duration-700"
+                                     x-transition:enter-start="opacity-0 scale-105"
                                      x-transition:enter-end="opacity-100 scale-100"
                                      class="absolute inset-0 w-full h-full flex flex-col">
                                     <div class="absolute inset-0">
                                         @if(isset($inclusion['image']) && $inclusion['image'])
-                                            <img src="{{ asset('storage/' . $inclusion['image']) }}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700">
+                                            <img src="{{ asset('storage/' . $inclusion['image']) }}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000">
                                         @else
                                             <div class="w-full h-full bg-slate-800 flex items-center justify-center text-7xl opacity-50">🎁</div>
                                         @endif
@@ -230,6 +254,7 @@
                         </button>
                     </div>
 
+                    {{-- The Fullscreen Modal (Stays the same) --}}
                     <div x-show="showInclusionModal" style="display:none;" 
                          class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4 md:p-8 backdrop-blur-sm" 
                          @click.self="showInclusionModal = false; document.body.style.overflow=''" 
@@ -380,4 +405,4 @@
 
 </div>
 
-</x-eo-layout>
+</x-layout>

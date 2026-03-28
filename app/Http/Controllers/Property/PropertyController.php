@@ -13,7 +13,9 @@ class PropertyController extends Controller
     {
         // 1. Find by ID first (Faster & Unique)
         // We also make sure it is PUBLISHED so agents can't view hidden drafts by guessing ID
-        $property = \App\Models\Property::where('status', 'PUBLISHED')->findOrFail($id);
+        $property = \App\Models\Property::where('status', 'PUBLISHED')
+                                        ->where('listing_type', 'RENT')
+                                        ->findOrFail($id);
 
         // 2. SEO Redirect Check
         // If the URL slug is wrong (e.g. old name), 301 Redirect to the correct one
@@ -32,6 +34,7 @@ class PropertyController extends Controller
             ->where('category', $property->category) // Ensure 'category' column exists, or use 'property_type'
             ->where('id', '!=', $property->id)
             ->where('status', 'PUBLISHED')
+            ->where('listing_type', 'RENT')
             ->take(3)
             ->get();
 
@@ -40,6 +43,7 @@ class PropertyController extends Controller
             $relatedProperties = \App\Models\Property::where('category', $property->category)
                 ->where('id', '!=', $property->id)
                 ->where('status', 'PUBLISHED')
+                ->where('listing_type', 'RENT')
                 ->take(3)
                 ->get();
         }
@@ -67,7 +71,7 @@ class PropertyController extends Controller
         return view('property.property-detail.tour', compact('property', 'scenes'));
     }
 
-      public function downloadPdf($id, $slug)
+    public function downloadPdf($id, $slug)
     {
         $property = \App\Models\Property::where('status', 'PUBLISHED')->findOrFail($id);
 
@@ -77,7 +81,7 @@ class PropertyController extends Controller
         return $pdf->stream('brochure-' . $property->slug . '.pdf');
     }
 
-        public function wishlistParams(Request $request)
+    public function wishlistParams(Request $request)
     {
         // 1. Get IDs from URL (?ids=1,5,8)
         $ids = explode(',', $request->ids);
@@ -85,6 +89,7 @@ class PropertyController extends Controller
         // 2. Fetch Properties
         $properties = \App\Models\Property::whereIn('id', $ids)
                         ->where('status', 'PUBLISHED')
+                        ->where('listing_type', 'RENT')
                         ->get();
 
         // 3. Return only the HTML (Not a full page layout)
@@ -97,7 +102,7 @@ class PropertyController extends Controller
         return response()->json(['html' => $html]);
     }
 
-        public function compare(Request $request)
+    public function compare(Request $request)
     {
         // Get IDs from URL (e.g., ?ids=1,2,3)
         $ids = explode(',', $request->query('ids', ''));
@@ -105,7 +110,8 @@ class PropertyController extends Controller
         // Fetch properties
         $properties = \App\Models\Property::whereIn('id', $ids)
             ->where('status', 'PUBLISHED')
-            ->limit(3) // Limit to 3 for mobile safety
+            ->where('listing_type', 'RENT')
+            ->limit(3) 
             ->get();
 
         return view('property.compare', compact('properties'));

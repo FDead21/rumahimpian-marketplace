@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
 
     <div class="bg-gradient-to-br from-rose-600 to-pink-700 text-white py-16 text-center">
         <h1 class="text-4xl font-extrabold mb-2">{{ __('Our Vendors') }}</h1>
@@ -98,4 +98,4 @@
         </a>
     </div>
 
-</x-eo-layout>
+</x-layout>

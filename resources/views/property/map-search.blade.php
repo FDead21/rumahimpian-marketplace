@@ -153,7 +153,7 @@
                         <div class="p-3">
                             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 truncate">${prop.title}</h3>
                             <p class="text-xs text-gray-500 mb-2">${prop.district}, ${prop.city}</p>
-                            <a href="/property/${prop.id}/${prop.slug}" target="_blank" class="block w-full bg-sky-600 text-white text-center text-xs py-2 rounded font-bold hover:bg-sky-700 transition">
+                            <a href="/property/${prop.id}/${prop.slug}" target="_blank" class="block w-full text text-center text-xs py-2 rounded font-bold hover:bg-yellow-200 transition">
                                 {{ __('View Property') }}
                             </a>
                         </div>

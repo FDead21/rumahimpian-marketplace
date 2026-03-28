@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
 
     {{-- HERO --}}
     @php
@@ -6,60 +6,7 @@
         $heroSlides = is_string($rawSlides) ? json_decode($rawSlides, true) : $rawSlides;
         if (!is_array($heroSlides)) $heroSlides = [];
     @endphp
-    <div class="relative h-[600px] w-full"
-        x-data="{
-            activeSlide: 0,
-            slides: {{ Js::from($heroSlides) }},
-        init() {
-            if(this.slides.length > 1) {
-                setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length; }, 5000);
-            }
-        }
-     }">
-
-        <div class="absolute inset-0 overflow-hidden">
-            <template x-for="(slide, index) in slides" :key="index">
-                <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-                     x-show="activeSlide === index"
-                     x-transition:enter="opacity-0" x-transition:enter-end="opacity-100"
-                     x-transition:leave="opacity-100" x-transition:leave-end="opacity-0">
-                    <img :src="'/storage/' + slide" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30"></div>
-                </div>
-            </template>
-
-            @if(empty($heroSlides))
-                <div class="absolute inset-0 bg-rose-900">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2070&q=80"
-                         class="w-full h-full object-cover opacity-40">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                </div>
-            @endif
-        </div>
-
-        {{-- Hero Text --}}
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
-            <span class="bg-rose-600/90 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-                {{ __('Wedding & Event Organizer') }}
-            </span>
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg tracking-tight">
-                {{ $eoSettings['eo_hero_title'] ?? __('Your Dream Event, Made Real') }}
-            </h1>
-            <p class="text-xl text-gray-200 drop-shadow-md max-w-2xl mb-8">
-                {{ $eoSettings['eo_hero_subtitle'] ?? __('Professional event organizer for weddings, corporate, and more.') }}
-            </p>
-            <div class="flex flex-wrap gap-4 justify-center">
-                <a href="{{ route('eventOrganizer.booking.create') }}"
-                   class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-4 rounded-xl shadow-2xl transition transform hover:-translate-y-1 text-lg">
-                    📅 {{ __('Book Your Event') }}
-                </a>
-                <a href="{{ route('eventOrganizer.packages.index') }}"
-                   class="bg-white/20 backdrop-blur hover:bg-white/30 text-white font-bold px-8 py-4 rounded-xl border border-white/40 transition text-lg">
-                    🎁 {{ __('View Packages') }}
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-portal-hero />
 
     {{-- STATS BAR --}}
     <div class="bg-rose-600 text-white py-6">
@@ -177,4 +124,4 @@
         </div>
     </div>
 
-</x-eo-layout>
+</x-layout>

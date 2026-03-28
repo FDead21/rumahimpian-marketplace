@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
 
     {{-- Hero / Cover --}}
     <div class="relative h-80 md:h-[28rem] overflow-hidden bg-gray-900">
@@ -181,4 +181,4 @@
         </div>
     </div>
 
-</x-eo-layout>
+</x-layout>

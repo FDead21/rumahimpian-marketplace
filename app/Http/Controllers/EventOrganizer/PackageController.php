@@ -10,10 +10,23 @@ use App\Models\Setting;
 class PackageController extends EoBaseController
 {
      // Packages listing
-    public function index()
+    public function index(Request $request)
     {
-        $packages = Package::where('is_active', true)
-            ->orderByDesc('is_featured')
+        // Start with active packages
+        $query = Package::where('is_active', true);
+
+        // Catch the 'search' parameter from the Hero search bar
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                // Search by package name or description
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply sorting and get the results
+        $packages = $query->orderByDesc('is_featured')
             ->orderBy('price')
             ->get();
 

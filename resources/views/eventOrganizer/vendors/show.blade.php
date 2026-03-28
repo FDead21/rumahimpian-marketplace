@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
     @php
         // Helper to cleanly extract YouTube video ID for embedding
         $youtubeEmbedUrl = null;
@@ -221,4 +221,4 @@
 
         </div>
     </div>
-</x-eo-layout>
+</x-layout>

@@ -1,7 +1,6 @@
 <x-layout>
     @section('meta_title', $article->seo_title ?? $article->title)
     @section('meta_description', $article->seo_description ?? Str::limit(strip_tags($article->content), 150))
-    
     <div class="bg-white py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             

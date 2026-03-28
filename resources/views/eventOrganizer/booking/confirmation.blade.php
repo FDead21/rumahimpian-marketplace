@@ -1,4 +1,4 @@
-<x-eo-layout>
+<x-layout>
     @section('title', __('Receipt') . '_' . $booking->booking_code . '_' . Str::slug($booking->client_name))
 
     <title>{{ __('Receipt') }}_{{ $booking->booking_code }}_{{ Str::slug($booking->client_name) }}</title>
@@ -136,7 +136,7 @@
             </a>
         </div>
     </div>
-</x-eo-layout>
+</x-layout>
 
 <style>
     @media print {
