@@ -11,7 +11,7 @@
             </p>
         </div>
         
-        <a href="{{ route('home') }}" target="_blank" 
+        <a href="{{ route('property.home') }}" target="_blank" 
            class="inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg font-medium transition shadow-sm">
             <span>🌍 Open Website</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

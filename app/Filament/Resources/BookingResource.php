@@ -19,8 +19,8 @@ class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'Event Management';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'CRM';
+    protected static ?int    $navigationSort  = 2;
 
     // Badge: count INQUIRY status bookings
     public static function getNavigationBadge(): ?string

@@ -1,34 +1,31 @@
 <?php
 
-use App\Http\Controllers\PublicController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Agent\DashboardController;
-use App\Models\Inquiry;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Http\Controllers\EoController;
- 
-Route::domain(env('EO_DOMAIN'))->group(function () {
-    
-    Route::get('/', [EoController::class, 'home'])->name('eo.home');
-    Route::get('/packages', [EoController::class, 'packages'])->name('eo.packages');
-    Route::get('/packages/{slug}', [EoController::class, 'packageShow'])->name('eo.packages.show');
-    Route::get('/booking', [EoController::class, 'bookingForm'])->name('eo.booking.booking-form');
-    Route::post('/booking', [EoController::class, 'bookingStore'])->name('eo.booking.store')->middleware('throttle:5,1');
-    Route::get('/booking/confirmation/{code}', [EoController::class, 'bookingConfirmation'])->name('eo.booking.booking-confirmation');
-    Route::get('/gallery', [EoController::class, 'gallery'])->name('eo.gallery');
-    Route::get('/gallery/{slug}', [EoController::class, 'galleryShow'])->name('eo.gallery.gallery-index');
-    Route::get('/vendors', [EoController::class, 'vendors'])->name('eo.vendors');
 
-});
+// Core & Auth Controllers
+use App\Http\Controllers\Core\AuthController;
+use App\Http\Controllers\Core\HomeController as SuperAppHomeController;
+use App\Http\Controllers\Core\ArticleController;
 
-Route::get('/migrate-' . env('MIGRATE_SECRET'), function() {
-    Artisan::call('migrate', ['--force' => true]);
-    return 'Done: ' . Artisan::output();
-});
+// Property Domain Controllers
+use App\Http\Controllers\Property\HomeController as PropertyHomeController;
+use App\Http\Controllers\Property\PropertyController;
+use App\Http\Controllers\Property\MapSearchController;
+use App\Http\Controllers\Property\AgentController;
+use App\Http\Controllers\Property\AgencyController;
+use App\Http\Controllers\Property\InquiryController;
+use App\Http\Controllers\Property\TourEditorController;
+use App\Http\Controllers\Property\DashboardController;
 
+// Event Organizer Controllers
+use App\Http\Controllers\EventOrganizer\HomeController as EventOrganizerHomeController;
+use App\Http\Controllers\EventOrganizer\PackageController;
+use App\Http\Controllers\EventOrganizer\BookingController;
+use App\Http\Controllers\EventOrganizer\GalleryController;
+use App\Http\Controllers\EventOrganizer\VendorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,15 +33,10 @@ Route::get('/migrate-' . env('MIGRATE_SECRET'), function() {
 |--------------------------------------------------------------------------
 */
 
-// Homepage
-Route::get('/', [PublicController::class, 'index'])->name('home');
+Route::get('/', [SuperAppHomeController::class, 'index'])->name('home');
 
-// Map Search
-Route::get('/map', [PublicController::class, 'mapSearch'])->name('map.search');
-
-// Agent & Agency Profiles
-Route::get('/agent/{id}', [PublicController::class, 'agent'])->name('agent.show');
-Route::get('/agency/{slug}', [PublicController::class, 'agency'])->name('agency.show');
+Route::get('/news', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('/news/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'id'])) {
@@ -56,42 +48,60 @@ Route::get('/lang/{locale}', function ($locale) {
 /*
 |--------------------------------------------------------------------------
 | Property Routes
+| Prefix: /property
+| Names:  property.*
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('property')->group(function () {
-    Route::get('/{id}/{slug}', [PublicController::class, 'show'])->name('property.show');
-    Route::get('/{id}/{slug}/360', [PublicController::class, 'tour'])->name('property.tour');
-    Route::get('/{id}/{slug}/pdf', [PublicController::class, 'downloadPdf'])->name('property.pdf');
-    
-    Route::post('/{id}/inquire', function (Request $request, $id) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'message' => 'required|string',
-        ]);
+Route::prefix('property')->name('property.')->group(function () {
 
-        Inquiry::create([
-            'property_id' => $id,
-            'buyer_name' => $request->name,
-            'buyer_phone' => $request->phone,
-            'message' => $request->message,
-            'status' => 'NEW', // Default status
-        ]);
+    Route::get('/', [PropertyHomeController::class, 'index'])->name('home');
 
-        return back()->with('success', 'Inquiry sent! Our agent will contact you shortly.');
-    })->name('inquiry.send')->middleware('throttle:3,1');
+    Route::get('/wishlist', fn() => view('property.wishlist'))->name('wishlist');
+    Route::get('/wishlist/cards', [PropertyController::class, 'wishlistParams'])->name('wishlist.data');
+    Route::get('/compare', [PropertyController::class, 'compare'])->name('compare');
+    Route::get('/map', [MapSearchController::class, 'index'])->name('map');
+
+    Route::get('/agent/{id}', [AgentController::class, 'show'])->name('agent.show');
+    Route::get('/agency/{slug}', [AgencyController::class, 'show'])->name('agency.show');
+
+    Route::get('/{id}/{slug}', [PropertyController::class, 'show'])->name('show');
+    Route::get('/{id}/{slug}/360', [PropertyController::class, 'tour'])->name('tour');
+    Route::get('/{id}/{slug}/pdf', [PropertyController::class, 'downloadPdf'])->name('pdf');
+
+    Route::post('/{id}/inquire', [InquiryController::class, 'store'])
+        ->name('inquiry.store')
+        ->middleware('throttle:3,1');
 });
 
 /*
 |--------------------------------------------------------------------------
-| User Features (Wishlist & Compare)
+| Event Organizer Routes
+| Prefix: /event-organizer  (kebab-case, consistent with Laravel convention)
+| Names:  eo.*
 |--------------------------------------------------------------------------
 */
 
-Route::view('/wishlist', 'wishlist')->name('wishlist');
-Route::get('/wishlist/cards', [PublicController::class, 'wishlistParams'])->name('wishlist.data');
-Route::get('/compare', [PublicController::class, 'compare'])->name('compare');
+Route::prefix('eventOrganizer')->name('eventOrganizer.')->group(function () {
+
+    Route::get('/', [EventOrganizerHomeController::class, 'index'])->name('home');
+
+    // Packages
+    Route::get('/packages', [PackageController::class, 'index'])->name('packages.index');
+    Route::get('/packages/{slug}', [PackageController::class, 'show'])->name('packages.show');
+
+    // Booking
+    Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
+    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store')->middleware('throttle:5,1');
+    Route::get('/booking/confirmation/{code}', [BookingController::class, 'confirmation'])->name('booking.confirmation');
+
+    // Gallery
+    Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+    Route::get('/gallery/{slug}', [GalleryController::class, 'show'])->name('gallery.show');
+
+    // Vendors
+    Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -99,47 +109,43 @@ Route::get('/compare', [PublicController::class, 'compare'])->name('compare');
 |--------------------------------------------------------------------------
 */
 
-// Guest Routes
 Route::middleware('guest')->group(function () {
     Route::get('/agent/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/agent/register', [AuthController::class, 'register']);
 });
 
-// Authenticated Agent Routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('agent.dashboard');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Email Verification Routes
+| Email Verification
 |--------------------------------------------------------------------------
 */
 
-// 1. The Notice Page (Shown if they try to access dashboard without verifying)
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify', fn() => view('auth.verify-email'))
+    ->middleware('auth')
+    ->name('verification.notice');
 
-// 2. The Link Handler (When they click the email link)
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill(); // This fires the "Verified" event -> triggers our Listener!
+    $request->fulfill();
     return redirect('/dashboard')->with('success', 'Email verified! You now have the Blue Badge.');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
-// 3. Resend Link
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::get('/news', [PublicController::class, 'articles'])->name('articles.index');
-Route::get('/news/{slug}', [PublicController::class, 'articleShow'])->name('articles.show');
+/*
+|--------------------------------------------------------------------------
+| Portal API — Virtual Tour Editor (auth required)
+|--------------------------------------------------------------------------
+*/
 
-// Virtual Tour Hotspot Editor
-Route::prefix('portal-api')->middleware(['auth'])->group(function () {
-    Route::get('/properties/{property}/tour-editor', [App\Http\Controllers\TourEditorController::class, 'show'])->name('tour.editor');
-    Route::post('/hotspots', [App\Http\Controllers\TourEditorController::class, 'store'])->name('hotspots.store');
-    Route::delete('/hotspots/{hotspot}', [App\Http\Controllers\TourEditorController::class, 'destroy'])->name('hotspots.destroy');
+Route::prefix('portal-api')->name('portal.')->middleware('auth')->group(function () {
+    Route::get('/properties/{property}/tour-editor', [TourEditorController::class, 'show'])->name('tour.editor');
+    Route::post('/hotspots', [TourEditorController::class, 'store'])->name('hotspots.store');
+    Route::delete('/hotspots/{hotspot}', [TourEditorController::class, 'destroy'])->name('hotspots.destroy');
 });
-

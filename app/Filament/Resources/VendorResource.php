@@ -15,7 +15,7 @@ class VendorResource extends Resource
     protected static ?string $model = Vendor::class;
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
     protected static ?string $navigationGroup = 'Event Management';
-    protected static ?int $navigationSort = 3;
+    protected static ?int    $navigationSort  = 2;
 
     public static function canViewAny(): bool
     {

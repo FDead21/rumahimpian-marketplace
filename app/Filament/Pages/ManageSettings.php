@@ -10,21 +10,20 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Tabs;
 use Filament\Notifications\Notification;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Storage;
 
 class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-    protected static ?string $navigationLabel = 'Site Settings';
-    protected static ?string $title = 'Website Configuration';
-    protected static ?int $navigationSort = 100;
-    protected static string $view = 'filament.pages.manage-settings';
+    protected static ?string $navigationIcon    = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int    $navigationSort  = 1;
+    protected static ?string $title             = 'Website Configuration';
+    protected static string  $view              = 'filament.pages.manage-settings';
 
-    // Only Admins can see this
     public static function canAccess(): bool
     {
         return auth()->user()->role === 'ADMIN';
@@ -34,8 +33,18 @@ class ManageSettings extends Page implements HasForms
 
     public function mount(): void
     {
-        // Load existing settings into the form
         $settings = Setting::all()->pluck('value', 'key')->toArray();
+
+        // Decode JSON fields for FileUpload multiple
+        foreach (['hero_slides', 'eo_hero_slides'] as $field) {
+            if (!empty($settings[$field]) && is_string($settings[$field])) {
+                $decoded = json_decode($settings[$field], true);
+                if (is_array($decoded)) {
+                    $settings[$field] = $decoded;
+                }
+            }
+        }
+
         $this->form->fill($settings);
     }
 
@@ -43,62 +52,115 @@ class ManageSettings extends Page implements HasForms
     {
         return $form
             ->schema([
-                Section::make('General Information')
-                    ->schema([
-                        FileUpload::make('site_logo')
-                            ->label('Website Logo')
-                            ->image()
-                            ->directory('settings') 
-                            ->preserveFilenames(),
-                            
-                        FileUpload::make('site_favicon')
-                            ->label('Website Favicon (Icon)')
-                            ->image()
-                            ->directory('settings')
-                            ->preserveFilenames(),
-                        // ----------------------------
+                Tabs::make('Settings')
+                    ->tabs([
 
-                        TextInput::make('site_name')
-                            ->label('Website Name')
-                            ->required(),
-                        Textarea::make('site_description')
-                            ->label('Footer Description')
-                            ->rows(3),
-                    ]),
+                        // ------------------------------------------------
+                        // TAB 1: Global — shared across all verticals
+                        // ------------------------------------------------
+                        Tabs\Tab::make('Global')
+                            ->icon('heroicon-o-globe-alt')
+                            ->schema([
+                                Section::make('Branding')
+                                    ->schema([
+                                        FileUpload::make('site_logo')
+                                            ->label('Website Logo')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('settings')
+                                            ->preserveFilenames(),
 
-                Section::make('Home Page Banner')
-                    ->schema([
-                        FileUpload::make('hero_slides')
-                            ->label('Hero Carousel Images')
-                            ->multiple() 
-                            ->image()
-                            ->directory('hero')
-                            ->reorderable()
-                            ->preserveFilenames(),
-                            
-                        TextInput::make('hero_title')
-                            ->label('Hero Title')
-                            ->default('Find Your Dream Home'),
-                        
-                        TextInput::make('hero_subtitle')
-                            ->label('Hero Subtitle')
-                            ->default('Trusted by millions of buyers & agents.'),
-                    ]),
+                                        FileUpload::make('site_favicon')
+                                            ->label('Favicon')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('settings')
+                                            ->preserveFilenames(),
 
-                Section::make('Contact Details')
-                    ->schema([
-                        TextInput::make('contact_phone')->tel(),
-                        TextInput::make('contact_email')->email(),
-                        TextInput::make('contact_address'),
-                    ])->columns(2),
+                                        TextInput::make('site_name')
+                                            ->label('Website Name')
+                                            ->required(),
 
-                Section::make('Social Media')
-                    ->schema([
-                        TextInput::make('social_facebook')->prefix('facebook.com/'),
-                        TextInput::make('social_instagram')->prefix('instagram.com/'),
-                        TextInput::make('social_twitter')->prefix('x.com/'),
-                        TextInput::make('social_youtube')->prefix('youtube.com/'),
-                    ])->columns(2),
+                                        Textarea::make('site_description')
+                                            ->label('Footer Description')
+                                            ->rows(3)
+                                            ->columnSpanFull(),
+                                    ])->columns(2),
+
+                                Section::make('Contact Details')
+                                    ->schema([
+                                        TextInput::make('contact_phone')->tel(),
+                                        TextInput::make('contact_email')->email(),
+                                        TextInput::make('contact_address')->columnSpanFull(),
+                                    ])->columns(2),
+
+                                Section::make('Social Media')
+                                    ->schema([
+                                        TextInput::make('social_facebook')->prefix('facebook.com/'),
+                                        TextInput::make('social_instagram')->prefix('instagram.com/'),
+                                        TextInput::make('social_twitter')->prefix('x.com/'),
+                                        TextInput::make('social_youtube')->prefix('youtube.com/'),
+                                    ])->columns(2),
+                            ]),
+
+                        // ------------------------------------------------
+                        // TAB 2: Property — property vertical only
+                        // ------------------------------------------------
+                        Tabs\Tab::make('Property')
+                            ->icon('heroicon-o-home')
+                            ->schema([
+                                Section::make('Hero Banner')
+                                    ->schema([
+                                        FileUpload::make('hero_slides')
+                                            ->label('Hero Carousel Images')
+                                            ->multiple()
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('hero')
+                                            ->reorderable()
+                                            ->preserveFilenames()
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('hero_title')
+                                            ->label('Hero Title')
+                                            ->placeholder('Find Your Dream Home'),
+
+                                        TextInput::make('hero_subtitle')
+                                            ->label('Hero Subtitle')
+                                            ->placeholder('Trusted by millions of buyers & agents.'),
+                                    ])->columns(2),
+                            ]),
+
+                        // ------------------------------------------------
+                        // TAB 3: Event Organizer — EO vertical only
+                        // ------------------------------------------------
+                        Tabs\Tab::make('Event Organizer')
+                            ->icon('heroicon-o-calendar-days')
+                            ->schema([
+                                Section::make('Hero Banner')
+                                    ->schema([
+                                        FileUpload::make('eo_hero_slides')
+                                            ->label('EO Hero Carousel Images')
+                                            ->multiple()
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('eo-hero')
+                                            ->reorderable()
+                                            ->preserveFilenames()
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('eo_hero_title')
+                                            ->label('Hero Title')
+                                            ->placeholder('Your Dream Event, Made Real'),
+
+                                        TextInput::make('eo_hero_subtitle')
+                                            ->label('Hero Subtitle')
+                                            ->placeholder('Professional event organizer...'),
+                                    ])->columns(2),
+                            ]),
+
+                    ])
+                    ->columnSpanFull(),
             ])
             ->statePath('data');
     }
@@ -107,20 +169,44 @@ class ManageSettings extends Page implements HasForms
     {
         $data = $this->form->getState();
 
-        foreach ($data as $key => $value) {
-            if ($value !== null) {
-                if (is_array($value)) {
-                    $value = json_encode($value);
-                }
+        // Define which group each key belongs to
+        $groupMap = [
+            'site_logo'         => 'GLOBAL',
+            'site_favicon'      => 'GLOBAL',
+            'site_name'         => 'GLOBAL',
+            'site_description'  => 'GLOBAL',
+            'contact_phone'     => 'GLOBAL',
+            'contact_email'     => 'GLOBAL',
+            'contact_address'   => 'GLOBAL',
+            'social_facebook'   => 'GLOBAL',
+            'social_instagram'  => 'GLOBAL',
+            'social_twitter'    => 'GLOBAL',
+            'social_youtube'    => 'GLOBAL',
+            'hero_slides'       => 'PROPERTY',
+            'hero_title'        => 'PROPERTY',
+            'hero_subtitle'     => 'PROPERTY',
+            'eo_hero_slides'    => 'EO',
+            'eo_hero_title'     => 'EO',
+            'eo_hero_subtitle'  => 'EO',
+        ];
 
-                Setting::updateOrCreate(
-                    ['key' => $key],
-                    ['value' => $value]
-                );
+        foreach ($data as $key => $value) {
+            if ($value === null) continue;
+
+            if (is_array($value)) {
+                $value = json_encode(array_values($value));
             }
+
+            Setting::updateOrCreate(
+                ['key' => $key],
+                [
+                    'group' => $groupMap[$key] ?? 'GLOBAL',
+                    'value' => $value,
+                ]
+            );
         }
-        
-        \Illuminate\Support\Facades\Cache::forget('site_settings'); 
+
+        Setting::flushCache();
 
         Notification::make()
             ->title('Settings saved successfully')

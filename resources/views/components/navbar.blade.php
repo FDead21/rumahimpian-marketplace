@@ -1,82 +1,78 @@
-<nav class="bg-white border-b border-gray-200 sticky top-0 z-50 transition-all duration-300 shadow-md font-sans" 
-    x-data="{ 
-    locationOpen: false, 
-    agencyOpen: false,
-    mobileOpen: false,
-    mobileLocationOpen: false,
-    mobileAgencyOpen: false,
-    scrolled: false, 
-    isHome: {{ request()->routeIs('home') ? 'true' : 'false' }}
-    }" 
-    @scroll.window="scrolled = (window.pageYOffset > 400)">
+@php
+    // 1. Detect the current module
+    $isEo = request()->is('eventOrganizer*');
+    $isProperty = request()->is('property*') || request()->is('map*') || request()->is('agency*') || request()->is('agent*');
+    $isPortal = request()->routeIs('home'); 
 
-    <div class="border-b border-gray-100 bg-white relative z-50">
+    // 2. Set Theme Colors dynamically
+    $themeText = $isEo ? 'text-rose-600' : 'text-sky-600';
+    $themeBg = $isEo ? 'bg-rose-600 hover:bg-rose-700' : 'bg-sky-600 hover:bg-sky-700';
+    $themeBorder = $isEo ? 'hover:border-rose-600' : 'hover:border-sky-600';
+@endphp
+
+<nav class="bg-white sticky top-0 z-50 transition-all duration-300 shadow-sm font-sans" x-data="{ mobileOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+
+    {{-- ============================================================== --}}
+    {{--  ROW 1: GLOBAL TOP BAR (Always Visible)                        --}}
+    {{-- ============================================================== --}}
+    <div class="border-b border-gray-100 relative z-50 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20 gap-4">
 
-                {{-- 1. LEFT: LOGO --}}
+                {{-- 1. LEFT: GLOBAL LOGO --}}
                 <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center gap-2 group">
-                    @if(!empty($settings['site_logo']))
-                        <img src="{{ asset('storage/' . $settings['site_logo']) }}" class="h-8 md:h-10 w-auto object-contain">
-                    @else
-                        <span class="text-xl md:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-sky-700 to-sky-500 tracking-tight">
-                            {{ $settings['site_name'] ?? 'RumahImpian' }}
-                        </span>
-                    @endif
+                    <span class="text-xl md:text-2xl font-extrabold tracking-tight {{ $themeText }}">
+                        {{ $settings['site_name'] ?? 'MadeInTravel' }}
+                    </span>
                 </a>
 
-                {{-- 2. MIDDLE: SEARCH BAR (Desktop Only) --}}
-                <div class="hidden md:block flex-1 max-w-2xl transition-all duration-300 transform origin-left"
-                     :class="(isHome && !scrolled) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'"
-                     x-cloak>
-                    <form action="{{ route('home') }}" method="GET">
-                        <div class="relative group">
-                            <input type="text" name="search" 
-                                   class="w-full bg-gray-100 border-transparent focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 rounded-full py-2.5 pl-11 pr-14 transition-all outline-none text-gray-800 font-medium placeholder-gray-400"
-                                   placeholder="{{ __('Search by City, District, or Property Name...') }}">
-                            <span class="absolute left-4 top-3 text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            </span>
-                            <button type="submit" class="absolute right-1.5 top-1.5 bg-sky-600 text-white p-1.5 rounded-full hover:bg-sky-700 transition shadow-sm">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </button>
-                        </div>
-                    </form>
+                {{-- 2. MIDDLE: CONTEXTUAL SEARCH BAR (Hidden on Portal & EO) --}}
+                <div class="hidden md:block flex-1 max-w-2xl px-8" x-cloak>
+                    @if($isProperty)
+                        <form action="{{ route('property.home') }}" method="GET">
+                            <div class="relative group">
+                                <input type="text" name="search" 
+                                       class="w-full bg-gray-100 border-transparent focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 rounded-full py-2.5 pl-11 pr-14 outline-none text-sm transition-all"
+                                       placeholder="{{ __('Search by City, District, or Property Name...') }}">
+                                <span class="absolute left-4 top-2.5 text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </span>
+                                <button type="submit" class="absolute right-1.5 top-1.5 bg-sky-600 text-white p-1.5 rounded-full hover:bg-sky-700 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            </div>
+                        </form>
+                    @endif
                 </div>
 
-                {{-- 3. RIGHT: ACTIONS (Desktop Only) --}}
-                <div class="hidden md:flex items-center space-x-4">
+                {{-- 3. RIGHT: GLOBAL ACTIONS --}}
+                <div class="hidden md:flex items-center space-x-6">
+                    
+                    {{-- Language Switcher (Always visible) --}}
                     <div class="relative" x-data="{ langOpen: false }">
-                        <button @click="langOpen = !langOpen" class="flex items-center gap-1 text-gray-500 hover:text-sky-600 font-bold text-sm">
-                            @if(app()->getLocale() == 'id')
-                                🇮🇩 ID
-                            @else
-                                🇺🇸 EN
-                            @endif
+                        <button @click="langOpen = !langOpen" class="flex items-center gap-1 text-gray-500 hover:text-gray-900 font-bold text-sm">
+                            @if(app()->getLocale() == 'id') 🇮🇩 ID @else 🇺🇸 EN @endif
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-
-                        <div x-show="langOpen" @click.away="langOpen = false" 
-                             class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-100 z-50 py-1"
-                             style="display: none;">
-                            <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-sky-50">🇺🇸 English</a>
-                            <a href="{{ route('lang.switch', 'id') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-sky-50">🇮🇩 Indonesia</a>
+                        <div x-show="langOpen" @click.away="langOpen = false" class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-100 py-1" style="display: none;">
+                            <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">🇺🇸 English</a>
+                            <a href="{{ route('lang.switch', 'id') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">🇮🇩 Indonesia</a>
                         </div>
                     </div>
 
-                    {{-- Wishlist --}}
-                    <a href="{{ route('wishlist') }}" class="relative p-2 text-gray-400 hover:text-red-500 transition-colors group" title="{{ __('My Saved Homes') }}">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                        <div x-show="$store.wishlist.ids.length > 0" x-transition.scale style="display: none;" class="absolute top-0 right-0 transform translate-x-1 -translate-y-1">
-                            <span class="flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white" x-text="$store.wishlist.ids.length"></span>
-                        </div>
-                    </a>
+                    {{-- Wishlist (Only visible in Property) --}}
+                    @if($isProperty)
+                        <a href="{{ '/property/wishlist' }}" class="relative text-gray-400 hover:text-red-500 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <div x-show="$store.wishlist.ids.length > 0" class="absolute -top-1 -right-2 flex items-center justify-center h-4 w-4 rounded-full bg-red-600 text-[9px] font-bold text-white" x-text="$store.wishlist.ids.length" style="display: none;"></div>
+                        </a>
+                    @endif
                 </div>
 
-                {{-- 4. HAMBURGER BUTTON (Mobile Only) --}}
+                {{-- Hamburger --}}
                 <div class="md:hidden flex items-center">
-                    <button @click="mobileOpen = true" class="text-gray-500 hover:text-sky-600 p-2 focus:outline-none">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <button @click="mobileOpen = true" class="text-gray-500 hover:text-gray-900 p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
 
@@ -85,45 +81,59 @@
     </div>
 
     {{-- ============================================================== --}}
-    {{--  DESKTOP ROW 2: MENU (Hidden on Mobile)                        --}}
+    {{--  ROW 2: CONTEXTUAL SUB-NAV (Hidden on Portal)                  --}}
     {{-- ============================================================== --}}
-    <div class="hidden md:block bg-white/80 backdrop-blur-md border-b border-gray-100 relative z-40">
+    @if(!$isPortal)
+    <div class="hidden md:block bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center h-12 gap-8 relative">
-                <a href="{{ route('home') }}" class="text-sm font-bold text-gray-600 hover:text-sky-600 h-full flex items-center border-b-2 border-transparent hover:border-sky-600">{{ __('Home') }}</a>
-                <a href="{{ route('articles.index') }}" class="text-sm font-bold text-gray-600 hover:text-sky-600 h-full flex items-center border-b-2 border-transparent hover:border-sky-600">{{ __('News') }}</a>
-                {{-- Locations Dropdown (Desktop) --}}
-                <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                    <button class="text-gray-500 hover:text-sky-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">{{ __('Location') }}</button>
-                    <div x-show="open" class="absolute left-0 top-full w-[600px] bg-white border border-gray-100 shadow-xl rounded-b-xl p-6 z-50 grid grid-cols-3 gap-4" style="display: none;">
-                        @if(isset($cities) && $cities->count() > 0)
-                            @foreach($cities as $city)
-                                <a href="{{ route('home', ['search' => $city]) }}" class="text-sm text-gray-600 hover:text-sky-600 block">📍 {{ $city }}</a>
-                            @endforeach
-                        @else
-                            <p class="text-gray-400 italic text-sm">{{ __('No locations found.') }}</p>
-                        @endif
+            <div class="flex items-center h-12 gap-8 text-sm font-bold text-gray-500">
+                
+                @if($isProperty)
+                    {{-- Property Links --}}
+                    <a href="{{ route('property.home') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('Properties') }}</a>
+                    {{-- Locations Dropdown (Desktop) --}}
+                    <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                        <button class="text-gray-500 hover:{{ $themeText }} text-sm font-bold h-full flex items-center border-b-2 border-transparent transition">{{ __('Location') }}</button>
+                        <div x-show="open" x-transition class="absolute left-0 top-full w-[600px] bg-white border border-gray-100 shadow-xl rounded-b-xl p-6 z-50 grid grid-cols-3 gap-4" style="display: none;">
+                            @if(isset($cities) && $cities->count() > 0)
+                                @foreach($cities as $city)
+                                    <a href="{{ route('property.home', ['search' => $city]) }}" class="text-sm text-gray-600 hover:{{ $themeText }} block transition">📍 {{ $city }}</a>
+                                @endforeach
+                            @else
+                                <p class="text-gray-400 italic text-sm">{{ __('No locations found.') }}</p>
+                            @endif
+                        </div>
                     </div>
-                </div>
 
-                 {{-- Agencies Dropdown (Desktop) --}}
-                 <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                    <button class="text-gray-500 hover:text-sky-600 text-sm font-medium h-full flex items-center border-b-2 border-transparent">{{ __('Find Agencies') }}</button>
-                    <div x-show="open" class="absolute left-0 top-full w-[250px] bg-white border border-gray-100 shadow-xl rounded-b-xl p-4 z-50 space-y-2" style="display: none;">
-                        @if(isset($agencies) && $agencies->count() > 0)
-                            @foreach($agencies as $agency)
-                                <a href="{{ route('agency.show', $agency->slug) }}" class="block text-sm text-gray-600 hover:text-sky-600">{{ $agency->name }}</a>
-                            @endforeach
-                        @else
-                            <p class="text-gray-400 italic text-sm">{{ __('No agencies found.') }}</p>
-                        @endif
+                     {{-- Agencies Dropdown (Desktop) --}}
+                     <div class="relative h-full flex items-center" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                        <button class="text-gray-500 hover:{{ $themeText }} text-sm font-bold h-full flex items-center border-b-2 border-transparent transition">{{ __('Find Agencies') }}</button>
+                        <div x-show="open" x-transition class="absolute left-0 top-full w-[250px] bg-white border border-gray-100 shadow-xl rounded-b-xl p-4 z-50 space-y-2" style="display: none;">
+                            @if(isset($agencies) && $agencies->count() > 0)
+                                @foreach($agencies as $agency)
+                                    <a href="{{ route('property.agency.show', $agency->slug) }}" class="block text-sm text-gray-600 hover:{{ $themeText }} transition">{{ $agency->name }}</a>
+                                @endforeach
+                            @else
+                                <p class="text-gray-400 italic text-sm">{{ __('No agencies found.') }}</p>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                    <a href="{{ route('property.map') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('Map Search') }}</a>
+                    <a href="{{ route('articles.index') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('News') }}</a>
+                @endif
 
-                <a href="{{ route('map.search') }}" class="text-sm font-bold text-gray-600 hover:text-sky-600 h-full flex items-center">{{ __('Map Search') }}</a>
+                @if($isEo)
+                    {{-- EO Links --}}
+                    <a href="{{ route('eventOrganizer.home') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('Discover Events') }}</a>
+                    <a href="{{ route('eventOrganizer.packages.index') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('Packages') }}</a>
+                    <a href="{{ route('eventOrganizer.vendors.index') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('Vendors') }}</a>
+                    <a href="{{ route('eventOrganizer.gallery.index') }}" class="h-full flex items-center border-b-2 border-transparent {{ $themeBorder }} hover:{{ $themeText }}">{{ __('Gallery') }}</a>
+                @endif
+
             </div>
         </div>
     </div>
+    @endif
 
     {{-- ============================================================== --}}
     {{--  MOBILE SLIDE-OUT MENU                                         --}}
@@ -154,103 +164,62 @@
              x-transition:leave-start="translate-x-0"
              x-transition:leave-end="translate-x-full">
             
-            {{-- Drawer Header (User Info) --}}
-            <div class="p-6 bg-sky-50 border-b border-sky-100">
-                <div class="flex items-center justify-between mb-6">
-                    <span class="font-bold text-lg text-sky-900">{{ __('Menu') }}</span>
-                    <button @click="mobileOpen = false" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
+            {{-- Drawer Header --}}
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <span class="font-bold text-lg {{ $themeText }}">{{ __('Menu') }}</span>
+                <button @click="mobileOpen = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
 
             {{-- Drawer Links --}}
-            <div class="flex-1 overflow-y-auto p-4 space-y-1">
+            <div class="flex-1 overflow-y-auto p-4 space-y-2">
                 
-                {{-- Home --}}
+                {{-- Global Portal Link --}}
                 <a href="{{ route('home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                    🏠 {{ __('Home') }}
+                    🌍 {{ __('Main Page') }}
                 </a>
+                
+                <div class="border-t border-gray-100 my-2"></div>
 
-                <a href="{{ route('articles.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                    📰 {{ __('News') }}
-                </a>
+                {{-- Contextual Links: Property --}}
+                @if($isProperty)
+                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Property</div>
+                    <a href="{{ route('property.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏠 {{ __('Home') }}</a>
+                    <a href="{{ route('articles.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">📰 {{ __('News') }}</a>
+                    <a href="{{ route('property.map') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🗺️ {{ __('Map Search') }}</a>
+                    <a href="{{ route('property.wishlist') }}" class="flex justify-between items-center px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
+                        <span>❤️ {{ __('My Saved Homes') }}</span>
+                        <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full" x-show="$store.wishlist.ids.length > 0" x-text="$store.wishlist.ids.length" style="display: none;"></span>
+                    </a>
+                @endif
 
+                {{-- Contextual Links: EO --}}
+                @if($isEo)
+                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Event Organizer</div>
+                    <a href="{{ route('eventOrganizer.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎊 {{ __('Discover Events') }}</a>
+                    <a href="{{ route('eventOrganizer.packages.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎁 {{ __('Packages') }}</a>
+                    <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏪 {{ __('Vendors') }}</a>
+                    <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🖼️ {{ __('Gallery') }}</a>
+                    <a href="{{ route('eventOrganizer.booking.create') }}" class="block mt-4 w-full text-center bg-rose-600 text-white font-bold py-3 rounded-lg shadow-sm">📅 {{ __('Book Now') }}</a>
+                @endif
+
+                <div class="border-t border-gray-100 my-2"></div>
+
+                {{-- Language Toggle --}}
                 <div class="relative" x-data="{ langOpen: false }">
                     <button @click="langOpen = !langOpen" class="w-full flex items-center justify-between px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                        <span class="flex items-center gap-2">
-                            🌐 {{ __('Language') }}
-                            @if(app()->getLocale() == 'id') (ID) @else (EN) @endif
-                        </span>
+                        <span class="flex items-center gap-2">🌐 {{ __('Language') }} @if(app()->getLocale() == 'id') (ID) @else (EN) @endif</span>
                         <svg class="w-4 h-4 transition-transform" :class="langOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-
-                    <div x-show="langOpen" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2">
+                    <div x-show="langOpen" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2" style="display: none;">
                         <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-gray-700 hover:text-sky-600">🇺🇸 English</a>
                         <a href="{{ route('lang.switch', 'id') }}" class="block px-4 py-2 text-sm text-gray-700 hover:text-sky-600">🇮🇩 Indonesia</a>
                     </div>
                 </div>
 
-                {{-- Wishlist --}}
-                <a href="{{ route('wishlist') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg flex justify-between items-center">
-                    <span>❤️ {{ __('My Saved Homes') }}</span>
-                    <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full" x-text="$store.wishlist.ids.length"></span>
-                </a>
-
-                <div class="border-t border-gray-100 my-2"></div>
-
-                {{-- Locations Toggle --}}
-                <div x-data="{ open: false }">
-                    <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                        <span>📍 {{ __('Browse by Location') }}</span>
-                        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="open" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2">
-                        @if(isset($cities) && $cities->count() > 0)
-                            @foreach($cities as $city)
-                                <a href="{{ route('home', ['search' => $city]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-sky-600">{{ $city }}</a>
-                            @endforeach
-                        @else
-                            <span class="block px-4 py-2 text-sm text-gray-400">{{ __('No locations found.') }}</span>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Agencies Toggle --}}
-                <div x-data="{ open: false }">
-                    <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                        <span>🏢 {{ __('Find Agencies') }}</span>
-                        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="open" class="pl-4 space-y-1 bg-gray-50 rounded-lg mb-2 p-2">
-                         @if(isset($agencies) && $agencies->count() > 0)
-                            @foreach($agencies as $agency)
-                                <a href="{{ route('agency.show', $agency->slug) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-sky-600">{{ $agency->name }}</a>
-                            @endforeach
-                        @else
-                            <span class="block px-4 py-2 text-sm text-gray-400">{{ __('No agencies found.') }}</span>
-                        @endif
-                    </div>
-                </div>
-
-                <a href="{{ route('map.search') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">
-                    🗺️ {{ __('Map Search') }}
-                </a>
-
-                @auth
-                    <div class="border-t border-gray-100 my-2"></div>
-                    <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
-                        @csrf
-                        <button type="submit" class="w-full text-left px-4 py-3 text-red-600 font-bold hover:bg-red-50 rounded-lg">
-                            🚪 {{ __('Logout') }}
-                        </button>
-                    </form>
-                @endauth
-
             </div>
         </div>
     </div>
-</nav>
 
-<script src="//unpkg.com/alpinejs" defer></script>
+</nav>

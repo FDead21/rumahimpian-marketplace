@@ -30,7 +30,7 @@
             @endif
             
             <div class="mt-4">
-                <a href="{{ route('home') }}" class="text-sm text-gray-500 hover:underline">Skip for now</a>
+                <a href="{{ route('property.home') }}" class="text-sm text-gray-500 hover:underline">Skip for now</a>
             </div>
         </div>
     </div>

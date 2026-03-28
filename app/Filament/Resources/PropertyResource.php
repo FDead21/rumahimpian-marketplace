@@ -22,6 +22,10 @@ class PropertyResource extends Resource
 {
     protected static ?string $model = Property::class;
 
+    protected static ?string $navigationGroup = 'Property';
+    
+    protected static ?int    $navigationSort  = 1;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -31,9 +35,10 @@ class PropertyResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
+                TextInput::make('slug')
+                    ->disabled()
+                    ->dehydrated() 
+                    ->helperText('Auto-generated from title'),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('price')
@@ -89,7 +94,6 @@ class PropertyResource extends Resource
                     ->numeric(),
                 Forms\Components\TextInput::make('building_area')
                     ->numeric(),
-                Forms\Components\TextInput::make('specifications'),
                 Forms\Components\Select::make('status')
                     ->options([
                         'DRAFT' => 'Draft',
@@ -208,7 +212,7 @@ class PropertyResource extends Resource
                         Tables\Actions\EditAction::make(),
                         Tables\Actions\Action::make('tour_editor')
                             ->label('🗺 Tour Hotspots')
-                            ->url(fn ($record) => route('tour.editor', $record))
+                            ->url(fn ($record) => route('portal.tour.editor', $record))
                             ->openUrlInNewTab()
                             ->color('success')
                             ->visible(fn ($record) => $record->media()->where('file_type', 'VIRTUAL_TOUR_360')->exists()),

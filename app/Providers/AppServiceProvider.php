@@ -4,98 +4,124 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\View; 
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Events\Verified;
+use App\Listeners\AssignBlueBadge;
+use App\Models\Setting;
 use App\Models\Property;
+use App\Models\Agency;
 use App\Models\PropertyMedia;
 use App\Observers\PropertyMediaObserver;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Setting;
-use Illuminate\Auth\Events\Verified; 
-use App\Listeners\AssignBlueBadge;  
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Cache;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
+        $this->bootEvents();
+        $this->bootViewGlobals();
+        $this->bootViewComposers();
+        $this->bootBladeDirectives();
+        $this->bootBladeComponents();
+        $this->bootObservers();
+    }
 
-        Event::listen(
-            Verified::class,
-            AssignBlueBadge::class,
-        );
+    // ----------------------------------------------------------------
+    // Events
+    // ----------------------------------------------------------------
 
-        if (! $this->app->runningInConsole() && Schema::hasTable('settings')) {
-            $settings = \Cache::rememberForever('site_settings', function () {
-                return Setting::all()->pluck('value', 'key')->toArray();
-            });
+    private function bootEvents(): void
+    {
+        Event::listen(Verified::class, AssignBlueBadge::class);
+    }
 
-            View::share('settings', $settings);
+    // ----------------------------------------------------------------
+    // Global view data — shared with every view, one DB hit, cached forever.
+    // Clear cache via Setting::flushCache() when admin saves a setting.
+    // ----------------------------------------------------------------
+
+    private function bootViewGlobals(): void
+    {
+        if ($this->app->runningInConsole() || ! Schema::hasTable('settings')) {
+            return;
         }
 
-        View::composer('*', function ($view) {
-            if (Schema::hasTable('settings')) {
-                $eoSettings = Cache::remember('eo_settings', 3600, function () {
-                    $raw = Setting::where('key', 'like', 'eo_%')
-                        ->pluck('value', 'key')
-                        ->toArray();
+        // All settings as flat array — views access via $settings['site_name']
+        // EO views access via $settings['eo_site_name'] — same array, no duplication.
+        // Now that settings have a 'group' column, Filament can filter by group.
+        // The flat array here stays for backwards compatibility with existing views.
+        $settings = Setting::allCached();
 
-                    foreach (['eo_hero_slides'] as $field) {
-                        if (!empty($raw[$field])) {
-                            $decoded = json_decode($raw[$field], true);
-                            if (is_array($decoded)) {
-                                $raw[$field] = $decoded;
-                            }
-                        }
-                    }
+        View::share('settings', $settings);
+    }
 
-                    return $raw;
-                });
+    // ----------------------------------------------------------------
+    // View Composers — scoped, not global
+    // ----------------------------------------------------------------
 
-                $view->with('eoSettings', $eoSettings);
-            }
+    private function bootViewComposers(): void
+    {
+        // Navbar needs cities + agencies — only load for views that use the navbar
+        View::composer('components.navbar', function ($view) {
+            $cities = Property::where('status', 'PUBLISHED')
+                ->select('city')
+                ->distinct()
+                ->orderBy('city')
+                ->pluck('city');
+
+            $agencies = Agency::has('agents')->get();
+
+            $view->with(compact('cities', 'agencies'));
         });
 
+        // NOTE: eoSettings is intentionally removed from the global View::composer.
+        // EO controllers that need eo-specific settings now call Setting::forGroup('EO')
+        // directly. This avoids running EO queries on property pages.
+    }
+
+    // ----------------------------------------------------------------
+    // Blade Directives
+    // ----------------------------------------------------------------
+
+    private function bootBladeDirectives(): void
+    {
         Blade::directive('currency', function ($expression) {
             return "<?php
-                \$num = $expression;
-                if(\$num >= 1000000000) {
-                    echo 'Rp ' . number_format(\$num / 1000000000, 1, ',', '.') . ' Miliar';
-                } elseif(\$num >= 1000000) {
-                    echo 'Rp ' . number_format(\$num / 1000000, 1, ',', '.') . ' Juta';
+                \$_num = (float)($expression);
+                if (\$_num >= 1_000_000_000) {
+                    echo 'Rp ' . number_format(\$_num / 1_000_000_000, 1, ',', '.') . ' Miliar';
+                } elseif (\$_num >= 1_000_000) {
+                    echo 'Rp ' . number_format(\$_num / 1_000_000, 1, ',', '.') . ' Juta';
                 } else {
-                    echo 'Rp ' . number_format(\$num, 0, ',', '.');
+                    echo 'Rp ' . number_format(\$_num, 0, ',', '.');
                 }
             ?>";
         });
+    }
 
-        View::composer('components.navbar', function ($view) {
-            $cities = Property::where('status', 'PUBLISHED')
-                        ->select('city')
-                        ->distinct()
-                        ->orderBy('city')
-                        ->pluck('city'); 
+    // ----------------------------------------------------------------
+    // Blade Components
+    // ----------------------------------------------------------------
 
-            $agencies = \App\Models\Agency::has('agents')->get();
+    private function bootBladeComponents(): void
+    {
+        Blade::component('eventOrganizer.components.layout', 'eo-layout');
+        Blade::component('eventOrganizer.components.eo-navbar', 'eo-navbar');
+        Blade::component('eventOrganizer.components.eo-footer', 'eo-footer');
+    }
 
-            $view->with('cities', $cities)->with('agencies', $agencies);
-            
-        });
+    // ----------------------------------------------------------------
+    // Observers
+    // ----------------------------------------------------------------
 
+    private function bootObservers(): void
+    {
         PropertyMedia::observe(PropertyMediaObserver::class);
-        Blade::component('eo.layouts.eo-layout', 'eo-layout');
-        Blade::component('eo.components.eo-navbar', 'eo-navbar');
-        Blade::component('eo.components.eo-footer', 'eo-footer');
     }
 }

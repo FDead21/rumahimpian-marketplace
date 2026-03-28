@@ -17,7 +17,7 @@ class InquiryResource extends Resource
     protected static ?string $model = Inquiry::class;
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
     protected static ?string $navigationGroup = 'CRM';
-    protected static ?int $navigationSort = 1;
+    protected static ?int    $navigationSort  = 1;
 
     // Show a red badge for NEW inquiries
     public static function getNavigationBadge(): ?string

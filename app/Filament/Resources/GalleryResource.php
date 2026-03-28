@@ -16,8 +16,7 @@ class GalleryResource extends Resource
     protected static ?string $model = GalleryEvent::class;
     protected static ?string $navigationIcon = 'heroicon-o-photo';
     protected static ?string $navigationGroup = 'Event Management';
-    protected static ?string $navigationLabel = 'Gallery';
-    protected static ?int $navigationSort = 4;
+    protected static ?int    $navigationSort  = 3;
 
     public static function canViewAny(): bool
     {

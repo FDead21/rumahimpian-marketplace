@@ -9,10 +9,12 @@ class Inquiry extends Model
     protected $fillable = [
         'property_id',
         'buyer_name',
+        'buyer_email',
         'buyer_phone',
         'message',
-        'status',    
-        'admin_notes',
+        'status',
+        'source',     
+        'admin_notes',  
     ];
 
     public function property()

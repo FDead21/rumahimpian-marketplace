@@ -17,7 +17,7 @@ class PackageResource extends Resource
     protected static ?string $model = Package::class;
     protected static ?string $navigationIcon = 'heroicon-o-gift';
     protected static ?string $navigationGroup = 'Event Management';
-    protected static ?int $navigationSort = 1;
+    protected static ?int    $navigationSort  = 1;
 
     public static function canViewAny(): bool
     {

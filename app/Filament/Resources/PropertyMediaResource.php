@@ -17,6 +17,10 @@ class PropertyMediaResource extends Resource
 {
     protected static ?string $model = PropertyMedia::class;
 
+    protected static ?string $navigationGroup = 'Property';
+
+    protected static ?int    $navigationSort  = 2;
+    
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

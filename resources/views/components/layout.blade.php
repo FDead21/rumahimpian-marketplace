@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? $settings['site_name'] ?? 'RumahImpian' }}</title>
+    {{-- Dynamically prioritize EO settings if they exist, otherwise fallback to Property/Global settings --}}
+    <title>{{ $title ?? $eoSettings['eo_site_name'] ?? $settings['site_name'] ?? 'RumahImpian Group' }}</title>
 
-    @if(!empty($settings['site_favicon']))
+    @if(!empty($eoSettings['eo_site_favicon']))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $eoSettings['eo_site_favicon']) }}">
+    @elseif(!empty($settings['site_favicon']))
         <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings['site_favicon']) }}">
     @else
         <link rel="icon" href="{{ asset('favicon.ico') }}"> 
@@ -13,8 +16,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    {{-- Leaflet CSS/JS omitted for brevity --}}
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans text-gray-900">
 
@@ -23,7 +24,8 @@
     <main class="flex-grow">
         {{ $slot }}
     </main>
-
+    @include('components.popup')
+\
     @include('components.footer')
 
     <div x-data="compareBar()" 
@@ -38,7 +40,7 @@
             </div>
             <div class="flex gap-3">
                 <button @click="clear()" class="text-gray-500 hover:text-red-600 font-bold text-sm underline">{{ __('Clear') }}</button>
-                <a :href="'/compare?ids=' + ids.join(',')" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-1">
+                <a :href="'/property/compare?ids=' + ids.join(',')" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-1">
                     ⚖️ {{ __('Compare Now') }}
                 </a>
             </div>
@@ -46,7 +48,6 @@
     </div>
 
     <script>
-        // Alpine Logic (No text changes needed inside JS logic usually, except for alerts)
         document.addEventListener('alpine:init', () => {
             Alpine.store('wishlist', {
                 ids: JSON.parse(localStorage.getItem('wishlist_ids') || '[]'),

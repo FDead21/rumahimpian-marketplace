@@ -19,7 +19,8 @@ use Illuminate\Database\Eloquent\Model;
 class AgencyResource extends Resource
 {
     protected static ?string $model = Agency::class;
-
+    protected static ?string $navigationGroup = 'Property';
+    protected static ?int    $navigationSort  = 3;
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
     public static function shouldRegisterNavigation(): bool

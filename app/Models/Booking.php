@@ -26,6 +26,7 @@ class Booking extends Model
         'payment_status',
         'status',
         'admin_notes',
+        'cancellation_reason', 
     ];
 
     protected $casts = [
@@ -78,6 +79,7 @@ class Booking extends Model
 
     public function getIsConfirmedAttribute(): bool
     {
-        return in_array($this->status, ['CONFIRMED', 'DEPOSIT_PAID', 'IN_PROGRESS', 'COMPLETED']);
+        return in_array($this->status, ['CONFIRMED', 'IN_PROGRESS', 'COMPLETED']);
     }
+ 
 }
