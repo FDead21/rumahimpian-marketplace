@@ -1,21 +1,21 @@
 <x-eo-layout>
 
     {{-- HERO --}}
-        @php
-            $rawSlides = $eoSettings['eo_hero_slides'] ?? [];
-            $heroSlides = is_string($rawSlides) ? json_decode($rawSlides, true) : $rawSlides;
-            if (!is_array($heroSlides)) $heroSlides = [];
-        @endphp
-        <div class="relative h-[600px] w-full"
-            x-data="{
-                activeSlide: 0,
-                slides: {{ Js::from($heroSlides) }},
-            init() {
-                if(this.slides.length > 1) {
-                    setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length; }, 5000);
-                }
+    @php
+        $rawSlides = $eoSettings['eo_hero_slides'] ?? [];
+        $heroSlides = is_string($rawSlides) ? json_decode($rawSlides, true) : $rawSlides;
+        if (!is_array($heroSlides)) $heroSlides = [];
+    @endphp
+    <div class="relative h-[600px] w-full"
+        x-data="{
+            activeSlide: 0,
+            slides: {{ Js::from($heroSlides) }},
+        init() {
+            if(this.slides.length > 1) {
+                setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length; }, 5000);
             }
-         }">
+        }
+     }">
 
         <div class="absolute inset-0 overflow-hidden">
             <template x-for="(slide, index) in slides" :key="index">
@@ -40,22 +40,22 @@
         {{-- Hero Text --}}
         <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
             <span class="bg-rose-600/90 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-                Wedding & Event Organizer
+                {{ __('Wedding & Event Organizer') }}
             </span>
             <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg tracking-tight">
-                {{ $eoSettings['eo_hero_title'] ?? 'Your Dream Event, Made Real' }}
+                {{ $eoSettings['eo_hero_title'] ?? __('Your Dream Event, Made Real') }}
             </h1>
             <p class="text-xl text-gray-200 drop-shadow-md max-w-2xl mb-8">
-                {{ $eoSettings['eo_hero_subtitle'] ?? 'Professional event organizer for weddings, corporate, and more.' }}
+                {{ $eoSettings['eo_hero_subtitle'] ?? __('Professional event organizer for weddings, corporate, and more.') }}
             </p>
             <div class="flex flex-wrap gap-4 justify-center">
                 <a href="{{ route('eventOrganizer.booking.create') }}"
                    class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-4 rounded-xl shadow-2xl transition transform hover:-translate-y-1 text-lg">
-                    📅 Book Your Event
+                    📅 {{ __('Book Your Event') }}
                 </a>
                 <a href="{{ route('eventOrganizer.packages.index') }}"
                    class="bg-white/20 backdrop-blur hover:bg-white/30 text-white font-bold px-8 py-4 rounded-xl border border-white/40 transition text-lg">
-                    🎁 View Packages
+                    🎁 {{ __('View Packages') }}
                 </a>
             </div>
         </div>
@@ -64,8 +64,8 @@
     {{-- STATS BAR --}}
     <div class="bg-rose-600 text-white py-6">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div><div class="text-3xl font-extrabold">{{ $packages->count() }}+</div><div class="text-rose-200 text-sm mt-1">Packages Available</div></div>
-            <div><div class="text-3xl font-extrabold">{{ $vendors->count() }}+</div><div class="text-rose-200 text-sm mt-1">Trusted Vendors</div></div>
+            <div><div class="text-3xl font-extrabold">{{ $packages->count() }}+</div><div class="text-rose-200 text-sm mt-1">{{ __('Packages Available') }}</div></div>
+            <div><div class="text-3xl font-extrabold">{{ $vendors->count() }}+</div><div class="text-rose-200 text-sm mt-1">{{ __('Trusted Vendors') }}</div></div>
         </div>
     </div>
 
@@ -73,11 +73,11 @@
     <div class="max-w-7xl mx-auto px-4 py-16">
         <div class="flex justify-between items-end mb-8">
             <div>
-                <h2 class="text-3xl font-bold text-gray-900">Our Packages</h2>
-                <p class="text-gray-500 mt-1">Choose the perfect package for your event</p>
+                <h2 class="text-3xl font-bold text-gray-900">{{ __('Our Packages') }}</h2>
+                <p class="text-gray-500 mt-1">{{ __('Choose the perfect package for your event') }}</p>
             </div>
             <a href="{{ route('eventOrganizer.packages.index') }}" class="hidden md:flex items-center text-rose-600 font-bold hover:text-rose-700 transition">
-                View All Packages
+                {{ __('View All Packages') }}
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
         </div>
@@ -86,7 +86,7 @@
             @foreach($packages as $package)
             <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
                 @if($package->is_featured)
-                    <div class="absolute top-4 left-4 z-10 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">⭐ Featured</div>
+                    <div class="absolute top-4 left-4 z-10 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">⭐ {{ __('Featured') }}</div>
                 @endif
                 <div class="relative h-48 overflow-hidden">
                     @if($package->thumbnail)
@@ -102,7 +102,7 @@
                 <div class="p-6">
                     <h3 class="font-bold text-xl text-gray-900 mb-2 group-hover:text-rose-600 transition">{{ $package->name }}</h3>
                     @if($package->max_pax)
-                        <p class="text-sm text-gray-500 mb-3">👥 Up to {{ $package->max_pax }} guests</p>
+                        <p class="text-sm text-gray-500 mb-3">👥 {{ __('Up to') }} {{ $package->max_pax }} {{ __('guests') }}</p>
                     @endif
                     @if($package->inclusions)
                         <ul class="space-y-1 mb-4">
@@ -112,13 +112,13 @@
                                 </li>
                             @endforeach
                             @if(count($package->inclusions) > 3)
-                                <li class="text-xs text-gray-400">+ {{ count($package->inclusions) - 3 }} more inclusions</li>
+                                <li class="text-xs text-gray-400">+ {{ count($package->inclusions) - 3 }} {{ __('more inclusions') }}</li>
                             @endif
                         </ul>
                     @endif
                     <a href="{{ route('eventOrganizer.packages.show', $package->slug) }}"
                        class="block w-full text-center bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white font-bold py-2.5 rounded-xl border border-rose-200 hover:border-rose-600 transition">
-                        View Details
+                        {{ __('View Details') }}
                     </a>
                 </div>
             </div>
@@ -132,11 +132,11 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-end mb-8">
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-900">Our Work</h2>
-                    <p class="text-gray-500 mt-1">A glimpse of events we've organized</p>
+                    <h2 class="text-3xl font-bold text-gray-900">{{ __('Our Work') }}</h2>
+                    <p class="text-gray-500 mt-1">{{ __('A glimpse of events we\'ve organized') }}</p>
                 </div>
                 <a href="{{ route('eventOrganizer.gallery.index') }}" class="hidden md:flex items-center text-rose-600 font-bold hover:text-rose-700 transition">
-                    View Full Gallery
+                    {{ __('View Full Gallery') }}
                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
             </div>
@@ -168,11 +168,11 @@
     {{-- CTA BANNER --}}
     <div class="bg-gradient-to-r from-rose-600 to-pink-600 py-16 text-white text-center">
         <div class="max-w-3xl mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Ready to plan your dream event?</h2>
-            <p class="text-rose-100 text-lg mb-8">Let's make it unforgettable. Reach out to us today.</p>
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">{{ __('Ready to plan your dream event?') }}</h2>
+            <p class="text-rose-100 text-lg mb-8">{{ __('Let\'s make it unforgettable. Reach out to us today.') }}</p>
             <a href="{{ route('eventOrganizer.booking.create') }}"
                class="bg-white text-rose-600 hover:bg-rose-50 font-bold px-10 py-4 rounded-xl shadow-xl transition transform hover:-translate-y-1 text-lg inline-block">
-                📅 Book Your Event Now
+                📅 {{ __('Book Your Event Now') }}
             </a>
         </div>
     </div>

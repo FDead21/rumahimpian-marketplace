@@ -2,8 +2,8 @@
     <div class="bg-gray-50 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Latest Property News</h1>
-                <p class="text-lg text-gray-500">Insights, market trends, and tips for your dream home.</p>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-4">{{ __('Latest Property News') }}</h1>
+                <p class="text-lg text-gray-500">{{ __('Insights, market trends, and tips for your dream home.') }}</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -21,7 +21,7 @@
                     
                     <div class="p-6 flex-1 flex flex-col">
                         <div class="text-sm text-sky-600 font-semibold mb-2">
-                            {{ $article->published_at->format('M d, Y') }}
+                            {{ $article->published_at->translatedFormat('M d, Y') }}
                         </div>
                         <a href="{{ route('articles.show', $article->slug) }}" class="block">
                             <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sky-600 transition">{{ $article->title }}</h3>
@@ -30,7 +30,7 @@
                             {{ Str::limit(strip_tags($article->content), 100) }}
                         </p>
                         <a href="{{ route('articles.show', $article->slug) }}" class="inline-flex items-center text-sky-600 font-bold hover:underline">
-                            Read Article <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            {{ __('Read Article') }} <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>
                     </div>
                 </div>

@@ -8,11 +8,11 @@
         {{-- Gateway Header --}}
         <div class="relative z-10 text-center mb-12 max-w-3xl px-4 mt-8 md:mt-0">
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-lg">
-                Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-rose-400"> {{ $settings['site_name'] ?? 'MadeInTravel' }}</span>
+                {{ __('Welcome to') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-rose-400">{{ $settings['site_name'] ?? 'MadeInTravel' }}</span>
             </h1>
             <p class="text-lg md:text-xl text-gray-300 font-light leading-relaxed">
-                Your gateway to perfect living and unforgettable celebrations. 
-                <br class="hidden md:block" />Select your destination to begin.
+                {{ __('Your gateway to perfect living and unforgettable celebrations.') }} 
+                <br class="hidden md:block" />{{ __('Select your destination to begin.') }}
             </p>
         </div>
 
@@ -23,7 +23,7 @@
             <a href="{{ route('property.home') }}" 
                class="group relative flex-1 md:hover:flex-[1.4] transition-all duration-700 ease-in-out rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl flex flex-col justify-end outline-none focus:ring-4 focus:ring-sky-500/50">
                 
-                {{-- Background Image (Replace src with your actual property image) --}}
+                {{-- Background Image --}}
                 <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80" 
                      alt="Property Marketplace" 
                      class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
@@ -44,9 +44,9 @@
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-bold text-white mb-2">Property Marketplace</h2>
+                        <h2 class="text-3xl font-bold text-white mb-2">{{ __('Property Marketplace') }}</h2>
                         <p class="text-gray-300 text-sm md:text-base line-clamp-2 md:line-clamp-none">
-                            Discover your next home. Buy, sell, or rent houses and apartments across Indonesia with our trusted agents.
+                            {{ __('Discover your next home. Buy, sell, or rent houses and apartments across Indonesia with our trusted agents.') }}
                         </p>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
             <a href="{{ route('eventOrganizer.home') }}" 
                class="group relative flex-1 md:hover:flex-[1.4] transition-all duration-700 ease-in-out rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl flex flex-col justify-end outline-none focus:ring-4 focus:ring-rose-500/50">
                 
-                {{-- Background Image (Replace src with your actual event image) --}}
+                {{-- Background Image --}}
                 <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" 
                      alt="Event Organizer" 
                      class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
@@ -77,9 +77,9 @@
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-bold text-white mb-2">Event Organizer</h2>
+                        <h2 class="text-3xl font-bold text-white mb-2">{{ __('Event Organizer') }}</h2>
                         <p class="text-gray-300 text-sm md:text-base line-clamp-2 md:line-clamp-none">
-                            Bring your vision to life. Book premium venues, top-tier catering, and full-service packages for any occasion.
+                            {{ __('Bring your vision to life. Book premium venues, top-tier catering, and full-service packages for any occasion.') }}
                         </p>
                     </div>
                 </div>

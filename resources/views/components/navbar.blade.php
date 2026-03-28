@@ -184,7 +184,7 @@
 
                 {{-- Contextual Links: Property --}}
                 @if($isProperty)
-                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Property</div>
+                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Property') }}</div>
                     <a href="{{ route('property.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏠 {{ __('Home') }}</a>
                     <a href="{{ route('articles.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">📰 {{ __('News') }}</a>
                     <a href="{{ route('property.map') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🗺️ {{ __('Map Search') }}</a>
@@ -196,11 +196,11 @@
 
                 {{-- Contextual Links: EO --}}
                 @if($isEo)
-                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Event Organizer</div>
+                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Event Organizer') }}</div>
                     <a href="{{ route('eventOrganizer.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎊 {{ __('Discover Events') }}</a>
                     <a href="{{ route('eventOrganizer.packages.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎁 {{ __('Packages') }}</a>
                     <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏪 {{ __('Vendors') }}</a>
-                    <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🖼️ {{ __('Gallery') }}</a>
+                    <a href="{{ route('eventOrganizer.gallery.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🖼️ {{ __('Gallery') }}</a>
                     <a href="{{ route('eventOrganizer.booking.create') }}" class="block mt-4 w-full text-center bg-rose-600 text-white font-bold py-3 rounded-lg shadow-sm">📅 {{ __('Book Now') }}</a>
                 @endif
 

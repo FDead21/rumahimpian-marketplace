@@ -1,8 +1,8 @@
 <x-eo-layout>
 
     <div class="bg-gradient-to-br from-rose-600 to-pink-700 text-white py-16 text-center">
-        <h1 class="text-4xl font-extrabold mb-2">Our Vendors</h1>
-        <p class="text-rose-200 text-lg">Trusted partners who make your event perfect</p>
+        <h1 class="text-4xl font-extrabold mb-2">{{ __('Our Vendors') }}</h1>
+        <p class="text-rose-200 text-lg">{{ __('Trusted partners who make your event perfect') }}</p>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 py-16">
@@ -11,7 +11,7 @@
         <div class="mb-14">
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
                 <span class="bg-rose-100 text-rose-600 px-4 py-1 rounded-full text-sm font-bold">
-                    {{ $category }}
+                    {{ __($category) }}
                 </span>
             </h2>
 
@@ -49,7 +49,7 @@
                                 Rp {{ number_format($vendor->price_from, 0, ',', '.') }} –
                                 Rp {{ number_format($vendor->price_to, 0, ',', '.') }}
                             @elseif($vendor->price_from)
-                                From Rp {{ number_format($vendor->price_from, 0, ',', '.') }}
+                                {{ __('From') }} Rp {{ number_format($vendor->price_from, 0, ',', '.') }}
                             @endif
                         </div>
                         @endif
@@ -57,9 +57,9 @@
                         {{-- Contact --}}
                         @if($vendor->phone)
                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $vendor->phone) }}"
-                           target="_blank"
-                           class="inline-flex items-center gap-2 bg-green-50 hover:bg-green-600 text-green-700 hover:text-white text-sm font-bold px-4 py-2 rounded-xl border border-green-200 hover:border-green-600 transition w-full justify-center">
-                            💬 WhatsApp
+                            target="_blank"
+                            class="inline-flex items-center gap-2 bg-green-50 hover:bg-green-600 text-green-700 hover:text-white text-sm font-bold px-4 py-2 rounded-xl border border-green-200 hover:border-green-600 transition w-full justify-center">
+                            💬 {{ __('WhatsApp') }}
                         </a>
                         @endif
 
@@ -82,7 +82,7 @@
         @empty
             <div class="text-center py-16 text-gray-400">
                 <div class="text-5xl mb-4">🏪</div>
-                <p class="text-lg font-semibold">No vendors available yet.</p>
+                <p class="text-lg font-semibold">{{ __('No vendors available yet.') }}</p>
             </div>
         @endforelse
 
@@ -90,11 +90,11 @@
 
     {{-- CTA --}}
     <div class="bg-rose-50 border-t border-rose-100 py-12 text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Ready to book your event?</h2>
-        <p class="text-gray-500 mb-6">Our vendors will be assigned to your booking automatically</p>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ __('Ready to book your event?') }}</h2>
+        <p class="text-gray-500 mb-6">{{ __('Our vendors will be assigned to your booking automatically') }}</p>
         <a href="{{ route('eventOrganizer.booking.create') }}"
            class="inline-block bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-3 rounded-xl shadow transition transform hover:-translate-y-0.5">
-            📅 Book Your Event
+            📅 {{ __('Book Your Event') }}
         </a>
     </div>
 

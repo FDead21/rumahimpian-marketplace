@@ -1,9 +1,8 @@
-{{-- gallery/index.blade.php --}}
 <x-eo-layout>
 
     <div class="bg-gradient-to-br from-rose-600 to-pink-700 text-white py-16 text-center">
-        <h1 class="text-4xl font-extrabold mb-2">Our Gallery</h1>
-        <p class="text-rose-200 text-lg">A collection of events we've had the pleasure of organizing</p>
+        <h1 class="text-4xl font-extrabold mb-2">{{ __('Our Gallery') }}</h1>
+        <p class="text-rose-200 text-lg">{{ __("A collection of events we've had the pleasure of organizing") }}</p>
     </div>
 
     {{-- Filter Tabs --}}
@@ -15,7 +14,7 @@
             <button @click="filter = '{{ strtolower($type) }}'"
                     :class="filter === '{{ strtolower($type) }}' ? 'bg-rose-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:border-rose-300'"
                     class="px-4 py-2 rounded-full text-sm font-bold transition">
-                {{ $type === 'all' ? 'All Events' : $type }}
+                {{ $type === 'all' ? __('All Events') : __($type) }}
             </button>
             @endforeach
         </div>
@@ -34,11 +33,11 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     @if($event->event_type)
                         <div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-                            {{ $event->event_type }}
+                            {{ __($event->event_type) }}
                         </div>
                     @endif
                     <div class="absolute bottom-3 left-3 right-3 text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        {{ $event->media->count() }} photos →
+                        {{ $event->media->count() }} {{ __('photos') }} →
                     </div>
                 </a>
                 <div class="p-4">
@@ -51,7 +50,7 @@
             @empty
                 <div class="col-span-3 text-center py-16 text-gray-400">
                     <div class="text-5xl mb-4">🖼️</div>
-                    <p class="text-lg font-semibold">No gallery events published yet.</p>
+                    <p class="text-lg font-semibold">{{ __('No gallery events published yet.') }}</p>
                 </div>
             @endforelse
         </div>

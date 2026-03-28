@@ -19,26 +19,26 @@
 
         {{-- 2. Property Links --}}
         <div>
-            <h3 class="font-bold text-lg mb-4 text-sky-400">Properties</h3>
+            <h3 class="font-bold text-lg mb-4 text-sky-400">{{ __('Properties') }}</h3>
             <ul class="space-y-3 text-sm text-gray-400">
-                <li><a href="{{ route('property.home') }}" class="hover:text-white transition">Search Homes</a></li>
-                <li><a href="{{ route('property.map') }}" class="hover:text-white transition">Map View</a></li>
+                <li><a href="{{ route('property.home') }}" class="hover:text-white transition">{{ __('Search Homes') }}</a></li>
+                <li><a href="{{ route('property.map') }}" class="hover:text-white transition">{{ __('Map View') }}</a></li>
             </ul>
         </div>
 
         {{-- 3. Event Links --}}
         <div>
-            <h3 class="font-bold text-lg mb-4 text-rose-400">Events</h3>
+            <h3 class="font-bold text-lg mb-4 text-rose-400">{{ __('Events') }}</h3>
             <ul class="space-y-3 text-sm text-gray-400">
-                <li><a href="{{ route('eventOrganizer.home') }}" class="hover:text-white transition">Featured Packages</a></li>
-                <li><a href="{{ route('eventOrganizer.vendors.index') }}" class="hover:text-white transition">Browse Vendors</a></li>
-                <li><a href="{{ route('eventOrganizer.vendors.index') }}" class="hover:text-white transition">Inspiration Gallery</a></li>
+                <li><a href="{{ route('eventOrganizer.home') }}" class="hover:text-white transition">{{ __('Featured Packages') }}</a></li>
+                <li><a href="{{ route('eventOrganizer.vendors.index') }}" class="hover:text-white transition">{{ __('Browse Vendors') }}</a></li>
+                <li><a href="{{ route('eventOrganizer.gallery.index') }}" class="hover:text-white transition">{{ __('Inspiration Gallery') }}</a></li>
             </ul>
         </div>
 
         {{-- 4. Contact & Socials --}}
         <div>
-            <h3 class="font-bold text-lg mb-4 text-gray-100">Contact Support</h3>
+            <h3 class="font-bold text-lg mb-4 text-gray-100">{{ __('Contact Support') }}</h3>
             <ul class="space-y-3 text-sm text-gray-400 mb-6">
                 @if(!empty($settings['contact_address']))
                     <li>📍 {{ $settings['contact_address'] }}</li>
@@ -89,6 +89,6 @@
         </div>
     </div>
     <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-        © {{ date('Y') }} {{ $settings['site_name'] ?? 'RumahImpian' }}. All rights reserved.
+        &copy; {{ date('Y') }} {{ $settings['site_name'] ?? 'RumahImpian' }}. {{ __('All rights reserved.') }}
     </div>
 </footer>

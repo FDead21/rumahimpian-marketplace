@@ -9,15 +9,15 @@
     <div class="max-w-4xl mx-auto px-4 py-12" x-data="bookingForm()">
 
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Book Your Event</h1>
-            <p class="text-gray-500">Fill in the details below and we'll get back to you within 24 hours</p>
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">{{ __('Book Your Event') }}</h1>
+            <p class="text-gray-500">{{ __("Fill in the details below and we'll get back to you within 24 hours") }}</p>
         </div>
 
         @if(session('success'))
             <div class="bg-green-50 border border-green-200 text-green-800 rounded-xl px-6 py-4 mb-8 flex items-center gap-3">
                 <span class="text-2xl">✅</span>
                 <div>
-                    <p class="font-bold">Booking submitted successfully!</p>
+                    <p class="font-bold">{{ __('Booking submitted successfully!') }}</p>
                     <p class="text-sm">{{ session('success') }}</p>
                 </div>
             </div>
@@ -25,19 +25,12 @@
 
         @if($errors->any())
             <div class="bg-red-50 border border-red-200 text-red-800 rounded-xl px-6 py-4 mb-8">
-                <p class="font-bold mb-2">Please fix the following:</p>
+                <p class="font-bold mb-2">{{ __('Please fix the following:') }}</p>
                 <ul class="list-disc list-inside text-sm space-y-1">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="bg-red-600 text-white rounded-xl px-6 py-4 mb-8 shadow-lg">
-                <p class="font-bold text-lg mb-1">🚨 Booking Failed</p>
-                <p class="text-sm font-medium">{{ session('error') }}</p>
             </div>
         @endif
 
@@ -50,10 +43,10 @@
 
             {{-- Package Selection --}}
             <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Event Package <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Event Package') }} <span class="text-red-500">*</span></label>
                 <select name="package_id" required x-model="selectedPackageId"
                         class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
-                    <option value="">Select a package...</option>
+                    <option value="">{{ __('Select a package...') }}</option>
                     @foreach($packages as $pkg)
                         <option value="{{ $pkg->id }}">
                             {{ $pkg->name }} — Rp {{ number_format($pkg->price, 0, ',', '.') }}
@@ -65,17 +58,17 @@
             {{-- Event Type + Date --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Event Type <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Event Type') }} <span class="text-red-500">*</span></label>
                     <select name="event_type" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
-                        <option value="">Select type...</option>
+                        <option value="">{{ __('Select type...') }}</option>
                         @foreach(['Wedding', 'Corporate', 'Birthday', 'Gathering', 'Other'] as $type)
-                            <option value="{{ $type }}" {{ old('event_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            <option value="{{ $type }}" {{ old('event_type') == $type ? 'selected' : '' }}>{{ __($type) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Event Date <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Event Date') }} <span class="text-red-500">*</span></label>
                     <input type="date" name="event_date" required
                            value="{{ old('event_date') }}"
                            min="{{ date('Y-m-d', strtotime('+1 day')) }}"
@@ -86,18 +79,17 @@
             {{-- Guest Count + Venue --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Estimated Guests</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Estimated Guests') }}</label>
                     <input type="number" name="guest_count" min="1" required
                            value="{{ old('guest_count') }}"
-                           placeholder="e.g. 200"
+                           placeholder="{{ __('e.g. 200') }}"
                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
                 </div>
 
-                {{-- Venue Picker (Your original code remains here) --}}
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
-                        Venue
-                        <span class="text-xs text-gray-400 font-normal ml-1">(optional)</span>
+                        {{ __('Venue') }}
+                        <span class="text-xs text-gray-400 font-normal ml-1">({{ __('optional') }})</span>
                     </label>
                     <button type="button" @click="openModal()"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none text-left transition hover:border-rose-300 hover:bg-rose-50 flex items-center justify-between gap-2">
@@ -105,7 +97,7 @@
                             <template x-if="selectedId">
                                 <img :src="selectedThumb" class="w-8 h-8 rounded-lg object-cover shrink-0" x-show="selectedThumb">
                             </template>
-                            <span class="truncate font-semibold text-gray-800" x-text="selectedId ? selectedLabel : 'I\'ll arrange my own venue'" :class="!selectedId ? 'text-gray-400 font-normal' : ''"></span>
+                            <span class="truncate font-semibold text-gray-800" x-text="selectedId ? selectedLabel : `{{ __("I'll arrange my own venue") }}`" :class="!selectedId ? 'text-gray-400 font-normal' : ''"></span>
                         </span>
                         <span class="shrink-0">
                             <template x-if="!selectedId">
@@ -125,7 +117,7 @@
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
-                        Clear venue selection
+                        {{ __('Clear venue selection') }}
                     </button>
                 </div>
             </div>
@@ -134,17 +126,17 @@
             <div class="border-t border-gray-100 pt-6">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h3 class="font-bold text-gray-800 text-xl">Customize Your Event</h3>
-                        <p class="text-sm text-gray-500">Optional add-ons to complete your package.</p>
+                        <h3 class="font-bold text-gray-800 text-xl">{{ __('Customize Your Event') }}</h3>
+                        <p class="text-sm text-gray-500">{{ __('Optional add-ons to complete your package.') }}</p>
                     </div>
                     <button type="button" @click="openVendorListModal()"
                             class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2 rounded-xl border border-rose-200 transition text-sm flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Add Services
+                        {{ __('Add Services') }}
                     </button>
                 </div>
 
-                {{-- Hidden inputs to pass data cleanly to Laravel --}}
+                {{-- Hidden inputs --}}
                 <template x-for="(indices, vId) in selectedServices" :key="'input-'+vId">
                     <template x-for="idx in indices" :key="'input-'+vId+'-'+idx">
                         <input type="hidden" :name="`vendor_services[${vId}][]`" :value="idx">
@@ -157,7 +149,7 @@
                 {{-- Dynamic Bundled Vendors (Included in Package) --}}
                 <template x-if="bundledVendors.length > 0">
                     <div class="mb-6 space-y-2">
-                        <p class="text-sm font-bold text-gray-700">Included in selected package:</p>
+                        <p class="text-sm font-bold text-gray-700">{{ __('Included in selected package:') }}</p>
                         <template x-for="bv in bundledVendors" :key="'bundled-'+bv.id">
                             <div class="flex items-center justify-between p-3 bg-green-50/50 border border-green-100 rounded-xl shadow-sm">
                                 <div class="flex items-center gap-3">
@@ -167,7 +159,7 @@
                                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider" x-text="bv.category"></p>
                                     </div>
                                 </div>
-                                <span class="text-[10px] font-bold text-green-700 bg-green-100 px-2 py-1 rounded uppercase tracking-wide" x-text="bv.is_mandatory ? 'Required' : 'Included'"></span>
+                                <span class="text-[10px] font-bold text-green-700 bg-green-100 px-2 py-1 rounded uppercase tracking-wide" x-text="bv.is_mandatory ? '{{ __('Required') }}' : '{{ __('Included') }}'"></span>
                             </div>
                         </template>
                     </div>
@@ -181,7 +173,7 @@
                         <div class="flex items-center justify-between p-3 border border-gray-200 bg-white rounded-xl shadow-sm">
                             <div>
                                 <p class="font-bold text-sm text-gray-900" x-text="getVendorName(vid)"></p>
-                                <p class="text-xs text-gray-500">Base Package</p>
+                                <p class="text-xs text-gray-500">{{ __('Base Package') }}</p>
                             </div>
                             <div class="flex items-center gap-4">
                                 <span class="font-extrabold text-rose-600 text-sm" x-text="'+ Rp ' + formatPrice(getVendorPrice(vid))"></span>
@@ -198,7 +190,7 @@
                             <div class="flex items-center justify-between p-3 border border-gray-200 bg-white rounded-xl shadow-sm">
                                 <div>
                                     <p class="font-bold text-sm text-gray-900" x-text="getServiceName(vId, idx)"></p>
-                                    <p class="text-xs text-gray-500" x-text="'From: ' + getVendorName(vId)"></p>
+                                    <p class="text-xs text-gray-500" x-text="'{{ __('From') }}: ' + getVendorName(vId)"></p>
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <span class="font-extrabold text-rose-600 text-sm" x-text="'+ Rp ' + formatPrice(getServicePrice(vId, idx))"></span>
@@ -211,32 +203,32 @@
                     </template>
                 </div>
 
-                {{-- Empty State if nothing selected --}}
+                {{-- Empty State --}}
                 <div x-show="selectedVendors.length === 0 && !hasSelectedServices()" class="p-6 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-center">
-                    <p class="text-gray-400 text-sm">No extra vendors selected yet.</p>
+                    <p class="text-gray-400 text-sm">{{ __('No extra vendors selected yet.') }}</p>
                 </div>
             </div>
 
             {{-- Client Info --}}
             <div class="border-t border-gray-100 pt-6">
-                <h3 class="font-bold text-gray-800 mb-4 text-xl">Your Contact Details</h3>
+                <h3 class="font-bold text-gray-800 mb-4 text-xl">{{ __('Your Contact Details') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Full Name') }} <span class="text-red-500">*</span></label>
                         <input type="text" name="client_name" required
                                value="{{ old('client_name') }}"
-                               placeholder="Your full name"
+                               placeholder="{{ __('Your full name') }}"
                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">WhatsApp Number <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('WhatsApp Number') }} <span class="text-red-500">*</span></label>
                         <input type="tel" name="client_phone" required
                                value="{{ old('client_phone') }}"
                                placeholder="+62 812 3456 7890"
                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none font-semibold text-gray-800">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Email Address') }}</label>
                         <input type="email" name="client_email"
                                value="{{ old('client_email') }}"
                                placeholder="your@email.com"
@@ -247,30 +239,31 @@
 
             {{-- Notes --}}
             <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Special Requests / Notes</label>
+                <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Special Requests / Notes') }}</label>
                 <textarea name="notes" rows="3"
-                          placeholder="Tell us anything special about your event..."
+                          placeholder="{{ __('Tell us anything special about your event...') }}"
                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none text-gray-800 resize-none">{{ old('notes') }}</textarea>
             </div>
 
-            {{-- NEW: Dynamic Price Display --}}
+            {{-- Dynamic Price Display --}}
             <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl mt-8">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div>
-                        <p class="text-gray-400 text-sm font-medium mb-1">Estimated Total</p>
+                        <p class="text-gray-400 text-sm font-medium mb-1">{{ __('Estimated Total') }}</p>
                         <div class="text-3xl md:text-4xl font-extrabold text-white">
                             Rp <span x-text="formatPrice(totalPrice)">0</span>
                         </div>
                     </div>
                     <button type="submit"
                             class="w-full md:w-auto bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-rose-500/30 transition transform hover:-translate-y-1 text-lg whitespace-nowrap">
-                        📅 Confirm Booking
+                        📅 {{ __('Confirm Booking') }}
                     </button>
                 </div>
             </div>
 
         </form>
 
+        {{-- Venue Modal --}}
         <div x-show="isOpen"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0"
@@ -283,88 +276,64 @@
              @keydown.escape.window="closeModal()"
              style="display:none">
 
-            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100">
-
-                {{-- Modal Header --}}
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
                 <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                     <div>
-                        <h2 class="text-xl font-extrabold text-gray-900">Choose a Venue</h2>
-                        <p class="text-sm text-gray-400 mt-0.5">Browse available properties from the marketplace</p>
+                        <h2 class="text-xl font-extrabold text-gray-900">{{ __('Choose a Venue') }}</h2>
+                        <p class="text-sm text-gray-400 mt-0.5">{{ __('Browse available properties from the marketplace') }}</p>
                     </div>
                     <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition p-1 rounded-full hover:bg-gray-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
 
-                {{-- Filters --}}
                 <div class="px-6 py-4 border-b border-gray-50 bg-gray-50/50">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div class="relative md:col-span-1">
-                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
-                            </svg>
                             <input x-model="search" @input="filterVenues()"
-                                   type="text" placeholder="Search name, city, district..."
+                                   type="text" placeholder="{{ __('Search name, city, district...') }}"
                                    class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-rose-400 focus:border-transparent outline-none transition">
                         </div>
                         <select x-model="filterCity" @change="filterVenues()"
                                 class="px-3 py-2.5 text-sm rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-rose-400 outline-none transition font-medium text-gray-700">
-                            <option value="">🏙 All Cities</option>
+                            <option value="">🏙 {{ __('All Cities') }}</option>
                             @foreach($venues->pluck('city')->unique()->sort() as $city)
                                 <option value="{{ $city }}">{{ $city }}</option>
                             @endforeach
                         </select>
                         <select x-model="filterType" @change="filterVenues()"
                                 class="px-3 py-2.5 text-sm rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-rose-400 outline-none transition font-medium text-gray-700">
-                            <option value="">🏠 All Types</option>
+                            <option value="">🏠 {{ __('All Types') }}</option>
                             @foreach($venues->pluck('property_type')->unique()->sort() as $type)
                                 <option value="{{ $type }}">{{ $type }}</option>
                             @endforeach
                         </select>
                     </div>
-
                     <div class="flex items-center justify-between mt-3 text-xs text-gray-400">
-                        <span x-text="filtered.length + ' properties available'"></span>
-                        <button x-show="selectedId" @click="clearVenue()"
-                                class="text-rose-400 hover:text-rose-600 font-semibold transition">
-                            Clear selection
+                        <span x-text="filtered.length + ' {{ __('properties available') }}'"></span>
+                        <button x-show="selectedId" @click="clearVenue()" class="text-rose-400 hover:text-rose-600 font-semibold transition">
+                            {{ __('Clear selection') }}
                         </button>
                     </div>
                 </div>
 
-                {{-- Grid --}}
                 <div class="overflow-y-auto flex-1 p-6">
-                    {{-- No venue option --}}
                     <div @click="clearVenue(); closeModal()"
                          class="mb-4 cursor-pointer rounded-2xl border-2 px-5 py-3 flex items-center gap-3 transition"
                          :class="!selectedId ? 'border-rose-400 bg-rose-50' : 'border-gray-100 hover:border-rose-200 hover:bg-rose-50/50'">
                         <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl shrink-0">🏟</div>
                         <div>
-                            <p class="font-bold text-sm text-gray-800">I'll arrange my own venue</p>
-                            <p class="text-xs text-gray-400">No property from the marketplace</p>
-                        </div>
-                        <div class="ml-auto" x-show="!selectedId">
-                            <svg class="w-5 h-5 text-rose-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
+                            <p class="font-bold text-sm text-gray-800">{{ __("I'll arrange my own venue") }}</p>
+                            <p class="text-xs text-gray-400">{{ __('No property from the marketplace') }}</p>
                         </div>
                     </div>
 
-                    {{-- Property cards --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <template x-for="venue in filtered" :key="venue.id">
                             <div @click="selectVenue(venue)"
                                  class="group cursor-pointer rounded-2xl border-2 overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                                 :class="selectedId === venue.id
-                                    ? 'border-rose-500 shadow-md shadow-rose-100'
-                                    : 'border-gray-100 hover:border-rose-300'">
-
-                                {{-- Image --}}
+                                 :class="selectedId === venue.id ? 'border-rose-500 shadow-md' : 'border-gray-100 hover:border-rose-300'">
+                                
                                 <div class="relative h-40 bg-gray-100 overflow-hidden">
                                     <template x-if="venue.thumb">
                                         <img :src="venue.thumb" :alt="venue.title"
@@ -374,12 +343,10 @@
                                         <div class="w-full h-full flex items-center justify-center text-4xl text-gray-300">🏠</div>
                                     </template>
 
-                                    {{-- Price badge --}}
                                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/65 to-transparent px-3 pt-6 pb-2">
                                         <span class="text-white font-bold text-sm" x-text="'Rp ' + venue.price"></span>
                                     </div>
 
-                                    {{-- Selected checkmark --}}
                                     <div x-show="selectedId === venue.id"
                                          class="absolute top-2 right-2 bg-rose-500 text-white rounded-full p-1 shadow">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
@@ -387,13 +354,11 @@
                                         </svg>
                                     </div>
 
-                                    {{-- Type badge --}}
                                     <div class="absolute top-2 left-2">
                                         <span class="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">RENT</span>
                                     </div>
                                 </div>
 
-                                {{-- Info --}}
                                 <div class="p-3.5">
                                     <p class="font-bold text-sm text-gray-900 leading-snug mb-1 group-hover:text-rose-600 transition truncate" x-text="venue.title"></p>
                                     <p class="text-xs text-gray-500 flex items-center gap-1 mb-3">
@@ -404,17 +369,14 @@
                                         <span x-text="venue.city + (venue.district ? ', ' + venue.district : '')"></span>
                                     </p>
                                     <div class="flex justify-between text-xs text-gray-400 border-t border-gray-100 pt-2.5">
-                                        <span x-text="venue.bedrooms + ' Bed'"></span>
-                                        <span x-text="venue.bathrooms + ' Bath'"></span>
+                                        <span x-text="venue.bedrooms + ' {{ __('Bed') }}'"></span>
+                                        <span x-text="venue.bathrooms + ' {{ __('Bath') }}'"></span>
                                         <span x-text="venue.building_area + ' m²'"></span>
                                     </div>
-
-                                    <button class="mt-3 w-full py-1.5 rounded-lg text-xs font-bold transition-all"
-                                            :class="selectedId === venue.id
-                                                ? 'bg-rose-500 text-white'
-                                                : 'bg-gray-100 text-gray-600 group-hover:bg-rose-100 group-hover:text-rose-600'">
-                                        <span x-text="selectedId === venue.id ? '✓ Selected' : 'Select Venue'"></span>
-                                    </button>
+                                     <button class="mt-3 w-full py-1.5 rounded-lg text-xs font-bold transition-all"
+                                             :class="selectedId === venue.id ? 'bg-rose-500 text-white' : 'bg-gray-100 text-gray-600 group-hover:bg-rose-100 group-hover:text-rose-600'">
+                                         <span x-text="selectedId === venue.id ? '✓ {{ __('Selected') }}' : '{{ __('Select Venue') }}'"></span>
+                                     </button>
                                 </div>
                             </div>
                         </template>
@@ -423,22 +385,20 @@
                         <div x-show="filtered.length === 0"
                              class="col-span-3 flex flex-col items-center justify-center py-16 text-gray-400">
                             <div class="text-5xl mb-3">🔍</div>
-                            <p class="font-semibold">No properties match your search</p>
+                            <p class="font-semibold">{{ __('No properties match your search') }}</p>
                             <button @click="search = ''; filterCity = ''; filterType = ''; filterVenues()"
-                                    class="mt-3 text-sm text-rose-500 hover:underline">Clear filters</button>
+                                    class="mt-3 text-sm text-rose-500 hover:underline">{{ __('Clear filters') }}</button>
                         </div>
                     </div>
                 </div>
 
-                {{-- Modal Footer --}}
                 <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
                     <span class="text-sm text-gray-500" x-show="selectedId">
-                        ✅ <strong x-text="selectedLabel"></strong> selected
+                        ✅ <strong x-text="selectedLabel"></strong> {{ __('selected') }}
                     </span>
-                    <span class="text-sm text-gray-400" x-show="!selectedId">No venue selected</span>
-                    <button @click="closeModal()"
-                            class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl transition text-sm">
-                        Confirm & Close
+                    <span class="text-sm text-gray-400" x-show="!selectedId">{{ __('No venue selected') }}</span>
+                    <button @click="closeModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl transition text-sm">
+                        {{ __('Confirm & Close') }}
                     </button>
                 </div>
             </div>
@@ -456,8 +416,8 @@
                 {{-- Header --}}
                 <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gray-50">
                     <div>
-                        <h2 class="text-xl font-extrabold text-gray-900" x-text="activeVendor ? activeVendor.name : 'Services'"></h2>
-                        <p class="text-sm text-gray-500 mt-0.5">Select the specific items you want</p>
+                        <h2 class="text-xl font-extrabold text-gray-900" x-text="activeVendor ? activeVendor.name : '{{ __('Services') }}'"></h2>
+                        <p class="text-sm text-gray-500 mt-0.5">{{ __('Select the specific items you want') }}</p>
                     </div>
                     <button type="button" @click="closeVendorModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -494,7 +454,7 @@
                 {{-- Footer --}}
                 <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
                     <button type="button" @click="closeVendorModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm">
-                        Done
+                        {{ __('Done') }}
                     </button>
                 </div>
             </div>
@@ -510,19 +470,18 @@
             <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden" x-show="isVendorListModalOpen" x-transition>
                 
                 {{-- Header & Filters --}}
-                <div class="px-6 py-5 border-b border-gray-100 bg-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-extrabold text-gray-900">Vendor Directory</h2>
-                        <button type="button" @click="closeVendorListModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-                    <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
-                        <button @click="vendorCategoryFilter = ''" class="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition" :class="vendorCategoryFilter === '' ? 'bg-rose-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">All</button>
-                        @foreach($vendorsByCategory->keys() as $cat)
-                            <button @click="vendorCategoryFilter = '{{ $cat }}'" class="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition" :class="vendorCategoryFilter === '{{ $cat }}' ? 'bg-rose-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">{{ $cat }}</button>
-                        @endforeach
-                    </div>
+                <div class="px-6 py-5 border-b border-gray-100 bg-white flex items-center justify-between">
+                    <h2 class="text-xl font-extrabold text-gray-900">{{ __('Vendor Directory') }}</h2>
+                    <button type="button" @click="closeVendorListModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                {{-- Category Filter Tabs --}}
+                <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2 px-6 py-2">
+                     <button @click="vendorCategoryFilter = ''" class="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition" :class="vendorCategoryFilter === '' ? 'bg-rose-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">{{ __('All') }}</button>
+                     @foreach($vendorsByCategory->keys() as $cat)
+                         <button @click="vendorCategoryFilter = '{{ $cat }}'" class="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition" :class="vendorCategoryFilter === '{{ $cat }}' ? 'bg-rose-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">{{ __($cat) }}</button>
+                     @endforeach
                 </div>
 
                 {{-- Vendor Grid --}}
@@ -539,21 +498,21 @@
                                     {{-- If it has a service menu --}}
                                     <template x-if="vendor.service_menu && vendor.service_menu.length > 0">
                                         <button @click="openVendorModal(vendor.id)" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 rounded-xl text-sm transition">
-                                            View Services
+                                            {{ __('View Services') }}
                                         </button>
                                     </template>
                                     {{-- If it does NOT have a service menu (Base Vendor) --}}
                                     <template x-if="!vendor.service_menu || vendor.service_menu.length === 0">
                                         <button @click="toggleBaseVendor(vendor.id)" class="w-full font-bold py-2 rounded-xl text-sm transition"
                                                 :class="selectedVendors.includes(String(vendor.id)) ? 'bg-rose-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-rose-300'">
-                                            <span x-text="selectedVendors.includes(String(vendor.id)) ? '✓ Selected' : '+ Add (Rp ' + formatPrice(vendor.price_from) + ')'"></span>
+                                            <span x-text="selectedVendors.includes(String(vendor.id)) ? '✓ {{ __('Selected') }}' : '+ {{ __('Add') }} (Rp ' + formatPrice(vendor.price_from) + ')'"></span>
                                         </button>
                                     </template>
                                 </div>
                             </div>
                         </template>
                     </div>
-                    <div x-show="filteredVendorsList.length === 0" class="text-center py-10 text-gray-400">No vendors found in this category.</div>
+                    <div x-show="filteredVendorsList.length === 0" class="text-center py-10 text-gray-400">{{ __('No vendors found in this category.') }}</div>
                 </div>
             </div>
         </div>

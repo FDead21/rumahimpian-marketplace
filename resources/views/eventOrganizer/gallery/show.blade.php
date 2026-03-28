@@ -1,4 +1,3 @@
-{{-- eo/gallery/gallery-show.blade.php --}}
 <x-eo-layout>
 
     {{-- Hero / Cover --}}
@@ -20,7 +19,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
-                Back to Gallery
+                {{ __('Back to Gallery') }}
             </a>
         </div>
 
@@ -29,7 +28,7 @@
             <div class="max-w-4xl mx-auto">
                 @if($event->event_type)
                     <span class="inline-block bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
-                        {{ $event->event_type }}
+                        {{ __($event->event_type) }}
                     </span>
                 @endif
                 <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-2">
@@ -48,7 +47,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        {{ $event->media->count() }} photos
+                        {{ $event->media->count() }} {{ __('photos') }}
                     </span>
                 </div>
             </div>
@@ -108,7 +107,6 @@
                      @keydown.arrow-right.window="next()"
                      style="display: none;">
 
-                    {{-- Close --}}
                     <button @click="close()"
                             class="absolute top-4 right-4 text-white/70 hover:text-white transition z-10">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +114,6 @@
                         </svg>
                     </button>
 
-                    {{-- Prev --}}
                     <button @click="prev()"
                             class="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition z-10 bg-black/30 rounded-full p-2">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +121,6 @@
                         </svg>
                     </button>
 
-                    {{-- Image --}}
                     <div class="max-w-5xl max-h-[85vh] flex flex-col items-center">
                         <template x-for="(photo, i) in photos" :key="i">
                             <div x-show="current === i" class="text-center">
@@ -141,7 +137,6 @@
                         </template>
                     </div>
 
-                    {{-- Next --}}
                     <button @click="next()"
                             class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition z-10 bg-black/30 rounded-full p-2">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +165,7 @@
         @else
             <div class="text-center py-20 text-gray-400">
                 <div class="text-6xl mb-4">🖼️</div>
-                <p class="text-lg font-semibold">No photos uploaded for this event yet.</p>
+                <p class="text-lg font-semibold">{{ __('No photos uploaded for this event yet.') }}</p>
             </div>
         @endif
 
@@ -181,7 +176,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
-                Back to All Events
+                {{ __('Back to All Events') }}
             </a>
         </div>
     </div>

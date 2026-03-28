@@ -8,7 +8,7 @@
             <article class="prose lg:prose-xl max-w-none">
                 <div class="mb-8 text-center">
                     <span class="bg-sky-100 text-sky-800 text-sm font-bold px-3 py-1 rounded-full">
-                        {{ $article->published_at->format('F d, Y') }}
+                        {{ $article->published_at->translatedFormat('F d, Y') }}
                     </span>
                     <h1 class="text-4xl font-extrabold text-gray-900 mt-4 mb-6 leading-tight">{{ $article->title }}</h1>
                 </div>
@@ -25,7 +25,7 @@
             </article>
 
             <div class="border-t border-gray-200 mt-16 pt-10">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">More to Read</h3>
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">{{ __('More to Read') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach($relatedArticles as $related)
                         <a href="{{ route('articles.show', $related->slug) }}" class="group">
