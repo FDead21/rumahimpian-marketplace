@@ -3,11 +3,20 @@
     {{-- Type Filter Tabs --}}
     <div class="max-w-7xl mx-auto px-4 pt-10">
         <div class="flex gap-3 justify-center flex-wrap">
-            @foreach(['' => '🚗 ' . __('All'), 'CAR' => '🚗 ' . __('Cars'), 'MOTORBIKE' => '🛵 ' . __('Motorbikes'), 'BOAT' => '⛵ ' . __('Boats')] as $type => $label)
+            @php
+                $types = [
+                    '' => ['icon' => '🚗', 'label' => __('All')],
+                    'CAR' => ['icon' => '🚗', 'label' => __('Cars')],
+                    'MOTORBIKE' => ['icon' => '🛵', 'label' => __('Motorbikes')],
+                    'BOAT' => ['icon' => '⛵', 'label' => __('Boats')]
+                ];
+            @endphp
+
+            @foreach($types as $type => $data)
                 <a href="{{ route('rental.vehicles.index', $type ? ['type' => strtolower($type)] : []) }}"
-                   class="px-5 py-2.5 rounded-full font-bold text-sm border-2 transition
-                          {{ request('type', '') === strtolower($type) ? 'bg-sky-600 border-sky-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-sky-400' }}">
-                    {{ $label }}
+                class="px-5 py-2.5 rounded-full font-bold text-sm border-2 transition
+                        {{ request('type', '') === strtolower($type) ? 'bg-sky-600 border-sky-600 text-white shadow-lg shadow-sky-600/20' : 'bg-white border-gray-200 text-gray-700 hover:border-sky-400' }}">
+                    {{ $data['icon'] }} {{ $data['label'] }}
                 </a>
             @endforeach
         </div>

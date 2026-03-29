@@ -49,31 +49,37 @@
                     </div>
                 </a>
 
-                {{-- Tours Card (Coming Soon) --}}
-                <div class="group relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-lg transition-all duration-500 cursor-not-allowed">
+                {{-- Tours Card --}}
+                <a href="{{ route('tour.home') }}" class="group relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                     <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80" 
-                        class="absolute inset-0 w-full h-full object-cover grayscale opacity-80">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                    <div class="absolute top-4 right-4 bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shadow-sm z-10">{{ __('Coming Soon') }}</div>
+                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                     
-                    <div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-start text-white opacity-70">
+                    <div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-start text-white">
                         <h3 class="text-xl font-bold mb-1">{{ __('Tours & Travel') }}</h3>
                         <p class="text-sm text-gray-300 mb-4 line-clamp-2">{{ __('Explore breathtaking destinations.') }}</p>
+                        <div class="bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/30 text-white text-xs font-bold px-4 py-2 rounded-full transition flex items-center gap-2">
+                            {{ __('Read More') }}
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
                     </div>
-                </div>
+                </a>
 
-                {{-- Rentals Card (Coming Soon) --}}
-                <div class="group relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-lg transition-all duration-500 cursor-not-allowed">
+                {{-- Rentals Card --}}
+                <a href="{{ route('rental.home') }}" class="group relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                     <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80" 
-                        class="absolute inset-0 w-full h-full object-cover grayscale opacity-80">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                    <div class="absolute top-4 right-4 bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shadow-sm z-10">{{ __('Coming Soon') }}</div>
+                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                     
-                    <div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-start text-white opacity-70">
+                    <div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-start text-white">
                         <h3 class="text-xl font-bold mb-1">{{ __('Vehicle Rentals') }}</h3>
                         <p class="text-sm text-gray-300 mb-4 line-clamp-2">{{ __('Cars, scooters, and boats for your trip.') }}</p>
+                        <div class="bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/30 text-white text-xs font-bold px-4 py-2 rounded-full transition flex items-center gap-2">
+                            {{ __('Read More') }}
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
                     </div>
-                </div>
+                </a>
 
             </div>
         </div>
@@ -152,7 +158,111 @@
     @endif
 
     {{-- ========================================================= --}}
-    {{-- 5. CONTENT RIBBON: ARTICLES                               --}}
+    {{-- 7. CONTENT RIBBON:   TOURS                                --}}
+    {{-- ========================================================= --}}
+    @if(isset($featuredTours) && $featuredTours->count() > 0)
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="flex justify-between items-end mb-6">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ __('Popular Tours & Activities') }}</h2>
+                <p class="text-gray-500 mt-1">{{ __('Discover authentic cultural experiences and adventures.') }}</p>
+            </div>
+            {{-- Make sure this matches your actual route name for tours index --}}
+            <a href="{{ route('tour.home') }}" class="hidden md:block text-emerald-600 font-bold hover:underline">{{ __('View All Tours') }} &rarr;</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            @foreach($featuredTours as $tour)
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition group">
+                    {{-- Note: Update the route name here if it's different in your web.php --}}
+                    <a href="{{ route('tour.tours.show', $tour->slug) }}" class="block h-48 bg-gray-200 relative overflow-hidden">
+                        @if($tour->coverImage())
+                            <img src="{{ asset('storage/' . $tour->coverImage()) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        @else
+                            <div class="w-full h-full bg-emerald-50 flex items-center justify-center text-4xl">🗺️</div>
+                        @endif
+                        <div class="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shadow-sm">
+                            {{ $tour->category_label }}
+                        </div>
+                    </a>
+                    <div class="p-4">
+                        <a href="{{ route('tour.tours.show', $tour->slug) }}">
+                            <h3 class="font-bold text-gray-900 line-clamp-2 hover:text-emerald-600 transition min-h-[2.5rem]">{{ $tour->name }}</h3>
+                        </a>
+                        <div class="flex items-center justify-between mt-3">
+                            <p class="text-xs text-gray-500 font-medium">⏱ {{ $tour->duration_days }} {{ __('Days') }}</p>
+                            <p class="text-emerald-600 font-extrabold text-sm">Rp {{ number_format($tour->price_per_person, 0, ',', '.') }}<span class="text-[10px] font-normal text-gray-400">/pax</span></p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+
+    {{-- ========================================================= --}}
+    {{-- 6. CONTENT RIBBON: VEHICLE RENTALS (By Category)          --}}
+    {{-- ========================================================= --}}
+    @if((isset($rentalCars) && $rentalCars->count() > 0) || (isset($rentalBikes) && $rentalBikes->count() > 0) || (isset($rentalBoats) && $rentalBoats->count() > 0))
+    <div class="bg-slate-900 py-16 mb-16 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white">{{ __('Premium Vehicle Rentals') }}</h2>
+                <p class="text-slate-400 mt-2">{{ __('Drive in style. Choose from our curated fleet of vehicles.') }}</p>
+            </div>
+
+            {{-- 1. ROW: CARS --}}
+            @if(isset($rentalCars) && $rentalCars->count() > 0)
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">🚗 {{ __('Cars & SUVs') }}</h3>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="text-sm text-slate-400 hover:text-white transition">{{ __('See all cars') }} &rarr;</a>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        @foreach($rentalCars as $car)
+                            @include('components.rental-card-small', ['vehicle' => $car])
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- 2. ROW: MOTORBIKES --}}
+            @if(isset($rentalBikes) && $rentalBikes->count() > 0)
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">🛵 {{ __('Motorbikes & Scooters') }}</h3>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="text-sm text-slate-400 hover:text-white transition">{{ __('See all motorbikes') }} &rarr;</a>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        @foreach($rentalBikes as $bike)
+                            @include('components.rental-card-small', ['vehicle' => $bike])
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- 3. ROW: BOATS --}}
+            @if(isset($rentalBoats) && $rentalBoats->count() > 0)
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">⛵ {{ __('Yachts & Boats') }}</h3>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="text-sm text-slate-400 hover:text-white transition">{{ __('See all boats') }} &rarr;</a>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        @foreach($rentalBoats as $boat)
+                            @include('components.rental-card-small', ['vehicle' => $boat])
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+        </div>
+    </div>
+    @endif
+
+    {{-- ========================================================= --}}
+    {{-- 7. CONTENT RIBBON: ARTICLES                               --}}
     {{-- ========================================================= --}}
     @if(isset($articles) && $articles->count() > 0)
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">

@@ -1,11 +1,16 @@
 @php
     // 1. Detect the current module
     $isEo = request()->is('eventOrganizer*');
+    $isRental = request()->is('rental*');
+    $isTour = request()->is('tour*');
     $isProperty = request()->is('property*') || request()->is('map*') || request()->is('agency*') || request()->is('agent*');
     $isPortal = request()->routeIs('home'); 
-    $isRental = request()->is('rental*');
-    $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home') || request()->routeIs('rental.home');
-    
+    $isHomePage = request()->routeIs('home') || 
+                  request()->routeIs('property.home') || 
+                  request()->routeIs('eventOrganizer.home') || 
+                  request()->routeIs('rental.home') ||
+                  request()->routeIs('tour.home'); 
+
     // 2. Set Theme Colors dynamically
     $themeText = 'text-sky-600';
     $themeBg = 'bg-sky-600 hover:bg-sky-700';
@@ -67,6 +72,22 @@
                     </div>
                 </div>
 
+                {{-- Tour Dropdown --}}
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                    <a href="{{ route('tour.home') }}"
+                    class="px-5 py-2 rounded-full text-sm font-bold transition-all block"
+                    :class="scrolled || !{{ $isHomePage ? 'true' : 'false' }} ? 'text-gray-600 hover:bg-white hover:shadow-sm' : 'text-white hover:bg-white/20'">
+                        {{ __('Tours') }}
+                    </a>
+                    <div x-show="open" x-transition.opacity class="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden" style="display: none;">
+                        <a href="{{ route('tour.home') }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">{{ __('Browse Tours') }}</a>
+                        <a href="{{ route('tour.tours.index', ['category' => 'adventure']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Adventure') }}</a>
+                        <a href="{{ route('tour.tours.index', ['category' => 'cultural']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Cultural') }}</a>
+                        <a href="{{ route('tour.tours.index', ['category' => 'nature']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Nature') }}</a>
+                        <a href="{{ route('tour.tours.index', ['category' => 'water_sports']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Water Sports') }}</a>
+                    </div>
+                </div>
+
                 {{-- Rental Dropdown --}}
                 <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                     <a href="{{ route('rental.home') }}" 
@@ -76,9 +97,9 @@
                     </a>
                     <div x-show="open" x-transition.opacity class="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden" style="display: none;">
                         <a href="{{ route('rental.home') }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">{{ __('Browse Vehicles') }}</a>
-                        <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">🚗 {{ __('Cars') }}</a>
-                        <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">🛵 {{ __('Motorbikes') }}</a>
-                        <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">⛵ {{ __('Boats') }}</a>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Cars') }}</a>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Motorbikes') }}</a>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600"> {{ __('Boats') }}</a>
                     </div>
                 </div>
 
@@ -145,28 +166,39 @@
                 
                 {{-- Property Mobile --}}
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Property') }}</div>
-                <a href="{{ route('property.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏠 {{ __('Search Homes') }}</a>
-                <a href="{{ route('property.map') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🗺️ {{ __('Map Search') }}</a>
+                <a href="{{ route('property.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Search Homes') }}</a>
+                <a href="{{ route('property.map') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Map Search') }}</a>
                 
                 <div class="border-t border-gray-100 my-2"></div>
 
                 {{-- Events Mobile --}}
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Event Organizer') }}</div>
-                <a href="{{ route('eventOrganizer.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎊 {{ __('Discover Events') }}</a>
-                <a href="{{ route('eventOrganizer.packages.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎁 {{ __('Packages') }}</a>
-                <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏪 {{ __('Vendors') }}</a>
-                <a href="{{ route('eventOrganizer.gallery.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🖼️ {{ __('Gallery') }}</a>
+                <a href="{{ route('eventOrganizer.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Discover Events') }}</a>
+                <a href="{{ route('eventOrganizer.packages.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Packages') }}</a>
+                <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Vendors') }}</a>
+                <a href="{{ route('eventOrganizer.gallery.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Gallery') }}</a>
+
+                <div class="border-t border-gray-100 my-2"></div>
+
+                {{-- Tour Mobile --}}
+                <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Tours') }}</div>
+                <a href="{{ route('tour.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Browse Tours') }}</a>
+                <a href="{{ route('tour.tours.index', ['category' => 'adventure']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Adventure') }}</a>
+                <a href="{{ route('tour.tours.index', ['category' => 'cultural']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Cultural') }}</a>
+                <a href="{{ route('tour.tours.index', ['category' => 'nature']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Nature') }}</a>
+                <a href="{{ route('tour.tours.index', ['category' => 'water_sports']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Water Sports') }}</a>
 
                 <div class="border-t border-gray-100 my-2"></div>
 
                 {{-- Rental Mobile --}}
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Rentals') }}</div>
-                <a href="{{ route('rental.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🚗 {{ __('Browse Vehicles') }}</a>
-                <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🚗 {{ __('Cars') }}</a>
-                <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🛵 {{ __('Motorbikes') }}</a>
-                <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">⛵ {{ __('Boats') }}</a>
+                <a href="{{ route('rental.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Browse Vehicles') }}</a>
+                <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Cars') }}</a>
+                <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Motorbikes') }}</a>
+                <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg"> {{ __('Boats') }}</a>
 
                 <div class="border-t border-gray-100 my-2"></div>
+                
 
                 <div class="relative" x-data="{ langOpen: false }">
                     <button @click="langOpen = !langOpen" class="w-full flex items-center justify-between px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">

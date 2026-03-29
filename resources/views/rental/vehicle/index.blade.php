@@ -13,11 +13,11 @@
                    placeholder="{{ __('Search vehicle, brand, city...') }}"
                    class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-sky-400">
 
-            <select name="type" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400">
+            <select name="type" class="...">
                 <option value="">{{ __('All Types') }}</option>
-                <option value="car"       {{ request('type') === 'car'       ? 'selected' : '' }}>🚗 {{ __('Car') }}</option>
+                <option value="car" {{ request('type') === 'car' ? 'selected' : '' }}>🚗 {{ __('Car') }}</option>
                 <option value="motorbike" {{ request('type') === 'motorbike' ? 'selected' : '' }}>🛵 {{ __('Motorbike') }}</option>
-                <option value="boat"      {{ request('type') === 'boat'      ? 'selected' : '' }}>⛵ {{ __('Boat') }}</option>
+                <option value="boat" {{ request('type') === 'boat' ? 'selected' : '' }}>⛵ {{ __('Boat') }}</option>
             </select>
 
             <input type="text" name="city" value="{{ request('city') }}"

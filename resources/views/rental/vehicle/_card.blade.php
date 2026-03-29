@@ -51,7 +51,10 @@
         @if($vehicle->specifications)
             <div class="flex flex-wrap gap-2 mb-4">
                 @foreach(array_slice($vehicle->specifications, 0, 3) as $key => $val)
-                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">{{ $key }}: {{ $val }}</span>
+                    {{-- Localize both the Key and the Value if possible --}}
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">
+                        {{ __($key) }}: {{ __($val) }}
+                    </span>
                 @endforeach
             </div>
         @endif

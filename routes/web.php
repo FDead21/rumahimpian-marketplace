@@ -20,6 +20,11 @@ use App\Http\Controllers\Property\InquiryController;
 use App\Http\Controllers\Property\TourEditorController;
 use App\Http\Controllers\Property\DashboardController;
 
+// Tour Controllers
+use App\Http\Controllers\Tour\HomeController as TourHomeController;
+use App\Http\Controllers\Tour\TourController;
+use App\Http\Controllers\Tour\BookingController as TourBookingController;
+
 // Rental Controllers
 use App\Http\Controllers\Rental\HomeController as RentalHomeController;
 use App\Http\Controllers\Rental\VehicleController;
@@ -107,6 +112,26 @@ Route::prefix('eventOrganizer')->name('eventOrganizer.')->group(function () {
     // Vendors
     Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
     Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Tour Routes
+| Prefix: /tour
+| Names:  tour.*
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('tour')->name('tour.')->group(function () {
+
+    Route::get('/', [TourHomeController::class, 'index'])->name('home');
+
+    Route::get('/tours', [TourController::class, 'index'])->name('tours.index');
+    Route::get('/tours/{slug}', [TourController::class, 'show'])->name('tours.show');
+
+    Route::get('/booking', [TourBookingController::class, 'create'])->name('booking.create');
+    Route::post('/booking', [TourBookingController::class, 'store'])->name('booking.store')->middleware('throttle:5,1');
+    Route::get('/booking/confirmation/{code}', [TourBookingController::class, 'confirmation'])->name('booking.confirmation');
 });
 
 /*

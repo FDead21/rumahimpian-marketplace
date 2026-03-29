@@ -156,7 +156,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         @foreach($vehicle->specifications as $key => $val)
                             <div class="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                                <p class="text-xs text-gray-400 uppercase tracking-wide font-bold mb-1">{{ $key }}</p>
+                                <p class="text-xs text-gray-400 uppercase tracking-wide font-bold mb-1">{{ __($key) }}</p>
                                 <p class="text-gray-900 font-semibold">{{ $val }}</p>
                             </div>
                         @endforeach
@@ -237,7 +237,7 @@
                                     <div style="min-width:160px">
                                         <strong style="font-size:13px">{{ addslashes($vehicle->name) }}</strong><br>
                                         <span style="color:#6b7280;font-size:12px">📍 {{ addslashes($vehicle->city) }}</span><br>
-                                        <span style="color:#6b7280;font-size:11px">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}/hari</span>
+                                        <span style="color:#6b7280;font-size:11px">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}/{{ __('day') }}</span>
                                     </div>
                                 `)
                                 .openPopup();
@@ -309,19 +309,28 @@
 
                     {{-- WhatsApp CTA --}}
                     @php
-                        $phone = $vehicle->user->phone_number ?? null;
+                    $phone = $vehicle->user->phone_number ?? null;
                         if ($phone) {
                             $phone = preg_replace('/[^0-9]/', '', $phone);
                             if (str_starts_with($phone, '0')) {
                                 $phone = '62' . substr($phone, 1);
                             }
+                            
+                            // Localized Message Logic
+                            $intro = __('Halo, saya tertarik menyewa kendaraan:');
+                            $typeLabel = __('Type');
+                            $priceLabel = __('Price');
+                            $dayLabel = __('day');
+                            $footer = __('Bisa minta info lebih lanjut? Terima kasih.');
+                            $linkLabel = __('Link');
+
                             $waMessage = urlencode(
-                                "Halo, saya tertarik menyewa kendaraan:\n\n" .
+                                "$intro\n\n" .
                                 "*{$vehicle->name}*\n" .
-                                "Tipe: {$vehicle->vehicle_type}\n" .
-                                "Harga: Rp " . number_format($vehicle->price_per_day, 0, ',', '.') . "/hari\n\n" .
-                                "Bisa minta info lebih lanjut? Terima kasih.\n" .
-                                "Link: " . request()->url()
+                                "$typeLabel: " . __($vehicle->vehicle_type) . "\n" .
+                                "$priceLabel: Rp " . number_format($vehicle->price_per_day, 0, ',', '.') . "/$dayLabel\n\n" .
+                                "$footer\n" .
+                                "$linkLabel: " . request()->url()
                             );
                             $waUrl = "https://wa.me/{$phone}?text={$waMessage}";
                         }

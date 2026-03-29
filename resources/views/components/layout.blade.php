@@ -34,8 +34,12 @@
 </head>
 
 @php
-        $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home') || request()->routeIs('rental.home');;
-    @endphp
+    $isHomePage = request()->routeIs('home') || 
+                  request()->routeIs('property.home') || 
+                  request()->routeIs('eventOrganizer.home') || 
+                  request()->routeIs('rental.home') ||
+                  request()->routeIs('tour.home');        
+@endphp
 
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans text-gray-900">
 
@@ -69,7 +73,7 @@
             <div class="flex gap-3">
                 <button @click="clear()" class="text-gray-500 hover:text-red-600 font-bold text-sm underline">{{ __('Clear') }}</button>
                 <a :href="'/property/compare?ids=' + ids.join(',')" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-1">
-                    ⚖️ {{ __('Compare Now') }}
+                     {{ __('Compare Now') }}
                 </a>
             </div>
         </div>
