@@ -24,21 +24,23 @@
             <button type="button" @click="activeTab = 'property'" 
                     class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap"
                     :class="activeTab === 'property' ? 'bg-white text-slate-900 shadow-md' : 'bg-white/10 text-white hover:bg-white/20'">
-                <span class="text-lg">🏠</span> {{ __('Property') }}
+                <span class="text-lg"></span> {{ __('Property') }}
             </button>
             
             <button type="button" @click="activeTab = 'events'" 
                     class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap"
                     :class="activeTab === 'events' ? 'bg-white text-slate-900 shadow-md' : 'bg-white/10 text-white hover:bg-white/20'">
-                <span class="text-lg">🎊</span> {{ __('Event Organizer') }}
+                <span class="text-lg"></span> {{ __('Event Organizer') }}
             </button>
             
             <button type="button" class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm bg-white/5 text-white/50 cursor-not-allowed whitespace-nowrap">
-                <span class="text-lg">🗺️</span> {{ __('Tours') }} <span class="bg-yellow-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1">{{ __('Soon') }}</span>
+                <span class="text-lg"></span> {{ __('Tours') }} <span class="bg-yellow-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1">{{ __('Soon') }}</span>
             </button>
             
-            <button type="button" class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm bg-white/5 text-white/50 cursor-not-allowed whitespace-nowrap">
-                <span class="text-lg">🚗</span> {{ __('Rentals') }} <span class="bg-yellow-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1">{{ __('Soon') }}</span>
+            <button type="button" @click="activeTab = 'rentals'" 
+                    class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap"
+                    :class="activeTab === 'rentals' ? 'bg-white text-slate-900 shadow-md' : 'bg-white/10 text-white hover:bg-white/20'">
+                <span class="text-lg"></span> {{ __('Rentals') }}
             </button>
         </div>
 
@@ -60,7 +62,7 @@
                 
                 {{-- Dynamic Input Area --}}
                 <div class="flex-1 relative flex items-center bg-transparent border-b md:border-b-0" :class="activeTab === 'property' ? 'md:border-r border-gray-200' : ''">
-                    <span class="pl-4 text-gray-400 text-xl" x-text="activeTab === 'property' ? '📍' : '🔍'"></span>
+                    <span class="pl-4 text-gray-400 text-xl" x-text="activeTab === 'property' ? '' : ''"></span>
                     
                     {{-- Retains search value on reload with request('search') --}}
                     <input type="text" name="search" value="{{ request('search') }}"
@@ -70,7 +72,7 @@
                 
                 {{-- Property Type Dropdown (Only enabled/shown for Property) --}}
                 <div x-show="activeTab === 'property'" style="display:none;" class="md:w-64 relative flex items-center bg-transparent">
-                    <span class="pl-4 text-gray-400 text-xl">🏢</span>
+                    <span class="pl-4 text-gray-400 text-xl"></span>
                     <select name="type" :disabled="activeTab !== 'property'" class="w-full pl-3 pr-8 py-3.5 bg-transparent border-none focus:ring-0 outline-none font-medium text-gray-800 appearance-none cursor-pointer">
                         <option value="">{{ __('All Types') }}</option>
                         <option value="House" {{ request('type') == 'House' ? 'selected' : '' }}>{{ __('House') }}</option>

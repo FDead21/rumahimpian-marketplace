@@ -3,8 +3,9 @@
     $isEo = request()->is('eventOrganizer*');
     $isProperty = request()->is('property*') || request()->is('map*') || request()->is('agency*') || request()->is('agent*');
     $isPortal = request()->routeIs('home'); 
-    $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home');
-
+    $isRental = request()->is('rental*');
+    $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home') || request()->routeIs('rental.home');
+    
     // 2. Set Theme Colors dynamically
     $themeText = 'text-sky-600';
     $themeBg = 'bg-sky-600 hover:bg-sky-700';
@@ -63,6 +64,21 @@
                         <a href="{{ route('eventOrganizer.packages.index') }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">{{ __('Packages') }}</a>
                         <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">{{ __('Vendors') }}</a>
                         <a href="{{ route('eventOrganizer.gallery.index') }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">{{ __('Gallery') }}</a>
+                    </div>
+                </div>
+
+                {{-- Rental Dropdown --}}
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                    <a href="{{ route('rental.home') }}" 
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all block"
+                       :class="scrolled || !{{ $isHomePage ? 'true' : 'false' }} ? 'text-gray-600 hover:bg-white hover:shadow-sm' : 'text-white hover:bg-white/20'">
+                        {{ __('Rentals') }}
+                    </a>
+                    <div x-show="open" x-transition.opacity class="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden" style="display: none;">
+                        <a href="{{ route('rental.home') }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">{{ __('Browse Vehicles') }}</a>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">🚗 {{ __('Cars') }}</a>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">🛵 {{ __('Motorbikes') }}</a>
+                        <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-sky-50 hover:text-sky-600">⛵ {{ __('Boats') }}</a>
                     </div>
                 </div>
 
@@ -140,6 +156,15 @@
                 <a href="{{ route('eventOrganizer.packages.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🎁 {{ __('Packages') }}</a>
                 <a href="{{ route('eventOrganizer.vendors.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🏪 {{ __('Vendors') }}</a>
                 <a href="{{ route('eventOrganizer.gallery.index') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🖼️ {{ __('Gallery') }}</a>
+
+                <div class="border-t border-gray-100 my-2"></div>
+
+                {{-- Rental Mobile --}}
+                <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Rentals') }}</div>
+                <a href="{{ route('rental.home') }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🚗 {{ __('Browse Vehicles') }}</a>
+                <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🚗 {{ __('Cars') }}</a>
+                <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">🛵 {{ __('Motorbikes') }}</a>
+                <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="block px-4 py-3 text-gray-700 font-bold hover:bg-gray-50 rounded-lg">⛵ {{ __('Boats') }}</a>
 
                 <div class="border-t border-gray-100 my-2"></div>
 

@@ -20,12 +20,17 @@ use App\Http\Controllers\Property\InquiryController;
 use App\Http\Controllers\Property\TourEditorController;
 use App\Http\Controllers\Property\DashboardController;
 
+// Rental Controllers
+use App\Http\Controllers\Rental\HomeController as RentalHomeController;
+use App\Http\Controllers\Rental\VehicleController;
+
 // Event Organizer Controllers
 use App\Http\Controllers\EventOrganizer\HomeController as EventOrganizerHomeController;
 use App\Http\Controllers\EventOrganizer\PackageController;
 use App\Http\Controllers\EventOrganizer\BookingController;
 use App\Http\Controllers\EventOrganizer\GalleryController;
 use App\Http\Controllers\EventOrganizer\VendorController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -102,6 +107,22 @@ Route::prefix('eventOrganizer')->name('eventOrganizer.')->group(function () {
     // Vendors
     Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
     Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rental Routes
+| Prefix: /rental
+| Names:  rental.*
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('rental')->name('rental.')->group(function () {
+
+    Route::get('/', [RentalHomeController::class, 'index'])->name('home');
+
+    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+    Route::get('/vehicles/{slug}', [VehicleController::class, 'show'])->name('vehicles.show');
 });
 
 /*

@@ -25,7 +25,7 @@
                     
                     <div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-start text-white">
                         <h3 class="text-xl font-bold mb-1">{{ __('Property') }}</h3>
-                        <p class="text-sm text-gray-300 mb-4 line-clamp-2">{{ __('Buy, sell, or rent your dream home.') }}</p>
+                        <p class="text-sm text-gray-300 mb-4 line-clamp-2">{{ __('Rent the best vacation place you ever wanted.') }}</p>
                         <div class="bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/30 text-white text-xs font-bold px-4 py-2 rounded-full transition flex items-center gap-2">
                             {{ __('Read More') }}
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>

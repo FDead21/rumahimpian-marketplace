@@ -34,7 +34,7 @@
 </head>
 
 @php
-        $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home');
+        $isHomePage = request()->routeIs('home') || request()->routeIs('property.home') || request()->routeIs('eventOrganizer.home') || request()->routeIs('rental.home');;
     @endphp
 
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans text-gray-900">

@@ -229,14 +229,59 @@
                 {{-- Map --}}
                 <div class="mt-8 border-t pt-8">
                     <h2 class="text-xl font-bold mb-4">{{ __('Location') }}</h2>
-                    <div id="map" class="rounded-xl shadow-lg border h-96 w-full z-0"></div>
+                    <div class="relative rounded-xl overflow-hidden border shadow-lg" x-data="{ expanded: false }">
+                        
+                        <div id="map" 
+                             class="w-full transition-all duration-500 z-0"
+                             :class="expanded ? 'h-[500px]' : 'h-96'">
+                        </div>
+
+                        {{-- Click hint --}}
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none"
+                             x-show="!expanded" x-transition.opacity>
+                            <span class="bg-black/50 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
+                                🗺️ {{ __('Click map to interact') }}
+                            </span>
+                        </div>
+
+                        {{-- Expand toggle --}}
+                        <button @click="expanded = !expanded"
+                                class="absolute bottom-3 right-3 z-[999] bg-white shadow-md border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                            <span x-text="expanded ? '{{ __('Collapse') }}' : '{{ __('Expand') }}'"></span>
+                            <svg class="w-3 h-3 transition-transform duration-300" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        {{-- Open in Google Maps --}}
+                        <a href="https://www.google.com/maps?q={{ $property->latitude }},{{ $property->longitude }}"
+                           target="_blank"
+                           class="absolute bottom-3 left-3 z-[999] bg-white shadow-md border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                            {{ __('Open in Maps') }}
+                        </a>
+                    </div>
                 </div>
                 
                 {{-- Move map script to the push stack --}}
                 @push('scripts')
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        var map = L.map('map').setView([{{ $property->latitude ?? -6.2088 }}, {{ $property->longitude ?? 106.8456 }}], 15);
+                        const map = L.map('map', {
+                            scrollWheelZoom: false,
+                            zoomControl: true,
+                            dragging: true,
+                        }).setView([{{ $property->latitude ?? -6.2088 }}, {{ $property->longitude ?? 106.8456 }}], 15);
+
+                        map.getContainer().addEventListener('click', function () {
+                            map.scrollWheelZoom.enable();
+                        });
+                        map.getContainer().addEventListener('mouseleave', function () {
+                            map.scrollWheelZoom.disable();
+                        });
+
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                             attribution: '&copy; OpenStreetMap contributors'
                         }).addTo(map);
@@ -244,9 +289,22 @@
                         @if($property->latitude && $property->longitude)
                             L.marker([{{ $property->latitude }}, {{ $property->longitude }}])
                                 .addTo(map)
-                                .bindPopup("<b>{{ $property->title }}</b><br>{{ $property->address }}")
+                                .bindPopup(`
+                                    <div style="min-width:180px">
+                                        <strong style="font-size:13px">{{ addslashes($property->title) }}</strong><br>
+                                        <span style="color:#6b7280;font-size:12px">📍 {{ addslashes($property->district) }}, {{ addslashes($property->city) }}</span><br>
+                                        <span style="color:#0284c7;font-size:12px;font-weight:bold">Rp {{ number_format($property->price, 0, ',', '.') }}</span>
+                                    </div>
+                                `)
                                 .openPopup();
                         @endif
+
+                        window.addEventListener('resize', function () { map.invalidateSize(); });
+                        document.querySelector('#map')
+                            .closest('[x-data]')
+                            ?.__x?.$watch('expanded', () => {
+                                setTimeout(() => map.invalidateSize(), 520);
+                            });
                     });
                 </script>
                 @endpush
