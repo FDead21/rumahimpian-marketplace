@@ -172,9 +172,9 @@ class ManageSettings extends Page implements HasForms
             'tour_hero_title'    => 'TOUR',
             'tour_hero_subtitle' => 'TOUR',
             
-            'rental_hero_slides'   => 'RENTAL',
-            'rental_hero_title'    => 'RENTAL',
-            'rental_hero_subtitle' => 'RENTAL',
+            'rental_hero_slides'   => 'VEHICLE',
+            'rental_hero_title'    => 'VEHICLE',
+            'rental_hero_subtitle' => 'VEHICLE',
         ];
 
         foreach ($data as $key => $value) {
