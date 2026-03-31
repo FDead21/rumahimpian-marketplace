@@ -147,7 +147,7 @@
                             <a href="{{ route('eventOrganizer.packages.show', $package->slug) }}">
                                 <h3 class="font-bold text-gray-900 truncate hover:text-rose-600 transition">{{ $package->name }}</h3>
                             </a>
-                            <p class="text-xs text-gray-500 mt-1 mb-2">👥 {{ __('Up to') }} {{ $package->max_pax }} {{ __('guests') }}</p>
+                            <p class="text-xs text-gray-500 mt-1 mb-2">{{ __('Up to') }} {{ $package->max_pax }} {{ __('guests') }}</p>
                             <p class="text-rose-600 font-extrabold">Rp {{ number_format($package->price, 0, ',', '.') }}</p>
                         </div>
                     </div>
@@ -190,7 +190,7 @@
                             <h3 class="font-bold text-gray-900 line-clamp-2 hover:text-emerald-600 transition min-h-[2.5rem]">{{ $tour->name }}</h3>
                         </a>
                         <div class="flex items-center justify-between mt-3">
-                            <p class="text-xs text-gray-500 font-medium">⏱ {{ $tour->duration_days }} {{ __('Days') }}</p>
+                            <p class="text-xs text-gray-500 font-medium">{{ $tour->duration_days }} {{ __('Days') }}</p>
                             <p class="text-emerald-600 font-extrabold text-sm">Rp {{ number_format($tour->price_per_person, 0, ',', '.') }}<span class="text-[10px] font-normal text-gray-400">/pax</span></p>
                         </div>
                     </div>
@@ -216,7 +216,7 @@
             @if(isset($rentalCars) && $rentalCars->count() > 0)
                 <div class="mb-10">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold text-white flex items-center gap-2">🚗 {{ __('Cars & SUVs') }}</h3>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">{{ __('Cars & SUVs') }}</h3>
                         <a href="{{ route('rental.vehicles.index', ['type' => 'car']) }}" class="text-sm text-slate-400 hover:text-white transition">{{ __('See all cars') }} &rarr;</a>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -231,7 +231,7 @@
             @if(isset($rentalBikes) && $rentalBikes->count() > 0)
                 <div class="mb-10">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold text-white flex items-center gap-2">🛵 {{ __('Motorbikes & Scooters') }}</h3>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">{{ __('Motorbikes & Scooters') }}</h3>
                         <a href="{{ route('rental.vehicles.index', ['type' => 'motorbike']) }}" class="text-sm text-slate-400 hover:text-white transition">{{ __('See all motorbikes') }} &rarr;</a>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -246,7 +246,7 @@
             @if(isset($rentalBoats) && $rentalBoats->count() > 0)
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold text-white flex items-center gap-2">⛵ {{ __('Yachts & Boats') }}</h3>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">{{ __('Yachts & Boats') }}</h3>
                         <a href="{{ route('rental.vehicles.index', ['type' => 'boat']) }}" class="text-sm text-slate-400 hover:text-white transition">{{ __('See all boats') }} &rarr;</a>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

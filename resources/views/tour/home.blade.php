@@ -10,12 +10,12 @@
         <div class="flex gap-3 justify-center flex-wrap">
             @php
                 $cats = [
-                    ''            => '🌍 ' . __('All'),
-                    'ADVENTURE'   => '🏔️ ' . __('Adventure'),
-                    'CULTURAL'    => '🏛️ ' . __('Cultural'),
-                    'NATURE'      => '🌿 ' . __('Nature'),
-                    'WATER_SPORTS' => '🌊 ' . __('Water Sports'),
-                    'CUSTOM'      => '✏️ ' . __('Custom'),
+                    ''            => ' ' . __('All'),
+                    'ADVENTURE'   => ' ' . __('Adventure'),
+                    'CULTURAL'    => ' ' . __('Cultural'),
+                    'NATURE'      => ' ' . __('Nature'),
+                    'WATER_SPORTS' => ' ' . __('Water Sports'),
+                    'CUSTOM'      => ' ' . __('Custom'),
                 ];
             @endphp
             @foreach($cats as $key => $label)
@@ -31,7 +31,7 @@
     {{-- Featured Tours --}}
     <div class="max-w-7xl mx-auto px-4 py-12">
         @if($featured->count())
-            <h2 class="text-2xl font-bold text-gray-900 mb-8">⭐ {{ __('Featured Tours') }}</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-8"> {{ __('Featured Tours') }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($featured as $tour)
                     @include('tour.tour._card', ['tour' => $tour])
@@ -45,7 +45,7 @@
             </div>
         @else
             <div class="text-center py-16 text-gray-400">
-                <div class="text-5xl mb-4">🌍</div>
+                <div class="text-5xl mb-4"></div>
                 <p class="text-lg font-semibold">{{ __('No tours available yet.') }}</p>
             </div>
         @endif

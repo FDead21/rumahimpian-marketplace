@@ -57,7 +57,7 @@
                         <img :src="img" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                             <span class="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-bold shadow-lg transition-opacity duration-300 transform scale-95 group-hover:scale-100">
-                                🔍 {{ __('View Photos') }}
+                                {{ __('View Photos') }}
                             </span>
                         </div>
                     </div>
@@ -136,11 +136,11 @@
                 {{-- Title & badges --}}
                 <div>
                     @if($package->is_featured)
-                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">⭐ {{ __('Featured Package') }}</span>
+                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">{{ __('Featured Package') }}</span>
                     @endif
                     <h1 class="text-3xl font-extrabold text-gray-900 mb-2">{{ $package->name }}</h1>
                     @if($package->max_pax)
-                        <p class="text-gray-500">👥 {{ __('Up to') }} <strong>{{ $package->max_pax }}</strong> {{ __('guests') }}</p>
+                        <p class="text-gray-500">{{ __('Up to') }} <strong>{{ $package->max_pax }}</strong> {{ __('guests') }}</p>
                     @endif
                 </div>
 
@@ -240,7 +240,7 @@
                                         @if(isset($inclusion['image']) && $inclusion['image'])
                                             <img src="{{ asset('storage/' . $inclusion['image']) }}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000">
                                         @else
-                                            <div class="w-full h-full bg-slate-800 flex items-center justify-center text-7xl opacity-50">🎁</div>
+                                            <div class="w-full h-full bg-slate-800 flex items-center justify-center text-7xl opacity-50"></div>
                                         @endif
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                     </div>
@@ -271,7 +271,7 @@
                                     @if(isset($inclusion['image']) && $inclusion['image'])
                                         <img src="{{ asset('storage/' . $inclusion['image']) }}" class="max-h-[50vh] md:max-h-[80vh] rounded-2xl object-contain shadow-2xl border border-gray-800">
                                     @else
-                                        <div class="w-full aspect-video max-w-2xl bg-gray-900 rounded-2xl flex items-center justify-center text-7xl border border-gray-800">🎁</div>
+                                        <div class="w-full aspect-video max-w-2xl bg-gray-900 rounded-2xl flex items-center justify-center text-7xl border border-gray-800"></div>
                                     @endif
                                 </div>
                                 <div class="w-full md:w-2/5 text-white bg-gray-900/50 p-8 rounded-3xl border border-gray-800">
@@ -305,14 +305,14 @@
                     <div class="space-y-3 pt-2 pb-4 border-b border-gray-100">
                         @if($package->max_pax)
                         <div class="flex items-center gap-3 text-sm text-gray-600">
-                            <span class="w-6 text-center text-lg">👥</span>
+                            <span class="w-6 text-center text-lg"></span>
                             <span>{{ __('Up to') }} <strong>{{ $package->max_pax }}</strong> {{ __('guests') }}</span>
                         </div>
                         @endif
                         
                         @if($package->vendors && $package->vendors->count() > 0)
                         <div class="flex items-center gap-3 text-sm text-gray-600">
-                            <span class="w-6 text-center text-lg">🤝</span>
+                            <span class="w-6 text-center text-lg"></span>
                             <span>{{ __('Includes') }} <strong>{{ $package->vendors->count() }}</strong> {{ __('premium vendors') }}</span>
                         </div>
                         @endif
@@ -349,7 +349,7 @@
                     <div class="space-y-3 pt-2">
                         <a href="{{ route('eventOrganizer.booking.create', ['package_id' => $package->id]) }}"
                            class="flex items-center justify-center gap-2 w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-rose-600/20 transition transform hover:-translate-y-0.5 text-lg">
-                            <span>📅</span> {{ __('Book This Package') }}
+                            <span></span> {{ __('Book This Package') }}
                         </a>
 
                         @if($package->whatsapp_url)
@@ -383,16 +383,16 @@
                         @if($relatedThumb)
                             <img src="{{ $relatedThumb }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                         @else
-                            <div class="w-full h-full bg-rose-50 flex items-center justify-center text-5xl">🎊</div>
+                            <div class="w-full h-full bg-rose-50 flex items-center justify-center text-5xl"></div>
                         @endif
                     </div>
                     <div class="p-5">
                         @if($related->is_featured)
-                            <span class="text-[10px] bg-rose-100 text-rose-600 font-bold px-2 py-0.5 rounded-full">⭐ {{ __('Featured') }}</span>
+                            <span class="text-[10px] bg-rose-100 text-rose-600 font-bold px-2 py-0.5 rounded-full">{{ __('Featured') }}</span>
                         @endif
                         <h3 class="font-bold text-gray-900 mt-2 mb-1 group-hover:text-rose-600 transition">{{ Str::limit($related->name, 50) }}</h3>
                         @if($related->max_pax)
-                            <p class="text-xs text-gray-400 mb-3">👥 {{ __('Up to') }} {{ $related->max_pax }} {{ __('guests') }}</p>
+                            <p class="text-xs text-gray-400 mb-3">{{ __('Up to') }} {{ $related->max_pax }} {{ __('guests') }}</p>
                         @endif
                         <p class="text-rose-700 font-extrabold">Rp {{ number_format($related->price, 0, ',', '.') }}</p>
                     </div>

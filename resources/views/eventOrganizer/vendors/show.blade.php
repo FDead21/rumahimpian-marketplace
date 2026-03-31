@@ -56,7 +56,7 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach($vendor->features as $feature)
                             <span class="bg-rose-50 text-rose-700 border border-rose-100 px-4 py-2 rounded-xl font-medium text-sm">
-                                ✨ {{ __($feature) }}
+                                {{ __($feature) }}
                             </span>
                         @endforeach
                     </div>
@@ -178,13 +178,13 @@
                         @endif
                         @if($vendor->email)
                         <li class="flex gap-3 text-sm text-gray-600">
-                            <span class="text-rose-500 mt-0.5">✉️</span>
+                            <span class="text-rose-500 mt-0.5"></span>
                             <a href="mailto:{{ $vendor->email }}" class="hover:text-rose-600">{{ $vendor->email }}</a>
                         </li>
                         @endif
                         @if($vendor->phone)
                         <li class="flex gap-3 text-sm text-gray-600">
-                            <span class="text-rose-500 mt-0.5">📞</span>
+                            <span class="text-rose-500 mt-0.5"></span>
                             <a href="tel:{{ $vendor->phone }}" class="hover:text-rose-600">{{ $vendor->phone }}</a>
                         </li>
                         @endif
@@ -209,12 +209,12 @@
                     {{-- Primary Action --}}
                     @if($vendor->phone)
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $vendor->phone) }}" target="_blank" class="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-4 rounded-xl shadow-lg shadow-green-500/30 transition transform hover:-translate-y-1 mb-3">
-                        💬 {{ __('Chat on WhatsApp') }}
+                        {{ __('Chat on WhatsApp') }}
                     </a>
                     @endif
                     
                     <a href="{{ route('eventOrganizer.booking.create') }}" class="block w-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-center font-bold py-4 rounded-xl transition">
-                        📅 {{ __('Plan Event with Vendor') }}
+                        {{ __('Plan Event with Vendor') }}
                     </a>
                 </div>
             </div>

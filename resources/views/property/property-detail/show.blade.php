@@ -72,7 +72,7 @@
                             {{-- Hover Overlay --}}
                             <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                                 <span class="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-bold shadow-lg transition-opacity duration-300 transform scale-95 group-hover:scale-100">
-                                    🔍 {{ __('View Photos') }}
+                                    {{ __('View Photos') }}
                                 </span>
                             </div>
                         </div>

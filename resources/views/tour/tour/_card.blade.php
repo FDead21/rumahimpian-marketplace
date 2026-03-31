@@ -4,18 +4,18 @@
         : ($tour->thumbnail ? asset('storage/' . $tour->thumbnail) : null);
 
     $categoryEmoji = match($tour->category) {
-        'ADVENTURE'    => '🏔️',
-        'CULTURAL'     => '🏛️',
-        'NATURE'       => '🌿',
-        'WATER_SPORTS' => '🌊',
-        default        => '✏️',
+        'ADVENTURE'    => '',
+        'CULTURAL'     => '',
+        'NATURE'       => '',
+        'WATER_SPORTS' => '',
+        default        => '',
     };
 @endphp
 
 <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative flex flex-col">
 
     @if($tour->is_featured)
-        <div class="absolute top-4 left-4 z-10 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">⭐ {{ __('Featured') }}</div>
+        <div class="absolute top-4 left-4 z-10 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">{{ __('Featured') }}</div>
     @endif
 
     {{-- Image --}}
@@ -44,7 +44,7 @@
         <h3 class="font-bold text-xl text-gray-900 mb-1 group-hover:text-emerald-600 transition">{{ $tour->name }}</h3>
 
         <div class="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
-            <span>🕐 
+            <span>
                 @if($tour->duration_label)
                     {{ __($tour->duration_label) }}
                 @else
@@ -52,7 +52,7 @@
                 @endif
             </span>
             @if($tour->min_participants)
-                <span>👤 {{ __('Min') }} {{ $tour->min_participants }} {{ __('pax') }}</span>
+                <span>{{ __('Min') }} {{ $tour->min_participants }} {{ __('pax') }}</span>
             @endif
             @if($tour->meeting_point)
                 <span>📍 {{ Str::limit($tour->meeting_point, 30) }}</span>
@@ -74,7 +74,7 @@
             </a>
             <a href="{{ route('tour.booking.create', ['tour_id' => $tour->id]) }}"
                class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition text-sm">
-                📅 {{ __('Book Now') }}
+                {{ __('Book Now') }}
             </a>
         </div>
     </div>

@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Welcome, {{ $user->name }}! 👋
+                Welcome, {{ $user->name }}! 
             </h2>
             <p class="text-gray-500 dark:text-gray-400">
                 @if($role === 'ADMIN') Platform Overview @else Your Performance @endif
@@ -13,7 +13,7 @@
         
         <a href="{{ route('property.home') }}" target="_blank" 
            class="inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg font-medium transition shadow-sm">
-            <span>🌍 Open Website</span>
+            <span> Open Website</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {{-- Card 1 --}}
         <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/50 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl">🏠</div>
+            <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/50 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl"></div>
             <div>
                 <p class="text-sm text-gray-500 font-medium">Total Properties</p>
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalProperties }}</h3>
@@ -33,7 +33,7 @@
 
         {{-- Card 2 --}}
         <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-sky-50 dark:bg-sky-900/50 rounded-lg flex items-center justify-center text-sky-600 dark:text-sky-400 text-2xl">👀</div>
+            <div class="w-12 h-12 bg-sky-50 dark:bg-sky-900/50 rounded-lg flex items-center justify-center text-sky-600 dark:text-sky-400 text-2xl"></div>
             <div>
                 <p class="text-sm text-gray-500 font-medium">Total Views</p>
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalViews ?? 0) }}</h3>
@@ -43,7 +43,7 @@
         {{-- Card 3 --}}
         @if($role === 'ADMIN')
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/50 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl">👥</div>
+                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/50 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl"></div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Total Users</p>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers }}</h3>
@@ -51,7 +51,7 @@
             </div>
         @else
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/50 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl">💬</div>
+                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/50 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl"></div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">New Leads</p>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $recentLeads->count() }}</h3>

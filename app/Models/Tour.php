@@ -31,6 +31,7 @@ class Tour extends Model
         'inclusions',
         'is_active',
         'is_featured',
+        'youtube_url',
     ];
 
     protected $casts = [

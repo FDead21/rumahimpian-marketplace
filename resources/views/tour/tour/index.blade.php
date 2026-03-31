@@ -14,11 +14,11 @@
 
             <select name="category" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
                 <option value="">{{ __('All Categories') }}</option>
-                <option value="adventure"    {{ request('category') === 'adventure'    ? 'selected' : '' }}>🏔️ {{ __('Adventure') }}</option>
-                <option value="cultural"     {{ request('category') === 'cultural'     ? 'selected' : '' }}>🏛️ {{ __('Cultural') }}</option>
-                <option value="nature"       {{ request('category') === 'nature'       ? 'selected' : '' }}>🌿 {{ __('Nature') }}</option>
-                <option value="water_sports" {{ request('category') === 'water_sports' ? 'selected' : '' }}>🌊 {{ __('Water Sports') }}</option>
-                <option value="custom"       {{ request('category') === 'custom'       ? 'selected' : '' }}>✏️ {{ __('Custom') }}</option>
+                <option value="adventure"    {{ request('category') === 'adventure'    ? 'selected' : '' }}> {{ __('Adventure') }}</option>
+                <option value="cultural"     {{ request('category') === 'cultural'     ? 'selected' : '' }}> {{ __('Cultural') }}</option>
+                <option value="nature"       {{ request('category') === 'nature'       ? 'selected' : '' }}> {{ __('Nature') }}</option>
+                <option value="water_sports" {{ request('category') === 'water_sports' ? 'selected' : '' }}> {{ __('Water Sports') }}</option>
+                <option value="custom"       {{ request('category') === 'custom'       ? 'selected' : '' }}> {{ __('Custom') }}</option>
             </select>
 
             <select name="duration" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
@@ -31,7 +31,7 @@
             </select>
 
             <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl transition text-sm">
-                🔍 {{ __('Search') }}
+                {{ __('Search') }}
             </button>
 
             @if(request()->hasAny(['search', 'category', 'duration']))
@@ -47,7 +47,7 @@
                 @include('tour.tour._card', ['tour' => $tour])
             @empty
                 <div class="col-span-3 text-center py-16 text-gray-400">
-                    <div class="text-5xl mb-4">🌍</div>
+                    <div class="text-5xl mb-4"></div>
                     <p class="text-lg font-semibold">{{ __('No tours found.') }}</p>
                     <a href="{{ route('tour.tours.index') }}" class="text-emerald-600 text-sm underline mt-2 inline-block">{{ __('Clear filters') }}</a>
                 </div>

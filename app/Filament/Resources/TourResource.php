@@ -163,6 +163,12 @@ class TourResource extends Resource
                     ->columns(2)
                     ->nullable()
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('youtube_url')
+                    ->label('YouTube URL')
+                    ->url()
+                    ->nullable()
+                    ->placeholder('https://www.youtube.com/watch?v=...')
+                    ->columnSpanFull(),
             ]),
 
             Forms\Components\Section::make('Visibility')->schema([

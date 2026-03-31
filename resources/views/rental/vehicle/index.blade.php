@@ -15,9 +15,9 @@
 
             <select name="type" class="...">
                 <option value="">{{ __('All Types') }}</option>
-                <option value="car" {{ request('type') === 'car' ? 'selected' : '' }}>🚗 {{ __('Car') }}</option>
-                <option value="motorbike" {{ request('type') === 'motorbike' ? 'selected' : '' }}>🛵 {{ __('Motorbike') }}</option>
-                <option value="boat" {{ request('type') === 'boat' ? 'selected' : '' }}>⛵ {{ __('Boat') }}</option>
+                <option value="car" {{ request('type') === 'car' ? 'selected' : '' }}> {{ __('Car') }}</option>
+                <option value="motorbike" {{ request('type') === 'motorbike' ? 'selected' : '' }}> {{ __('Motorbike') }}</option>
+                <option value="boat" {{ request('type') === 'boat' ? 'selected' : '' }}> {{ __('Boat') }}</option>
             </select>
 
             <input type="text" name="city" value="{{ request('city') }}"
@@ -43,7 +43,7 @@
                 @include('rental.vehicle._card', ['vehicle' => $vehicle])
             @empty
                 <div class="col-span-3 text-center py-16 text-gray-400">
-                    <div class="text-5xl mb-4">🚗</div>
+                    <div class="text-5xl mb-4"></div>
                     <p class="text-lg font-semibold">{{ __('No vehicles found.') }}</p>
                     <a href="{{ route('rental.vehicles.index') }}" class="text-sky-600 text-sm underline mt-2 inline-block">{{ __('Clear filters') }}</a>
                 </div>

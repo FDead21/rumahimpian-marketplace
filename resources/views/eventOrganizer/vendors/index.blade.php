@@ -26,7 +26,7 @@
                                  class="h-24 w-24 object-cover rounded-full border-4 border-white shadow-md transform group-hover:scale-110 transition duration-500">
                         @else
                             <div class="h-24 w-24 rounded-full bg-rose-200 flex items-center justify-center text-4xl border-4 border-white shadow-md transform group-hover:scale-110 transition duration-500">
-                                🏪
+                                
                             </div>
                         @endif
                     </a>
@@ -44,7 +44,7 @@
                         {{-- Price range --}}
                         @if($vendor->price_from || $vendor->price_to)
                         <div class="flex items-center gap-1 text-sm text-rose-600 font-semibold mb-3">
-                            <span>💰</span>
+                            <span></span>
                             @if($vendor->price_from && $vendor->price_to)
                                 Rp {{ number_format($vendor->price_from, 0, ',', '.') }} –
                                 Rp {{ number_format($vendor->price_to, 0, ',', '.') }}
@@ -59,7 +59,7 @@
                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $vendor->phone) }}"
                             target="_blank"
                             class="inline-flex items-center gap-2 bg-green-50 hover:bg-green-600 text-green-700 hover:text-white text-sm font-bold px-4 py-2 rounded-xl border border-green-200 hover:border-green-600 transition w-full justify-center">
-                            💬 {{ __('WhatsApp') }}
+                            {{ __('WhatsApp') }}
                         </a>
                         @endif
 
@@ -81,7 +81,7 @@
         </div>
         @empty
             <div class="text-center py-16 text-gray-400">
-                <div class="text-5xl mb-4">🏪</div>
+                <div class="text-5xl mb-4"></div>
                 <p class="text-lg font-semibold">{{ __('No vendors available yet.') }}</p>
             </div>
         @endforelse
@@ -94,7 +94,7 @@
         <p class="text-gray-500 mb-6">{{ __('Our vendors will be assigned to your booking automatically') }}</p>
         <a href="{{ route('eventOrganizer.booking.create') }}"
            class="inline-block bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-3 rounded-xl shadow transition transform hover:-translate-y-0.5">
-            📅 {{ __('Book Your Event') }}
+            {{ __('Book Your Event') }}
         </a>
     </div>
 

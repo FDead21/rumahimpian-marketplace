@@ -33,13 +33,13 @@
             @foreach($packages as $package)
             <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
                 @if($package->is_featured)
-                    <div class="absolute top-4 left-4 z-10 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">⭐ {{ __('Featured') }}</div>
+                    <div class="absolute top-4 left-4 z-10 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">{{ __('Featured') }}</div>
                 @endif
                 <div class="relative h-48 overflow-hidden">
                     @if($package->thumbnail)
                         <img src="{{ asset('storage/' . $package->thumbnail) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     @else
-                        <div class="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 flex items-center justify-center text-5xl">🎊</div>
+                        <div class="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 flex items-center justify-center text-5xl"></div>
                     @endif
                     <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg">
@@ -49,7 +49,7 @@
                 <div class="p-6">
                     <h3 class="font-bold text-xl text-gray-900 mb-2 group-hover:text-rose-600 transition">{{ $package->name }}</h3>
                     @if($package->max_pax)
-                        <p class="text-sm text-gray-500 mb-3">👥 {{ __('Up to') }} {{ $package->max_pax }} {{ __('guests') }}</p>
+                        <p class="text-sm text-gray-500 mb-3">{{ __('Up to') }} {{ $package->max_pax }} {{ __('guests') }}</p>
                     @endif
                     @if($package->inclusions)
                         <ul class="space-y-1 mb-4">
@@ -94,7 +94,7 @@
                     @if($event->cover_photo)
                         <img src="{{ asset('storage/' . $event->cover_photo) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     @else
-                        <div class="w-full h-full bg-gradient-to-br from-rose-200 to-pink-300 flex items-center justify-center text-4xl">🎉</div>
+                        <div class="w-full h-full bg-gradient-to-br from-rose-200 to-pink-300 flex items-center justify-center text-4xl"></div>
                     @endif
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div class="absolute bottom-3 left-3 right-3 text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -119,7 +119,7 @@
             <p class="text-rose-100 text-lg mb-8">{{ __('Let\'s make it unforgettable. Reach out to us today.') }}</p>
             <a href="{{ route('eventOrganizer.booking.create') }}"
                class="bg-white text-rose-600 hover:bg-rose-50 font-bold px-10 py-4 rounded-xl shadow-xl transition transform hover:-translate-y-1 text-lg inline-block">
-                📅 {{ __('Book Your Event Now') }}
+                 {{ __('Book Your Event Now') }}
             </a>
         </div>
     </div>

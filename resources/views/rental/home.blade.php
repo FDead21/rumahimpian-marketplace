@@ -5,10 +5,10 @@
         <div class="flex gap-3 justify-center flex-wrap">
             @php
                 $types = [
-                    '' => ['icon' => '🚗', 'label' => __('All')],
-                    'CAR' => ['icon' => '🚗', 'label' => __('Cars')],
-                    'MOTORBIKE' => ['icon' => '🛵', 'label' => __('Motorbikes')],
-                    'BOAT' => ['icon' => '⛵', 'label' => __('Boats')]
+                    '' => ['icon' => '', 'label' => __('All')],
+                    'CAR' => ['icon' => '', 'label' => __('Cars')],
+                    'MOTORBIKE' => ['icon' => '', 'label' => __('Motorbikes')],
+                    'BOAT' => ['icon' => '', 'label' => __('Boats')]
                 ];
             @endphp
 
@@ -25,7 +25,7 @@
     {{-- Featured Vehicles --}}
     <div class="max-w-7xl mx-auto px-4 py-12">
         @if($featured->count())
-            <h2 class="text-2xl font-bold text-gray-900 mb-8">⭐ {{ __('Featured Vehicles') }}</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">{{ __('Featured Vehicles') }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($featured as $vehicle)
                     @include('rental.vehicle._card', ['vehicle' => $vehicle])
@@ -39,7 +39,7 @@
             </div>
         @else
             <div class="text-center py-16 text-gray-400">
-                <div class="text-5xl mb-4">🚗</div>
+                <div class="text-5xl mb-4"></div>
                 <p class="text-lg font-semibold">{{ __('No vehicles available yet.') }}</p>
             </div>
         @endif

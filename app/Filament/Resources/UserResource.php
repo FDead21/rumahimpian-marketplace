@@ -18,8 +18,8 @@ use Filament\Tables\Columns\IconColumn;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationGroup = 'Property';
-    protected static ?int    $navigationSort  = 4;
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int    $navigationSort  = 3;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

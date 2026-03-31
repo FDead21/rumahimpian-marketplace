@@ -27,10 +27,10 @@
         }
 
         $typeEmoji = match($vehicle->vehicle_type) {
-            'CAR'       => '🚗',
-            'MOTORBIKE' => '🛵',
-            'BOAT'      => '⛵',
-            default     => '🚗',
+            'CAR'       => '',
+            'MOTORBIKE' => '',
+            'BOAT'      => '',
+            default     => '',
         };
     @endphp
 
@@ -60,7 +60,7 @@
                         <img :src="img" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                             <span class="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-bold shadow-lg transition-opacity duration-300">
-                                🔍 {{ __('View Photos') }}
+                                {{ __('View Photos') }}
                             </span>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
 
                 <div>
                     @if($vehicle->is_featured)
-                        <span class="bg-sky-100 text-sky-600 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">⭐ {{ __('Featured') }}</span>
+                        <span class="bg-sky-100 text-sky-600 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">{{ __('Featured') }}</span>
                     @endif
                     <div class="flex items-center gap-3 mb-2">
                         <h1 class="text-3xl font-extrabold text-gray-900">{{ $vehicle->name }}</h1>
@@ -179,7 +179,7 @@
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none"
                             x-show="!expanded" x-transition.opacity>
                             <span class="bg-black/50 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
-                                🗺️ {{ __('Click map to interact') }}
+                                {{ __('Click map to interact') }}
                             </span>
                         </div>
 
@@ -268,7 +268,7 @@
                     <div class="space-y-3 pt-2 pb-4 border-b border-gray-100">
                         @if($vehicle->max_passengers)
                         <div class="flex items-center gap-3 text-sm text-gray-600">
-                            <span class="text-lg">👤</span>
+                            <span class="text-lg"></span>
                             <span>{{ __('Up to') }} <strong>{{ $vehicle->max_passengers }}</strong> {{ __('passengers') }}</span>
                         </div>
                         @endif
@@ -280,7 +280,7 @@
                         @endif
                          @if($vehicle->address)
                         <div class="flex items-start gap-3 text-sm text-gray-600">
-                            <span class="text-lg mt-0.5">🗺️</span>
+                            <span class="text-lg mt-0.5"></span>
                             <span>{{ $vehicle->address }}</span>
                         </div>
                         @endif

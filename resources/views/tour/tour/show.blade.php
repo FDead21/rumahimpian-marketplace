@@ -21,11 +21,11 @@
             $allImages = collect([asset('storage/' . $tour->thumbnail)]);
         }
         $categoryEmoji = match($tour->category) {
-            'ADVENTURE'    => '🏔️',
-            'CULTURAL'     => '🏛️',
-            'NATURE'       => '🌿',
-            'WATER_SPORTS' => '🌊',
-            default        => '✏️',
+            'ADVENTURE'    => '',
+            'CULTURAL'     => '',
+            'NATURE'       => '',
+            'WATER_SPORTS' => '',
+            default        => '',
         };
     @endphp
 
@@ -55,7 +55,7 @@
                         <img :src="img" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                             <span class="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-bold shadow-lg transition-opacity duration-300">
-                                🔍 {{ __('View Photos') }}
+                                {{ __('View Photos') }}
                             </span>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                 {{-- Title --}}
                 <div>
                     @if($tour->is_featured)
-                        <span class="bg-emerald-100 text-emerald-600 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">⭐ {{ __('Featured Tour') }}</span>
+                        <span class="bg-emerald-100 text-emerald-600 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">{{ __('Featured Tour') }}</span>
                     @endif
                     <div class="flex flex-wrap items-center gap-3 mb-2">
                         <h1 class="text-3xl font-extrabold text-gray-900">{{ $tour->name }}</h1>
@@ -135,8 +135,8 @@
                         </span>
                     </div>
                     <div class="flex flex-wrap gap-4 text-sm text-gray-500 mt-3">
-                        <span>🕐 {{ $tour->duration_label ?? $tour->duration_days . ' ' . __('Day') }}</span>
-                        <span>👤 {{ __('Min') }} {{ $tour->min_participants }} {{ __('pax') }}@if($tour->max_participants) / {{ __('Max') }} {{ $tour->max_participants }} {{ __('pax') }}@endif</span>
+                        <span>{{ $tour->duration_label ?? $tour->duration_days . ' ' . __('Day') }}</span>
+                        <span>{{ __('Min') }} {{ $tour->min_participants }} {{ __('pax') }}@if($tour->max_participants) / {{ __('Max') }} {{ $tour->max_participants }} {{ __('pax') }}@endif</span>
                         @if($tour->meeting_point)
                             <span>📍 {{ $tour->meeting_point }}</span>
                         @endif
@@ -148,6 +148,35 @@
                 <div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3">{{ __('About This Tour') }}</h2>
                     <div class="text-gray-600 leading-relaxed">{!! nl2br(e($tour->description)) !!}</div>
+                </div>
+                @endif
+
+                @if($tour->youtube_url)
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('Video Preview') }}</h2>
+                    <div class="relative w-full overflow-hidden rounded-xl shadow-lg aspect-video">
+                        @php
+                            $video_id = '';
+                            if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $tour->youtube_url, $matches)) {
+                                $video_id = $matches[1];
+                            }
+                        @endphp
+                        @if($video_id)
+                            <iframe class="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/{{ $video_id }}?rel=0"
+                                title="{{ $tour->name }}" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        @else
+                            <div class="flex items-center justify-center h-full bg-gray-100 aspect-video">
+                                <a href="{{ $tour->youtube_url }}" target="_blank" class="flex items-center gap-2 text-red-600 font-bold hover:underline">
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                                    {{ __('Watch on YouTube') }}
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
                 @endif
 
@@ -224,7 +253,7 @@
                 {{-- Meeting Point Map --}}
                 @if($tour->meeting_point_lat && $tour->meeting_point_lng)
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">📍 {{ __('Meeting Point') }}</h2>
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('Meeting Point') }}</h2>
                     @if($tour->meeting_point)
                         <p class="text-gray-600 mb-3">{{ $tour->meeting_point }}</p>
                     @endif
@@ -235,7 +264,7 @@
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none"
                              x-show="!expanded" x-transition.opacity>
                             <span class="bg-black/50 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
-                                🗺️ {{ __('Click map to interact') }}
+                                {{ __('Click map to interact') }}
                             </span>
                         </div>
 
@@ -316,16 +345,16 @@
 
                     <div class="space-y-3 pt-2 pb-4 border-b border-gray-100">
                         <div class="flex items-center gap-3 text-sm text-gray-600">
-                            <span class="text-lg">🕐</span>
+                            <span class="text-lg"></span>
                             <span>{{ $tour->duration_label ?? $tour->duration_days . ' ' . __('Day') }}</span>
                         </div>
                         <div class="flex items-center gap-3 text-sm text-gray-600">
-                            <span class="text-lg">👤</span>
+                            <span class="text-lg"></span>
                             <span>{{ __('Min') }} {{ $tour->min_participants }} @if($tour->max_participants) / {{ __('Max') }} {{ $tour->max_participants }}@endif {{ __('pax') }}</span>
                         </div>
                         @if($tour->meeting_point)
                         <div class="flex items-start gap-3 text-sm text-gray-600">
-                            <span class="text-lg mt-0.5">📍</span>
+                            <span class="text-lg mt-0.5"></span>
                             <span>{{ $tour->meeting_point }}</span>
                         </div>
                         @endif
@@ -355,7 +384,7 @@
                     <div class="space-y-3 pt-2">
                         <a href="{{ route('tour.booking.create', ['tour_id' => $tour->id]) }}"
                            class="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition transform hover:-translate-y-0.5 text-lg">
-                            📅 {{ __('Book This Tour') }}
+                            {{ __('Book This Tour') }}
                         </a>
 
                         @php

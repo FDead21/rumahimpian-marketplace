@@ -4,17 +4,17 @@
         : ($vehicle->thumbnail ? asset('storage/' . $vehicle->thumbnail) : null);
 
     $typeEmoji = match($vehicle->vehicle_type) {
-        'CAR'       => '🚗',
-        'MOTORBIKE' => '🛵',
-        'BOAT'      => '⛵',
-        default     => '🚗',
+        'CAR'       => '',
+        'MOTORBIKE' => '',
+        'BOAT'      => '',
+        default     => '',
     };
 @endphp
 
 <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative flex flex-col">
 
     @if($vehicle->is_featured)
-        <div class="absolute top-4 left-4 z-10 bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-full">⭐ {{ __('Featured') }}</div>
+        <div class="absolute top-4 left-4 z-10 bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-full">{{ __('Featured') }}</div>
     @endif
 
     {{-- Image --}}
@@ -40,7 +40,7 @@
         <p class="text-sm text-gray-500 mb-1">{{ $vehicle->brand }} {{ $vehicle->year }}</p>
 
         @if($vehicle->max_passengers)
-            <p class="text-sm text-gray-500 mb-3">👤 {{ __('Up to') }} {{ $vehicle->max_passengers }} {{ __('passengers') }}</p>
+            <p class="text-sm text-gray-500 mb-3">{{ __('Up to') }} {{ $vehicle->max_passengers }} {{ __('passengers') }}</p>
         @endif
 
         @if($vehicle->city)
