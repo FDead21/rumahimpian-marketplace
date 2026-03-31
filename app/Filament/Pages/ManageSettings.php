@@ -36,7 +36,7 @@ class ManageSettings extends Page implements HasForms
         $settings = Setting::all()->pluck('value', 'key')->toArray();
 
         // Decode JSON fields for FileUpload multiple
-        foreach (['hero_slides', 'eo_hero_slides'] as $field) {
+        foreach (['hero_slides', 'eo_hero_slides', 'tour_hero_slides', 'rental_hero_slides'] as $field) {
             if (!empty($settings[$field]) && is_string($settings[$field])) {
                 $decoded = json_decode($settings[$field], true);
                 if (is_array($decoded)) {
@@ -55,9 +55,7 @@ class ManageSettings extends Page implements HasForms
                 Tabs::make('Settings')
                     ->tabs([
 
-                        // ------------------------------------------------
-                        // TAB 1: Global — shared across all verticals
-                        // ------------------------------------------------
+                        // TAB 1: Global
                         Tabs\Tab::make('Global')
                             ->icon('heroicon-o-globe-alt')
                             ->schema([
@@ -65,35 +63,19 @@ class ManageSettings extends Page implements HasForms
                                     ->schema([
                                         FileUpload::make('site_logo')
                                             ->label('Website Logo')
-                                            ->image()
-                                            ->disk('public')
-                                            ->directory('settings')
-                                            ->preserveFilenames(),
-
+                                            ->image()->disk('public')->directory('settings')->preserveFilenames(),
                                         FileUpload::make('site_favicon')
                                             ->label('Favicon')
-                                            ->image()
-                                            ->disk('public')
-                                            ->directory('settings')
-                                            ->preserveFilenames(),
-
-                                        TextInput::make('site_name')
-                                            ->label('Website Name')
-                                            ->required(),
-
-                                        Textarea::make('site_description')
-                                            ->label('Footer Description')
-                                            ->rows(3)
-                                            ->columnSpanFull(),
+                                            ->image()->disk('public')->directory('settings')->preserveFilenames(),
+                                        TextInput::make('site_name')->label('Website Name')->required(),
+                                        Textarea::make('site_description')->label('Footer Description')->rows(3)->columnSpanFull(),
                                     ])->columns(2),
-
                                 Section::make('Contact Details')
                                     ->schema([
                                         TextInput::make('contact_phone')->tel(),
                                         TextInput::make('contact_email')->email(),
                                         TextInput::make('contact_address')->columnSpanFull(),
                                     ])->columns(2),
-
                                 Section::make('Social Media')
                                     ->schema([
                                         TextInput::make('social_facebook')->prefix('facebook.com/'),
@@ -103,59 +85,55 @@ class ManageSettings extends Page implements HasForms
                                     ])->columns(2),
                             ]),
 
-                        // ------------------------------------------------
-                        // TAB 2: Property — property vertical only
-                        // ------------------------------------------------
+                        // TAB 2: Property
                         Tabs\Tab::make('Property')
                             ->icon('heroicon-o-home')
                             ->schema([
                                 Section::make('Hero Banner')
                                     ->schema([
-                                        FileUpload::make('hero_slides')
-                                            ->label('Hero Carousel Images')
-                                            ->multiple()
-                                            ->image()
-                                            ->disk('public')
-                                            ->directory('hero')
-                                            ->reorderable()
-                                            ->preserveFilenames()
-                                            ->columnSpanFull(),
-
-                                        TextInput::make('hero_title')
-                                            ->label('Hero Title')
-                                            ->placeholder('Find Your Dream Home'),
-
-                                        TextInput::make('hero_subtitle')
-                                            ->label('Hero Subtitle')
-                                            ->placeholder('Trusted by millions of buyers & agents.'),
+                                        FileUpload::make('hero_slides')->label('Hero Carousel Images')
+                                            ->multiple()->image()->disk('public')->directory('hero')->reorderable()->preserveFilenames()->columnSpanFull(),
+                                        TextInput::make('hero_title')->label('Hero Title')->placeholder('Find Your Dream Home'),
+                                        TextInput::make('hero_subtitle')->label('Hero Subtitle')->placeholder('Trusted by millions of buyers & agents.'),
                                     ])->columns(2),
                             ]),
 
-                        // ------------------------------------------------
-                        // TAB 3: Event Organizer — EO vertical only
-                        // ------------------------------------------------
+                        // TAB 3: Event Organizer
                         Tabs\Tab::make('Event Organizer')
                             ->icon('heroicon-o-calendar-days')
                             ->schema([
                                 Section::make('Hero Banner')
                                     ->schema([
-                                        FileUpload::make('eo_hero_slides')
-                                            ->label('EO Hero Carousel Images')
-                                            ->multiple()
-                                            ->image()
-                                            ->disk('public')
-                                            ->directory('eo-hero')
-                                            ->reorderable()
-                                            ->preserveFilenames()
-                                            ->columnSpanFull(),
+                                        FileUpload::make('eo_hero_slides')->label('EO Hero Carousel Images')
+                                            ->multiple()->image()->disk('public')->directory('eo-hero')->reorderable()->preserveFilenames()->columnSpanFull(),
+                                        TextInput::make('eo_hero_title')->label('Hero Title')->placeholder('Your Dream Event, Made Real'),
+                                        TextInput::make('eo_hero_subtitle')->label('Hero Subtitle')->placeholder('Professional event organizer...'),
+                                    ])->columns(2),
+                            ]),
 
-                                        TextInput::make('eo_hero_title')
-                                            ->label('Hero Title')
-                                            ->placeholder('Your Dream Event, Made Real'),
+                        // TAB 4: Tours
+                        Tabs\Tab::make('Tours')
+                            ->icon('heroicon-o-map')
+                            ->schema([
+                                Section::make('Hero Banner')
+                                    ->schema([
+                                        FileUpload::make('tour_hero_slides')->label('Tour Hero Carousel Images')
+                                            ->multiple()->image()->disk('public')->directory('tour-hero')->reorderable()->preserveFilenames()->columnSpanFull(),
+                                        TextInput::make('tour_hero_title')->label('Hero Title')->placeholder('Explore Breathtaking Destinations'),
+                                        TextInput::make('tour_hero_subtitle')->label('Hero Subtitle')->placeholder('Discover cultural tours, hikes, and adventure packages.'),
+                                    ])->columns(2),
+                            ]),
 
-                                        TextInput::make('eo_hero_subtitle')
-                                            ->label('Hero Subtitle')
-                                            ->placeholder('Professional event organizer...'),
+                        // TAB 5: Rentals
+                        Tabs\Tab::make('Rentals')
+                            ->icon('heroicon-o-truck')
+                            ->schema([
+                                Section::make('Hero Banner')
+                                    ->schema([
+                                        FileUpload::make('rental_hero_slides')->label('Rental Hero Carousel Images')
+                                            ->multiple()->image()->disk('public')->directory('rental-hero')->reorderable()->preserveFilenames()->columnSpanFull(),
+                                        TextInput::make('rental_hero_title')->label('Hero Title')->placeholder('Rent the Perfect Vehicle for Your Trip'),
+                                        TextInput::make('rental_hero_subtitle')->label('Hero Subtitle')->placeholder('Cars, motorbikes, and boats at the best prices.'),
                                     ])->columns(2),
                             ]),
 
@@ -169,7 +147,6 @@ class ManageSettings extends Page implements HasForms
     {
         $data = $this->form->getState();
 
-        // Define which group each key belongs to
         $groupMap = [
             'site_logo'         => 'GLOBAL',
             'site_favicon'      => 'GLOBAL',
@@ -182,12 +159,22 @@ class ManageSettings extends Page implements HasForms
             'social_instagram'  => 'GLOBAL',
             'social_twitter'    => 'GLOBAL',
             'social_youtube'    => 'GLOBAL',
+            
             'hero_slides'       => 'PROPERTY',
             'hero_title'        => 'PROPERTY',
             'hero_subtitle'     => 'PROPERTY',
+            
             'eo_hero_slides'    => 'EO',
             'eo_hero_title'     => 'EO',
             'eo_hero_subtitle'  => 'EO',
+            
+            'tour_hero_slides'   => 'TOUR',
+            'tour_hero_title'    => 'TOUR',
+            'tour_hero_subtitle' => 'TOUR',
+            
+            'rental_hero_slides'   => 'RENTAL',
+            'rental_hero_title'    => 'RENTAL',
+            'rental_hero_subtitle' => 'RENTAL',
         ];
 
         foreach ($data as $key => $value) {
