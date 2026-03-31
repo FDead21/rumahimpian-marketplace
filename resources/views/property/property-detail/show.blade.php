@@ -171,18 +171,18 @@
                     @if($property->bedrooms)
                     <div>
                         <span class="block text-gray-500 text-sm">{{ __('Bedrooms') }}</span>
-                        <span class="font-semibold text-lg">🛏 {{ $property->bedrooms }}</span>
+                        <span class="font-semibold text-lg">{{ $property->bedrooms }}</span>
                     </div>
                     @endif
                     @if($property->bathrooms)
                     <div>
                         <span class="block text-gray-500 text-sm">{{ __('Bathrooms') }}</span>
-                        <span class="font-semibold text-lg">🚿 {{ $property->bathrooms }}</span>
+                        <span class="font-semibold text-lg">{{ $property->bathrooms }}</span>
                     </div>
                     @endif
                     <div>
                         <span class="block text-gray-500 text-sm">{{ __('Building Size') }}</span>
-                        <span class="font-semibold text-lg">🏠 {{ $property->building_area }} m²</span>
+                        <span class="font-semibold text-lg">{{ $property->building_area }} m²</span>
                     </div>
                 </div>
 
@@ -240,7 +240,7 @@
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none"
                              x-show="!expanded" x-transition.opacity>
                             <span class="bg-black/50 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
-                                🗺️ {{ __('Click map to interact') }}
+                                {{ __('Click map to interact') }}
                             </span>
                         </div>
 
@@ -454,8 +454,8 @@
                             get whatsappLink() {
                                 let msg = 'Halo, saya ingin menjadwalkan viewing properti:\n\n';
                                 msg += '*' + this.title + '*\n';
-                                msg += '📅 Tanggal: ' + (this.date || 'Belum ditentukan') + '\n';
-                                msg += '⏰ Jam: ' + (this.time || 'Belum ditentukan') + '\n';
+                                msg += ' Tanggal: ' + (this.date || 'Belum ditentukan') + '\n';
+                                msg += ' Jam: ' + (this.time || 'Belum ditentukan') + '\n';
                                 msg += 'Link: ' + this.url;
                                 return 'https://wa.me/' + this.phone + '?text=' + encodeURIComponent(msg);
                             }
@@ -464,7 +464,7 @@
                         @if($property->listing_type === 'RENT')
                         <div class="bg-rose-50 border border-rose-100 rounded-2xl p-6 mt-6">
                             <div class="flex items-start gap-4">
-                                <div class="text-3xl">🎊</div>
+                                <div class="text-3xl"></div>
                                 <div class="flex-1">
                                     <h3 class="font-bold text-rose-800 text-lg mb-1">{{ __('Use this property as your event venue?') }}</h3>
                                     <p class="text-rose-600 text-sm mb-4">
@@ -472,7 +472,7 @@
                                     </p>
                                     <a href="{{ route('eventOrganizer.booking.create', ['property_id' => $property->id]) }}"
                                     class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-3 rounded-xl shadow transition transform hover:-translate-y-0.5">
-                                        📅 {{ __('Book as Event Venue') }}
+                                        {{ __('Book as Event Venue') }}
                                     </a>
                                 </div>
                             </div>
@@ -481,7 +481,7 @@
 
                         <button @click="viewingOpen = true" 
                                 class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold py-3 rounded-lg transition flex items-center justify-center gap-2 mt-3">
-                            📅 {{ __('Schedule Viewing') }}
+                             {{ __('Schedule Viewing') }}
                         </button>
 
                         <div x-show="viewingOpen" style="display: none;" class="fixed inset-0 z-[9999] flex items-center justify-center px-4"

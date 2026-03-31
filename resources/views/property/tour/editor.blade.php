@@ -157,7 +157,7 @@
         <div class="flex-1 relative">
             <div id="panorama"></div>
             <div id="clickHint" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-4 py-2 rounded-full pointer-events-none">
-                🖱 Click anywhere to place a hotspot
+                Click anywhere to place a hotspot
             </div>
         </div>
     </div>
