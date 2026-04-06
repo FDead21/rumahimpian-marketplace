@@ -182,35 +182,100 @@
 
                 {{-- Inclusions --}}
                 @if(is_array($tour->inclusions) && count($tour->inclusions) > 0)
-                <div class="mb-10">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __("What's Included") }}</h2>
+                <div class="mb-12" x-data="{ 
+                        activeIdx: 0, 
+                        showInclusionModal: false,
+                        totalItems: {{ count($tour->inclusions) }},
+                        autoPlayTimer: null,
+                        startAutoPlay() {
+                            this.autoPlayTimer = setInterval(() => {
+                                // Only auto-rotate if the modal is NOT open
+                                if (!this.showInclusionModal) {
+                                    this.activeIdx = (this.activeIdx + 1) % this.totalItems;
+                                }
+                            }, 4000); // Changes image every 4 seconds
+                        },
+                        stopAutoPlay() {
+                            clearInterval(this.autoPlayTimer);
+                        }
+                    }"
+                    x-init="startAutoPlay()"
+                    @mouseenter="stopAutoPlay()"
+                    @mouseleave="startAutoPlay()">
                     
-                    {{-- Carousel Container --}}
-                    <div class="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory hide-scrollbar">
-                        @foreach($tour->inclusions as $inclusion)
-                        <div class="snap-start shrink-0 w-64 flex flex-col bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                            
-                            {{-- Image Cover --}}
-                            @if(!empty($inclusion['image']))
-                                <img src="{{ asset('storage/' . $inclusion['image']) }}" 
-                                     alt="inclusion" 
-                                     class="w-full h-32 object-cover bg-gray-50">
-                            @else
-                                <div class="w-full h-32 bg-emerald-50 flex items-center justify-center">
-                                    <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl font-bold">
-                                        ✓
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __("What's Included") }}</h2>
+                    
+                    <div class="bg-white border border-gray-100 rounded-3xl p-3 shadow-sm flex flex-col md:flex-row gap-4 h-auto md:h-[450px]">
+                        
+                        {{-- The Left Sidebar (Buttons) --}}
+                        <div class="w-full md:w-1/3 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto gap-2 p-1" style="-ms-overflow-style: none; scrollbar-width: none;">
+                            @foreach($tour->inclusions as $index => $inclusion)
+                                <button type="button" @click="activeIdx = {{ $index }}" 
+                                        class="text-left px-5 py-4 rounded-2xl transition-all duration-300 shrink-0 md:shrink border-2 outline-none"
+                                        :class="activeIdx === {{ $index }} ? 'bg-emerald-50 border-emerald-200 shadow-sm' : 'bg-transparent border-transparent hover:bg-gray-50'">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-sm transition-colors" :class="activeIdx === {{ $index }} ? 'text-emerald-600' : 'text-gray-700'">
+                                            {{ $inclusion['item'] ?? __('Included Item') }}
+                                        </p>
+                                        <svg x-show="activeIdx === {{ $index }}" class="w-4 h-4 text-emerald-500 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                    </div>
+                                </button>
+                            @endforeach
+                        </div>
+
+                        {{-- The Right Side (Auto-changing Image) --}}
+                        <button type="button" @click="showInclusionModal = true; document.body.style.overflow='hidden'" 
+                                class="w-full md:w-2/3 relative rounded-2xl overflow-hidden bg-slate-900 h-[300px] md:h-full shrink-0 text-left cursor-zoom-in group focus:outline-none focus:ring-4 focus:ring-emerald-500/50">
+                            @foreach($tour->inclusions as $index => $inclusion)
+                                <div x-show="activeIdx === {{ $index }}" 
+                                     x-transition:enter="transition ease-out duration-700"
+                                     x-transition:enter-start="opacity-0 scale-105"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     class="absolute inset-0 w-full h-full flex flex-col">
+                                    <div class="absolute inset-0">
+                                        @if(isset($inclusion['image']) && $inclusion['image'])
+                                            <img src="{{ asset('storage/' . $inclusion['image']) }}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000">
+                                        @else
+                                            <div class="w-full h-full bg-slate-800 flex items-center justify-center text-7xl opacity-50"></div>
+                                        @endif
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                                    </div>
+                                    <div class="relative mt-auto p-6 md:p-8 text-white z-10">
+                                        <span class="inline-block bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">{{ __('Feature') }} {{ $index + 1 }}</span>
+                                        <h3 class="text-2xl md:text-3xl font-extrabold mb-2">{{ $inclusion['item'] ?? __('Included Item') }}</h3>
+                                        <p class="text-gray-300 text-sm line-clamp-2">{{ __('Click to read more & view full image...') }}</p>
                                     </div>
                                 </div>
-                            @endif
+                            @endforeach
+                        </button>
+                    </div>
 
-                            {{-- Text Content --}}
-                            <div class="p-5 flex-1 flex flex-col bg-white">
-                                <p class="font-extrabold text-gray-900 text-base mb-1">{{ $inclusion['item'] ?? '' }}</p>
-                                @if(!empty($inclusion['description']))
-                                    <p class="text-sm text-gray-500 leading-relaxed">{{ $inclusion['description'] }}</p>
-                                @endif
+                    {{-- The Fullscreen Modal --}}
+                    <div x-show="showInclusionModal" style="display:none;" 
+                         class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4 md:p-8 backdrop-blur-sm" 
+                         @click.self="showInclusionModal = false; document.body.style.overflow=''" 
+                         @keydown.escape.window="showInclusionModal = false; document.body.style.overflow=''">
+                        
+                        <button type="button" @click="showInclusionModal = false; document.body.style.overflow=''" class="absolute top-6 right-6 text-white hover:text-emerald-400 z-50 p-2 transition">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+
+                        @foreach($tour->inclusions as $index => $inclusion)
+                            <div x-show="activeIdx === {{ $index }}" class="w-full max-w-6xl flex flex-col md:flex-row gap-8 items-center"
+                                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+                                <div class="w-full md:w-3/5 flex items-center justify-center">
+                                    @if(isset($inclusion['image']) && $inclusion['image'])
+                                        <img src="{{ asset('storage/' . $inclusion['image']) }}" class="max-h-[50vh] md:max-h-[80vh] rounded-2xl object-contain shadow-2xl border border-gray-800">
+                                    @else
+                                        <div class="w-full aspect-video max-w-2xl bg-gray-900 rounded-2xl flex items-center justify-center text-7xl border border-gray-800"></div>
+                                    @endif
+                                </div>
+                                <div class="w-full md:w-2/5 text-white bg-gray-900/50 p-8 rounded-3xl border border-gray-800">
+                                    <span class="text-emerald-500 font-bold text-sm tracking-widest uppercase mb-2 block">{{ __('Feature') }} {{ $index + 1 }}</span>
+                                    <h3 class="text-3xl md:text-4xl font-extrabold mb-6">{{ $inclusion['item'] }}</h3>
+                                    <div class="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">{{ $inclusion['description'] ?? __('No additional description provided for this item.') }}</div>
+                                </div>
                             </div>
-                        </div>
                         @endforeach
                     </div>
                 </div>
