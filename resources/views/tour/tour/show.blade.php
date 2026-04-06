@@ -182,25 +182,32 @@
 
                 {{-- Inclusions --}}
                 @if(is_array($tour->inclusions) && count($tour->inclusions) > 0)
-                <div>
+                <div class="mb-10">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __("What's Included") }}</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    
+                    {{-- Carousel Container --}}
+                    <div class="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory hide-scrollbar">
                         @foreach($tour->inclusions as $inclusion)
-                        <div class="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                        <div class="snap-start shrink-0 w-64 flex flex-col bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             
-                            {{-- Show uploaded image if it exists, otherwise fallback to checkmark --}}
+                            {{-- Image Cover --}}
                             @if(!empty($inclusion['image']))
                                 <img src="{{ asset('storage/' . $inclusion['image']) }}" 
-                                     alt="icon" 
-                                     class="w-6 h-6 object-contain mt-0.5 shrink-0 rounded-sm">
+                                     alt="inclusion" 
+                                     class="w-full h-32 object-cover bg-gray-50">
                             @else
-                                <span class="text-emerald-500 font-bold text-lg mt-0.5 shrink-0">✓</span>
+                                <div class="w-full h-32 bg-emerald-50 flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl font-bold">
+                                        ✓
+                                    </div>
+                                </div>
                             @endif
 
-                            <div>
-                                <p class="font-bold text-gray-900 text-sm">{{ $inclusion['item'] ?? '' }}</p>
+                            {{-- Text Content --}}
+                            <div class="p-5 flex-1 flex flex-col bg-white">
+                                <p class="font-extrabold text-gray-900 text-base mb-1">{{ $inclusion['item'] ?? '' }}</p>
                                 @if(!empty($inclusion['description']))
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $inclusion['description'] }}</p>
+                                    <p class="text-sm text-gray-500 leading-relaxed">{{ $inclusion['description'] }}</p>
                                 @endif
                             </div>
                         </div>
