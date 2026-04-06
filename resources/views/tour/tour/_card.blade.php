@@ -1,7 +1,7 @@
 @php
-    $thumb = $tour->media->first()
-        ? asset('storage/' . $tour->media->first()->file_path)
-        : ($tour->thumbnail ? asset('storage/' . $tour->thumbnail) : null);
+    $thumb = $tour->thumbnail
+        ? asset('storage/' . $tour->thumbnail) 
+        : ($tour->media->first() ? asset('storage/' . $tour->media->first()->file_path) : null);
 
     $categoryEmoji = match($tour->category) {
         'ADVENTURE'    => '',

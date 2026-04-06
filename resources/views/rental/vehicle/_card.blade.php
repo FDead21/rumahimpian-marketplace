@@ -1,7 +1,7 @@
 @php
-    $thumb = $vehicle->media->first()
-        ? asset('storage/' . $vehicle->media->first()->file_path)
-        : ($vehicle->thumbnail ? asset('storage/' . $vehicle->thumbnail) : null);
+    $thumb = $vehicle->thumbnail
+        ? asset('storage/' . $vehicle->thumbnail) 
+        : ($vehicle->media->first() ? asset('storage/' . $vehicle->media->first()->file_path) : null);
 
     $typeEmoji = match($vehicle->vehicle_type) {
         'CAR'       => '',
