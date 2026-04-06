@@ -187,7 +187,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         @foreach($tour->inclusions as $inclusion)
                         <div class="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                            <span class="text-emerald-500 font-bold text-lg mt-0.5">✓</span>
+                            
+                            {{-- Show uploaded image if it exists, otherwise fallback to checkmark --}}
+                            @if(!empty($inclusion['image']))
+                                <img src="{{ asset('storage/' . $inclusion['image']) }}" 
+                                     alt="icon" 
+                                     class="w-6 h-6 object-contain mt-0.5 shrink-0 rounded-sm">
+                            @else
+                                <span class="text-emerald-500 font-bold text-lg mt-0.5 shrink-0">✓</span>
+                            @endif
+
                             <div>
                                 <p class="font-bold text-gray-900 text-sm">{{ $inclusion['item'] ?? '' }}</p>
                                 @if(!empty($inclusion['description']))
