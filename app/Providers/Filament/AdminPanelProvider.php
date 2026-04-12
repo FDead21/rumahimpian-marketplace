@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,6 +43,11 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->plugins([
+                FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable()
+            ])
             // ->widgets([
             //     Widgets\AccountWidget::class,
             //     Widgets\FilamentInfoWidget::class,
@@ -59,6 +65,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(
+                'panels::topbar.end',
+                fn (): \Illuminate\Contracts\View\View => view('filament.topbar-welcome'),
+            );
     }
 }

@@ -162,6 +162,18 @@ class PackageResource extends Resource
                             ->itemLabel(fn (array $state): ?string => \App\Models\Vendor::find($state['vendor_id'])?->name ?? 'New Vendor')
                             ->addActionLabel('Add Vendor to Package'),
 
+            Forms\Components\Section::make('Manual Availability Override')
+                ->description('Block specific dates to prevent users from booking this package.')
+                ->schema([
+                    Forms\Components\Repeater::make('blocked_dates')
+                        ->label('Blocked Dates')
+                        ->simple(
+                            Forms\Components\DatePicker::make('date')->native(false)->displayFormat('Y-m-d')->format('Y-m-d')
+                        )
+                        ->addActionLabel('Add Blocked Date')
+                        ->columnSpanFull(),
+                ])->collapsed(),
+
             Forms\Components\Section::make('Visibility')->schema([
                 Forms\Components\Toggle::make('is_active')
                     ->label('Active (visible on website)')

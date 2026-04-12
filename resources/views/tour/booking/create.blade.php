@@ -48,10 +48,27 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Tour Date') }} <span class="text-red-500">*</span></label>
-                    <input type="date" name="tour_date" required
+                    <input type="text" id="tour_date" name="tour_date" required readonly
                            value="{{ old('tour_date') }}"
-                           min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-gray-800">
+                           placeholder="{{ __('Select Tour Date') }}"
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-gray-800 cursor-pointer">
+                    @error('tour_date')
+                        <p class="text-red-500 text-sm mt-1 font-medium">⚠️ {{ $message }}</p>
+                    @enderror
+                    <div style="display: flex; gap: 16px; margin-top: 8px;">
+                        <span style="display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #6b7280;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+                            {{ __('Closed / Holiday') }}
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #6b7280;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #f97316; display: inline-block;"></span>
+                            {{ __('Fully Booked') }}
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #6b7280;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; display: inline-block;"></span>
+                            {{ __('Available') }}
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
@@ -119,27 +136,84 @@
                     </div>
                     <button type="submit"
                             class="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-emerald-500/30 transition transform hover:-translate-y-1 text-lg whitespace-nowrap">
-                        📅 {{ __('Confirm Booking') }}
+                          {{ __('Confirm Booking') }}
                     </button>
                 </div>
             </div>
         </form>
     </div>
 
+    {{-- Include Flatpickr --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
-        function tourBookingForm() {
-            return {
-                participants: {{ old('participants', $tour->min_participants) }},
-                pricePerPerson: {{ $tour->price_per_person }},
-                get totalPrice() {
-                    const p = parseInt(this.participants) || 0;
-                    return p * this.pricePerPerson;
-                },
-                formatPrice(price) {
-                    return new Intl.NumberFormat('id-ID').format(price);
-                }
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/blocked-dates')
+            .then(r => r.json())
+            .then(reasons => {
+                const blockedDates = Object.keys(reasons);
+
+                flatpickr("#tour_date", {
+                    mode: "single",
+                    minDate: "today",
+                    dateFormat: "Y-m-d",
+                    disable: @json($blockedDates ?? []),
+                    onDayCreate: function(dObj, dStr, fp, dayElem) {
+                        const d = dayElem.dateObj;
+                        if (!d) return;
+
+                        const dateStr = [
+                            d.getFullYear(),
+                            String(d.getMonth() + 1).padStart(2, '0'),
+                            String(d.getDate()).padStart(2, '0')
+                        ].join('-');
+
+                        if (!reasons[dateStr]) return;
+
+                        const info = reasons[dateStr];
+                        const isAdmin  = info.type === 'admin';
+                        const dotColor = isAdmin ? '#ef4444' : '#f97316'; // red vs orange
+                        const label    = isAdmin ? '🛑 ' : '  ';
+
+                        // Tooltip
+                        dayElem.setAttribute('title', label + info.reason);
+                        dayElem.style.position = 'relative';
+                        dayElem.style.cursor   = 'not-allowed';
+
+                        // Colored dot
+                        const dot = document.createElement('span');
+                        dot.style.cssText = `
+                            position: absolute;
+                            bottom: 2px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            width: 4px;
+                            height: 4px;
+                            border-radius: 50%;
+                            background: ${dotColor};
+                            display: block;
+                            pointer-events: none;
+                        `;
+                        dayElem.appendChild(dot);
+                    }
+                });
+            });
+    });
+
+    function tourBookingForm() {
+        return {
+            participants: {{ old('participants', $tour->min_participants) }},
+            pricePerPerson: {{ $tour->price_per_person }},
+            get totalPrice() {
+                const p = parseInt(this.participants) || 0;
+                return p * this.pricePerPerson;
+            },
+            formatPrice(price) {
+                return new Intl.NumberFormat('id-ID').format(price);
             }
         }
+    }
     </script>
 
 </x-layout>

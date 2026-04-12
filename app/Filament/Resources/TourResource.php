@@ -171,6 +171,18 @@ class TourResource extends Resource
                     ->columnSpanFull(),
             ]),
 
+            Forms\Components\Section::make('Manual Availability Override')
+                ->description('Block specific dates to prevent users from booking them (e.g., for holidays or bad weather).')
+                ->schema([
+                    Forms\Components\Repeater::make('blocked_dates')
+                        ->label('Blocked Dates')
+                        ->simple(
+                            Forms\Components\DatePicker::make('date')->native(false)->displayFormat('Y-m-d')->format('Y-m-d')
+                        )
+                        ->addActionLabel('Add Blocked Date')
+                        ->columnSpanFull(),
+                ])->collapsed(),
+
             Forms\Components\Section::make('Visibility')->schema([
                 Forms\Components\Toggle::make('is_active')->default(true),
                 Forms\Components\Toggle::make('is_featured')->default(false),

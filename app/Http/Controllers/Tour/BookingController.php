@@ -15,7 +15,35 @@ class BookingController extends TourBaseController
             ->with('media')
             ->findOrFail($request->tour_id);
 
-        return view('tour.booking.create', compact('tour'));
+        $autoBlocked = [];
+
+        if ($tour->max_participants) {
+            // Find dates where the SUM of participants is >= the tour's max capacity
+            $fullyBookedDates = TourBooking::select('tour_date', \Illuminate\Support\Facades\DB::raw('SUM(participants) as total_pax'))
+                ->where('tour_id', $tour->id)
+                ->whereIn('status', ['CONFIRMED', 'IN_PROGRESS', 'COMPLETED'])
+                ->groupBy('tour_date')
+                ->having('total_pax', '>=', $tour->max_participants)
+                ->get();
+
+            foreach ($fullyBookedDates as $booking) {
+                $autoBlocked[] = $booking->tour_date->format('Y-m-d');
+            }
+        }
+        
+        // Use $tour, not $vehicle!
+        $manualBlocked = array_merge(
+            $tour->blocked_dates ?? [],
+            \App\Models\AdminCalendarNote::where('type', 'BLOCK')
+                ->pluck('date')
+                ->map(fn($d) => $d->format('Y-m-d'))
+                ->toArray()
+        );
+
+        // Merge them together
+        $blockedDates = array_unique(array_merge($autoBlocked, $manualBlocked));
+
+        return view('tour.booking.create', compact('tour', 'blockedDates'));
     }
 
     public function store(Request $request)
@@ -29,6 +57,21 @@ class BookingController extends TourBaseController
             'participants' => 'required|integer|min:1',
             'notes'        => 'nullable|string',
         ]);
+
+        $adminBlocked = \App\Models\AdminCalendarNote::where('type', 'BLOCK')
+            ->whereIn('scope', ['ALL', 'TOUR'])  // ✅
+            ->pluck('date')
+            ->map(fn($d) => $d->format('Y-m-d'))
+            ->toArray();
+
+        if (in_array($request->tour_date, $adminBlocked)) {
+            $reason = \App\Models\AdminCalendarNote::where('type', 'BLOCK')
+                ->whereDate('date', $request->tour_date)
+                ->value('description');
+            return back()->withErrors([
+                'tour_date' => 'This date is unavailable: ' . $reason
+            ])->withInput();
+        }
 
         $tour = Tour::findOrFail($request->tour_id);
 

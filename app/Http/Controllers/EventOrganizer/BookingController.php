@@ -56,13 +56,46 @@ class BookingController extends EoBaseController
             ];
         })->values();
 
+       $adminBlocked = \App\Models\AdminCalendarNote::where('type', 'BLOCK')
+            ->whereIn('scope', ['ALL', 'EVENT'])  // ✅
+            ->pluck('date')
+            ->map(fn($d) => $d->format('Y-m-d'))
+            ->toArray();
+
+        if ($adminBlocked) {
+            return back()->withErrors([
+                'event_date' => 'This date is unavailable: ' . $adminBlocked->description
+            ])->withInput();
+        }
+
+        $autoBlocked = [];
+        $manualBlocked = $adminBlocked; // Admin blocks always apply
+
+        if ($selectedPackage) {
+            // Dates blocked by confirmed bookings for this package
+            $autoBlocked = Booking::where('package_id', $selectedPackage->id)
+                ->whereIn('status', ['CONFIRMED', 'IN_PROGRESS', 'COMPLETED'])
+                ->pluck('event_date')
+                ->map(fn($date) => $date->format('Y-m-d'))
+                ->toArray();
+
+            // Package's own manual blocked dates + admin blocked dates
+            $manualBlocked = array_merge(
+                $adminBlocked,
+                $selectedPackage->blocked_dates ?? []
+            );
+        }
+
+        $blockedDates = array_unique(array_merge($autoBlocked, $manualBlocked));
+
         return view('eventOrganizer.booking.create', compact(
             'selectedPackage', 
             'packages', 
             'vendorsByCategory', 
             'eoSettings',
             'venuesJson',         
-            'venues'    
+            'venues',
+            'blockedDates' 
         ));
     }
 

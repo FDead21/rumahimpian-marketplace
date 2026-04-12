@@ -9,6 +9,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\DatePicker;
 
 class RentalVehicleResource extends Resource
 {
@@ -94,6 +97,18 @@ class RentalVehicleResource extends Resource
                     ->nullable()
                     ->columnSpanFull(),
             ]),
+
+            Forms\Components\Section::make('Manual Availability Override')
+                ->description('Block specific dates to prevent users from booking them (e.g., for maintenance or holidays).')
+                ->schema([
+                    Forms\Components\Repeater::make('blocked_dates')
+                        ->label('Blocked Dates')
+                        ->simple(
+                            Forms\Components\DatePicker::make('date')->native(false)->displayFormat('Y-m-d')->format('Y-m-d')
+                        )
+                        ->addActionLabel('Add Blocked Date')
+                        ->columnSpanFull(),
+                ])->collapsed(),
 
             Forms\Components\Section::make('Visibility')->schema([
                 Forms\Components\Toggle::make('is_active')->default(true),

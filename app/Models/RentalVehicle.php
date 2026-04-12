@@ -28,6 +28,7 @@ class RentalVehicle extends Model
         'specifications',
         'is_active',
         'is_featured',
+        'blocked_dates',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class RentalVehicle extends Model
         'price_per_day'  => 'decimal:2',
         'is_active'      => 'boolean',
         'is_featured'    => 'boolean',
+        'blocked_dates' => 'array',
     ];
 
     protected static function booted(): void

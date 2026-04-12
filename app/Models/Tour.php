@@ -32,6 +32,7 @@ class Tour extends Model
         'is_active',
         'is_featured',
         'youtube_url',
+        'blocked_dates',
     ];
 
     protected $casts = [
@@ -41,6 +42,7 @@ class Tour extends Model
         'original_price' => 'decimal:2',
         'is_active'      => 'boolean',
         'is_featured'    => 'boolean',
+        'blocked_dates' => 'array',
     ];
 
     protected static function booted(): void

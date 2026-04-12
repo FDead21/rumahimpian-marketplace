@@ -28,6 +28,7 @@ use App\Http\Controllers\Tour\BookingController as TourBookingController;
 // Rental Controllers
 use App\Http\Controllers\Rental\HomeController as RentalHomeController;
 use App\Http\Controllers\Rental\VehicleController;
+use App\Http\Controllers\Rental\RentalBookingController;
 
 // Event Organizer Controllers
 use App\Http\Controllers\EventOrganizer\HomeController as EventOrganizerHomeController;
@@ -54,6 +55,8 @@ Route::get('/lang/{locale}', function ($locale) {
     }
     return back();
 })->name('lang.switch');
+
+Route::get('/api/blocked-dates', [\App\Http\Controllers\BlockedDatesController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +151,9 @@ Route::prefix('rental')->name('rental.')->group(function () {
 
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
     Route::get('/vehicles/{slug}', [VehicleController::class, 'show'])->name('vehicles.show');
+    Route::get('/rental/book/{slug}', [RentalBookingController::class, 'create'])->name('booking.create');
+    Route::post('/rental/book', [RentalBookingController::class, 'store'])->name('booking.store');
+    Route::get('/rental/receipt/{booking_code}', [RentalBookingController::class, 'confirmation'])->name('booking.confirmation');
 });
 
 /*

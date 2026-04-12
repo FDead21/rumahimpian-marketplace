@@ -24,6 +24,7 @@ class Package extends Model
         'longitude',
         'is_active',
         'is_featured',
+        'blocked_dates',
     ];
 
     protected $casts = [
@@ -34,6 +35,7 @@ class Package extends Model
         'longitude'      => 'decimal:7',
         'is_active'      => 'boolean',
         'is_featured'    => 'boolean',
+        'blocked_dates' => 'array',
     ];
 
     protected static function booted(): void
