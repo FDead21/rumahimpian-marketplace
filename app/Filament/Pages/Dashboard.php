@@ -21,6 +21,7 @@ class Dashboard extends Page
     public $user;
     public $role;
     public $upcomingBookings;
+    public $todaySchedule;
     // Property vars
     public $totalProperties;
     public $totalViews;
@@ -129,6 +130,54 @@ class Dashboard extends Page
             $this->pendingBookings = TourBooking::where('status', 'INQUIRY')->count()
                 + RentalBooking::where('status', 'INQUIRY')->count()
                 + Booking::where('status', 'INQUIRY')->count();
+
+            $todayTours = TourBooking::with('tour')
+                ->whereDate('tour_date', today())
+                ->whereIn('status', ['CONFIRMED', 'IN_PROGRESS'])
+                ->get()
+                ->map(fn($b) => [
+                    'icon'   => '🗺️',
+                    'name'   => $b->tour->name ?? 'Tour',
+                    'client' => $b->client_name,
+                    'time'   => 'All day',
+                    'status' => $b->status,
+                    'color'  => '#0f766e',
+                    'url'    => \App\Filament\Resources\TourBookingResource::getUrl('edit', ['record' => $b->id]),
+                ]);
+
+            $todayRentals = RentalBooking::with('rentalVehicle')
+                ->where('start_date', '<=', today())
+                ->where('end_date', '>=', today())
+                ->whereIn('status', ['CONFIRMED', 'IN_PROGRESS'])
+                ->get()
+                ->map(fn($b) => [
+                    'icon'   => '🚗',
+                    'name'   => $b->rentalVehicle->name ?? 'Vehicle',
+                    'client' => $b->client_name,
+                    'time'   => $b->start_date->format('d M') . ' → ' . $b->end_date->format('d M'),
+                    'status' => $b->status,
+                    'color'  => '#1d4ed8',
+                    'url'    => \App\Filament\Resources\RentalBookingResource::getUrl('edit', ['record' => $b->id]),
+                ]);
+
+            $todayEvents = Booking::with('package')
+                ->whereDate('event_date', today())
+                ->whereIn('status', ['CONFIRMED', 'IN_PROGRESS'])
+                ->get()
+                ->map(fn($b) => [
+                    'icon'   => '🎉',
+                    'name'   => $b->package->name ?? 'Event',
+                    'client' => $b->client_name,
+                    'time'   => 'All day',
+                    'status' => $b->status,
+                    'color'  => '#b45309',
+                    'url'    => \App\Filament\Resources\BookingResource::getUrl('edit', ['record' => $b->id]),
+                ]);
+
+            $this->todaySchedule = $todayTours
+                ->concat($todayRentals)
+                ->concat($todayEvents)
+                ->values();
 
         } else {
             $this->totalProperties = Property::where('user_id', $this->user->id)->count();
